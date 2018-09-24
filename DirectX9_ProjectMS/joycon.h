@@ -68,7 +68,11 @@ void pollLoop();
 void actuallyQuit();
 D3DXVECTOR3 GetJoyconAccel(int jcNo);
 D3DXVECTOR3 GetJoyconGyro(int jcNo);
+bool CheckJoyconSize(int nSize);
+int GetJoyconSize(void);
+
 void JoyconUpdate(void);
+
 BOOL JcPressed(int jcNo, DWORD button);
 BOOL JcTriggered(int jcNo, DWORD button);
 BOOL JcReleased(int jcNo, DWORD button);

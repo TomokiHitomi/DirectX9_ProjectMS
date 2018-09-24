@@ -8,6 +8,7 @@
 #include "cube.h"
 #include "calculate.h"
 #include "joycon.h"
+#include "input.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -39,7 +40,7 @@ Cube::Cube(void)
 	SetIdAndPriority(ObjectID::CUBE, Priority::Low, Priority::Middle);
 
 	// 各プロパティの初期化
-	m_tagProp.vPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_tagProp.vPos = D3DXVECTOR3(0.0f, 10.0f, 0.0f);
 	m_tagProp.vRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_tagProp.vScl = D3DXVECTOR3(MODEL_CUBE_SCL, MODEL_CUBE_SCL, MODEL_CUBE_SCL);
 	m_tagProp.bUse = true;
@@ -70,6 +71,24 @@ void Cube::Update(void)
 {
 	if (m_tagProp.bUse)
 	{
+		if (GetKeyboardPress(DIK_UP))
+		{
+			m_tagProp.vPos.z += 1.0f;
+		}
+		else if (GetKeyboardPress(DIK_DOWN))
+		{
+			m_tagProp.vPos.z -= 1.0f;
+		}
+
+		if (GetKeyboardPress(DIK_LEFT))
+		{
+			m_tagProp.vPos.x += 1.0f;
+		}
+		else if (GetKeyboardPress(DIK_RIGHT))
+		{
+			m_tagProp.vPos.x -= 1.0f;
+		}
+
 		// アニメーション更新処理
 		m_tagProp.CXModel->Update();
 	}

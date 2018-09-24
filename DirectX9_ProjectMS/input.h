@@ -71,7 +71,7 @@
 #define R_BUTTON_LEFT	0x80000000l	// LEFTボタン
 
 
-#define GAMEPADMAX			4			// 同時に接続するジョイパッドの最大数をセット
+#define GAMEPADMAX			8			// 同時に接続するジョイパッドの最大数をセット
 
 #define PAD_SLIDER_MARGIN	(10)
 #define PAD_SLIDER_SPEED	(0.0001f)

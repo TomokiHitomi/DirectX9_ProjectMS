@@ -904,6 +904,14 @@ init_start:
 					buf[0] = 0x0 | 0x0 | 0x2 | 0x0; // solid 2
 				}
 			}
+			if (i == 2) {
+				buf[0] = 0x0 | 0x0 | 0x2 | 0x1;		// solid 1
+			}
+			if (i == 3) {
+				if (settings.combineJoyCons) {
+					buf[0] = 0x0 | 0x0 | 0x2 | 0x1; // solid 1
+				}
+			}
 			//buf[0] = 0x80 | 0x40 | 0x2 | 0x1; // Flash top two, solid bottom two
 			//buf[0] = 0x8 | 0x4 | 0x2 | 0x1; // All solid
 			//buf[0] = 0x80 | 0x40 | 0x20 | 0x10; // All flashing
@@ -956,6 +964,23 @@ D3DXVECTOR3 GetJoyconGyro(int jcNo)
 	Joycon *jc = &joycons[jcNo];
 	D3DXVECTOR3 vecTemp = D3DXVECTOR3(jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
 	return vecTemp;
+}
+
+bool CheckJoyconSize(int nSize)
+{
+	if (nSize == joycons.size())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+int GetJoyconSize(void)
+{
+	return joycons.size();
 }
 
 void JoyconUpdate(void)

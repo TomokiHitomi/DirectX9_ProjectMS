@@ -65,6 +65,7 @@ TitleScene::TitleScene(void)
 	ObjectManager::CreateObject<Skydome>();
 	ObjectManager::CreateObject<Cube>();
 	ObjectManager::CreateObject<StageManager>();
+	ObjectManager::CreateObject<PlayerManager>();
 	//new Player;
 	//new Skydome;
 	//new Cube;

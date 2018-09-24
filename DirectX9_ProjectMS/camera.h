@@ -16,7 +16,7 @@
 #define	POS_Y_CAM				(25.0f)										// カメラの初期位置(Y座標)
 #define	POS_Z_CAM				(100.0f)										// カメラの初期位置(Z座標)
 
-#define	VIEW_ANGLE				(D3DXToRadian(35.0f))							// ビュー平面の視野角
+#define	VIEW_ANGLE				(D3DXToRadian(45.0f))							// ビュー平面の視野角
 #define	VIEW_ASPECT				((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT)	// ビュー平面のアスペクト比	
 #define	VIEW_NEAR_Z				(10.0f)											// ビュー平面のNearZ値
 #define	VIEW_FAR_Z				(5000.0f)										// ビュー平面のFarZ値

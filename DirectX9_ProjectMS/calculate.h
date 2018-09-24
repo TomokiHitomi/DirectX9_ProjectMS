@@ -46,6 +46,7 @@ enum
 //*****************************************************************************
 
 void WorldConvert(D3DXMATRIX *pOut, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl);
+void WorldConvertXYZ(D3DXMATRIX *world, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl);
 void WorldConvertAxis(D3DXMATRIX *world, D3DXVECTOR3 pos,
 	D3DXVECTOR3 vLook, D3DXVECTOR3 vUp, D3DXVECTOR3 scl);
 void MatrixRotationVecAndUp(D3DXMATRIX *mtxOut, D3DXVECTOR3 vLook, D3DXVECTOR3 vUp);

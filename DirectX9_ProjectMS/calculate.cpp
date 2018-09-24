@@ -41,6 +41,36 @@ void WorldConvert(D3DXMATRIX *world, D3DXVECTOR3 pos,
 }
 
 //=============================================================================
+// ƒ[ƒ‹ƒh•ÏŠ·
+//=============================================================================
+void WorldConvertXYZ(D3DXMATRIX *world, D3DXVECTOR3 pos,
+	D3DXVECTOR3 rot, D3DXVECTOR3 scl)
+{
+	D3DXMATRIX mtxScl, mtxRotX, mtxRotY, mtxRotZ, mtxTranslate;
+
+	/******************** ƒ[ƒ‹ƒh•ÏŠ· ********************/
+	// ƒ[ƒ‹ƒhƒ}ƒgƒŠƒNƒX‚Ì‰Šú‰»
+	D3DXMatrixIdentity(world);
+
+	// ySzƒXƒP[ƒ‹‚ğ”½‰f(Multiply‚Ís—ñŒvZ)
+	D3DXMatrixScaling(&mtxScl, scl.x, scl.y, scl.z);
+	D3DXMatrixMultiply(world, world, &mtxScl);
+
+	// yRz‰ñ“]‚ğ”½‰f(XYZ‚Ì‡”Ô‚Ås—ñŒvZ)
+	D3DXMatrixRotationX(&mtxRotX, rot.x);
+	D3DXMatrixRotationY(&mtxRotY, rot.y);
+	D3DXMatrixRotationZ(&mtxRotZ, rot.z);
+
+	D3DXMatrixMultiply(world, world, &mtxRotX);
+	D3DXMatrixMultiply(world, world, &mtxRotY);
+	D3DXMatrixMultiply(world, world, &mtxRotZ);
+
+	// yTz•½sˆÚ“®‚ğ”½‰f(ƒIƒuƒWƒFƒNƒg‚ğ”z’u‚µ‚Ä‚¢‚éj
+	D3DXMatrixTranslation(&mtxTranslate, pos.x, pos.y, pos.z);
+	D3DXMatrixMultiply(world, world, &mtxTranslate);
+}
+
+//=============================================================================
 // ƒ[ƒ‹ƒh•ÏŠ·iMatrixRotationVecAndUpd—lj
 //=============================================================================
 void WorldConvertAxis(D3DXMATRIX *world, D3DXVECTOR3 pos,
@@ -138,17 +168,17 @@ float CompHigh(float f1, float f2)
 	float f1t, f2t;
 	f1t = std::abs(f1);
 	f2t = std::abs(f2);
-	//if (f1t > 1.0f || f2t > 1.0f)
-	//{
-	//	return 1.0f;
-	//}
+	if (f1t > 1.0f || f2t > 1.0f)
+	{
+		return 1.0f;
+	}
 	 if (f1t > f2t)
 	{
-		return f1;
+		return f1t;
 	}
 	else
 	{
-		return f2;
+		return f2t;
 	}
 }
 

@@ -23,7 +23,7 @@
 #define MODEL_STAGE_MAX			(1)
 
 // モデルスケール
-#define MODEL_STAGE_SCL			(10.0f)
+#define MODEL_STAGE_SCL			(30.0f)
 
 //*****************************************************************************
 // 構造体定義
