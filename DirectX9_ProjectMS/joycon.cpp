@@ -10,6 +10,7 @@
 //*****************************************************************************
 #include "joycon.h"
 #include "joycon.hpp"
+#include "input.h"
 
 // glm:
 #define GLM_ENABLE_EXPERIMENTAL
@@ -23,7 +24,6 @@
 // デバッグ用
 #ifdef _DEBUG
 #include "debugproc.h"
-#include "input.h"
 #endif
 
 //*****************************************************************************
@@ -529,25 +529,25 @@ void pollLoop()
 
 		if (!jc->handle) { continue; }
 
-		if (GetKeyboardTrigger(DIK_V))
-		{
-			jc->rumble(100, 1);
+		//if (GetKeyboardTrigger(DIK_V))
+		//{
+		//	jc->rumble(100, 1);
 
-			jc->rumble(10, 3);
-		}
+		//	jc->rumble(10, 3);
+		//}
 
-		if (GetKeyboardPress(DIK_B))
-		{
-			jc->rumble(100, 1);
-			jc->rumble(10, 1);
+		//if (GetKeyboardPress(DIK_B))
+		//{
+		//	jc->rumble(100, 1);
+		//	jc->rumble(10, 1);
 
-		}
-		if (GetKeyboardPress(DIK_N))
-		{
-			jc->rumble(100, 2);
-			jc->rumble(10, 2);
+		//}
+		//if (GetKeyboardPress(DIK_N))
+		//{
+		//	jc->rumble(100, 2);
+		//	jc->rumble(10, 2);
 
-		}
+		//}
 
 		if (settings.forcePollUpdate) {
 			// set to be blocking:
@@ -577,6 +577,7 @@ void pollLoop()
 
 		//hid_read(jc->handle, buf, 0x40);
 		hid_read_timeout(jc->handle, buf, 0x40, 20);
+		//hid_read_timeout(jc->handle, buf, 0x40, 20);
 
 		// get rid of queue:
 		// if we force the poll to wait then the queue will never clear and will just freeze:
@@ -880,14 +881,14 @@ init_start:
 
 	// initial poll to get battery data:
 	pollLoop();
-	for (int i = 0; i < joycons.size(); ++i) {
-		printf("battery level: %u\n", joycons[i].battery);
-	}
+	//for (int i = 0; i < joycons.size(); ++i) {
+	//	printf("battery level: %u\n", joycons[i].battery);
+	//}
 
 
 
 	// set lights:
-	printf("setting LEDs...\n");
+	//printf("setting LEDs...\n");
 	for (int r = 0; r < 5; ++r) {
 		for (int i = 0; i < joycons.size(); ++i) {
 			Joycon *jc = &joycons[i];
@@ -922,7 +923,7 @@ init_start:
 
 
 	// give a small rumble to all joycons:
-	printf("vibrating JoyCon(s).\n");
+	//printf("vibrating JoyCon(s).\n");
 	for (int k = 0; k < 1; ++k) {
 		for (int i = 0; i < joycons.size(); ++i) {
 			joycons[i].rumble(100, 1);

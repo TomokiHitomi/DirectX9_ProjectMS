@@ -36,8 +36,19 @@ HRESULT InitDebugProc(void)
 	HRESULT hr;
 
 	// 情報表示用フォントを設定
-	hr = D3DXCreateFont(pDevice, 25, 0, 0, 0, FALSE, SHIFTJIS_CHARSET,
-					OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "Terminal", &g_pD3DXFont);
+	hr = D3DXCreateFont(
+		pDevice,			// デバイス
+		16,					// 文字の高さ
+		0,					// 文字幅
+		0,					// フォントの太さ
+		0,					// MIPMAPのレベル
+		FALSE,				// イタリックか
+		SHIFTJIS_CHARSET,	// 文字セット
+		OUT_DEFAULT_PRECIS,	// 出力精度
+		DEFAULT_QUALITY,	// 出力品質
+		DEFAULT_PITCH,		// フォントピッチとファミリ
+		"Terminal",			// フォント名
+		&g_pD3DXFont);		// フォントへのポインタのアドレス
 
 	// 情報クリア
 	memset(g_aStrDebug, 0, sizeof g_aStrDebug);

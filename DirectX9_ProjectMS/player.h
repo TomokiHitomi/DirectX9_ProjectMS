@@ -112,8 +112,8 @@ private:
 
 	void	Move(void);
 	void	Dash(void);
-	void	Guard(void);
-	void	Action(void);
+	//void	Guard(void);
+	//void	Action(void);
 	void	Jump(void);
 	void	MoveFunc(float);
 	void	MoveInertia(float fInertia);
@@ -168,7 +168,6 @@ public:
 		PLAYER_ANIME_HAND,
 		PLAYER_ANIME_MAX
 	};
-
 };
 
 class PlayerManager : public ObjectManager
@@ -196,10 +195,7 @@ public:
 	template <typename Type>
 	void Set(PLAYER player)
 	{
-		if (m_pPlayer[player] != NULL)
-		{
-			delete m_pPlayer[player];
-		}
+		delete m_pPlayer[player];
 		m_pPlayer[player] = new Type;
 		m_pPlayer[player]->m_nNum = int(player);
 		m_pPlayer[player]->m_nTagNum = int(PLAYER_2P - player);
@@ -223,6 +219,8 @@ class Fireman : public Player
 public:
 	Fireman() : Player()
 	{
+		// ƒ‚ƒfƒ‹‚Ì‰Šú‰»
+		m_CSkinMesh = new CSkinMesh;
 		LPDIRECT3DDEVICE9 pDevice = GetDevice();
 		m_CSkinMesh->Init(pDevice, PLAYER_MODEL);
 		m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN, 0.05f);
@@ -236,12 +234,16 @@ class Doctor : public Player
 public:
 	Doctor() : Player()
 	{
+		// ƒ‚ƒfƒ‹‚Ì‰Šú‰»
+		m_CSkinMesh = new CSkinMesh;
 		LPDIRECT3DDEVICE9 pDevice = GetDevice();
 		m_CSkinMesh->Init(pDevice, PLAYER_MODEL);
-		m_CSkinMesh->ChangeAnim(PLAYER_ANIME_DANCE_YMCA, 0.05f);
+		m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN, 0.05f);
 	}
-	~Doctor();
+	~Doctor()
+	{
 
+	}
 };
 
 //*****************************************************************************

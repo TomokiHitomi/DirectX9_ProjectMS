@@ -11,6 +11,8 @@
 #include "scene.h"
 #include "input.h"
 #include "joycon.h"
+//#include <imgui\imgui.h>
+//#include <imgui\imgui_impl_dx9.h>
 
 /* Debug */
 #ifdef _DEBUG
@@ -249,7 +251,9 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;	// 映像信号に同期してフリップする
 	d3dpp.Windowed = bWindow;					// ウィンドウモード
 	d3dpp.EnableAutoDepthStencil = TRUE;		// デプスバッファ（Ｚバッファ）とステンシルバッファを作成
-	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;// デプスバッファとして24ビットZバッファ8ビットステンシルバッファ作成
+	//d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;// デプスバッファとして24ビットZバッファ8ビットステンシルバッファ作成
+	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;// デプスバッファとして16ビットZバッファ
+
 
 	if (bWindow)
 	{// ウィンドウモード
@@ -311,9 +315,12 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);	// 最初のアルファ引数
 	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);	// ２番目のアルファ引数
 
+	//ImGui_ImplDX9_Init(g_pD3DDevice);
+
 	// シーンの初期化処理
 	SceneManager::Init(hInstance, hWnd);
 
+	// Joycon認識開始
 	start();
 
 	return S_OK;
@@ -354,9 +361,13 @@ void Update(void)
 
 	// 更新処理
 	{	
+#ifdef _DEBUG
 		Debugtimer timer2;
+#endif
 		SceneManager::Update();
+#ifdef _DEBUG
 		PrintDebugProc("【UpdateAt】\n[%f]\n", timer2.End());
+#endif
 	}
 
 }
@@ -367,18 +378,26 @@ void Update(void)
 void Draw(void)
 {
 	// ステンシルバッファ＆バックバッファ＆Ｚバッファのクリア
-	g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+	//g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+	g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
 
 	// 描画の開始
 	if (SUCCEEDED(g_pD3DDevice->BeginScene()))
 	{
+#ifdef _DEBUG
 		Debugtimer timer;
+#endif
 		// 描画処理
 		SceneManager::Draw();
+#ifdef _DEBUG
 		PrintDebugProc("【DrawAt】\n[%f]\n", timer.End());
+#endif
 
 		// 描画の終了
-		g_pD3DDevice->EndScene();
+		if (FAILED(g_pD3DDevice->EndScene()))
+		{
+			MessageBox(NULL, "EndSceneに失敗しました。", "EndScene", MB_OK);
+		}
 	}
 
 	// バックバッファとフロントバッファの入れ替え

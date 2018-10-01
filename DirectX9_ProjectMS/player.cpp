@@ -56,10 +56,7 @@ PlayerManager::~PlayerManager(void)
 {
 	for (unsigned int i = 0; i < PLAYER_MAX; i++)
 	{
-		if (m_pPlayer[i] != NULL)
-		{
-			delete m_pPlayer[i];
-		}
+		delete m_pPlayer[i];
 	}
 }
 
@@ -110,6 +107,9 @@ void PlayerManager::Draw(void)
 	}
 }
 
+//=============================================================================
+// É^Å[ÉQÉbÉgç¿ïWê›íËèàóù
+//=============================================================================
 void PlayerManager::SetTag(void)
 {
 	for (unsigned int i = 0; i < PLAYER_MAX; i++)
@@ -118,7 +118,8 @@ void PlayerManager::SetTag(void)
 		{
 			if (m_pPlayer[i]->m_bUse)
 			{
-				m_pPlayer[i]->SetTag(m_pPlayer[m_pPlayer[i]->m_nTagNum]->GetPos());
+				//m_pPlayer[i]->SetTag(m_pPlayer[m_pPlayer[i]->m_nTagNum]->GetPos());
+				m_pPlayer[i]->SetTag(ZERO_D3DXVECTOR3);
 			}
 		}
 	}
@@ -158,9 +159,6 @@ Player::Player(void)
 	m_fMoveSpeed = PLAYER_MOVE_SPEED;
 	m_fRiseSpeed = 0.0f;
 	m_bUse = true;
-
-	// ÉÇÉfÉãÇÃèâä˙âª
-	m_CSkinMesh = new CSkinMesh;
 }
 
 //=============================================================================
@@ -180,37 +178,37 @@ Player::~Player(void)
 //=============================================================================
 void Player::Update(void)
 {
-#ifdef _DEBUG
-	PrintDebugProc("Åy PLAYER Åz\n");
-#endif
+//#ifdef _DEBUG
+//	PrintDebugProc("Åy PLAYER Åz\n");
+//#endif
 
 	if (m_bUse)
 	{
 		// à⁄ìÆèàóù
 		Move();
 
-#ifdef _DEBUG
-		PrintDebugProc("Pos [%f,%f,%f]\n", m_vPos.x, m_vPos.y, m_vPos.z);
-		PrintDebugProc("Rot [%f,%f,%f]\n", m_vRot.x, m_vRot.y, m_vRot.z);
-		PrintDebugProc("RotI[%f,%f,%f]\n", m_vRotInertia.x, m_vRotInertia.y, m_vRotInertia.z);
-		PrintDebugProc("Move[%f,%f,%f]\n", m_vMove.x, m_vMove.y, m_vMove.z);
-		PrintDebugProc("Spd [%f]\n", m_fMoveSpeed);
-		PrintDebugProc("mtxX[%f,%f,%f]\n",
-			m_mtxWorld._11, m_mtxWorld._12, m_mtxWorld._13);
-		PrintDebugProc("mtxY[%f,%f,%f]\n",
-			m_mtxWorld._21, m_mtxWorld._22, m_mtxWorld._23);
-		PrintDebugProc("mtxZ[%f,%f,%f]\n",
-			m_mtxWorld._31, m_mtxWorld._32, m_mtxWorld._33);
-		PrintDebugProc("mtxA[%f,%f,%f]\n",
-			m_mtxWorld._41, m_mtxWorld._42, m_mtxWorld._43);
-#endif
+//#ifdef _DEBUG
+//		PrintDebugProc("Pos [%f,%f,%f]\n", m_vPos.x, m_vPos.y, m_vPos.z);
+//		PrintDebugProc("Rot [%f,%f,%f]\n", m_vRot.x, m_vRot.y, m_vRot.z);
+//		PrintDebugProc("RotI[%f,%f,%f]\n", m_vRotInertia.x, m_vRotInertia.y, m_vRotInertia.z);
+//		PrintDebugProc("Move[%f,%f,%f]\n", m_vMove.x, m_vMove.y, m_vMove.z);
+//		PrintDebugProc("Spd [%f]\n", m_fMoveSpeed);
+//		PrintDebugProc("mtxX[%f,%f,%f]\n",
+//			m_mtxWorld._11, m_mtxWorld._12, m_mtxWorld._13);
+//		PrintDebugProc("mtxY[%f,%f,%f]\n",
+//			m_mtxWorld._21, m_mtxWorld._22, m_mtxWorld._23);
+//		PrintDebugProc("mtxZ[%f,%f,%f]\n",
+//			m_mtxWorld._31, m_mtxWorld._32, m_mtxWorld._33);
+//		PrintDebugProc("mtxA[%f,%f,%f]\n",
+//			m_mtxWorld._41, m_mtxWorld._42, m_mtxWorld._43);
+//#endif
 		// ÉÇÉfÉãÇçXêV
 		m_CSkinMesh->Update();
 	}
 
-#ifdef _DEBUG
-	PrintDebugProc("\n");
-#endif
+//#ifdef _DEBUG
+//	PrintDebugProc("\n");
+//#endif
 }
 
 //=============================================================================
@@ -230,8 +228,6 @@ void Player::LateUpdate(void)
 		//// à⁄ìÆó Ç…äµê´ÇìKóp
 		//MoveInertia(m_fMoveInertia);
 
-		if (m_nNum == 0)
-		{
 			D3DXVECTOR3 vEye, vAt;
 
 			vAt.x = sinf(m_vRot.y) * -200.0f;
@@ -253,16 +249,13 @@ void Player::LateUpdate(void)
 
 
 			// ÉJÉÅÉâÇAtÇÉÇÉfÉãÇ…ê›íË
-			Camera::SetAt(m_vTag);
-
+			Camera::SetAt(m_vTag, m_nNum);
 
 			// ÉJÉÅÉâEyeÇÉÇÉfÉãå„ï˚Ç…ÉZÉbÉg
-			Camera::SetEye(m_vPos + vEye);
+			Camera::SetEye(m_vPos + vEye, m_nNum);
 
 			//// ÉJÉÅÉâUpÇÉÇÉfÉãè„ïîÇ…ê›íË
 			//Camera::SetUp(m_vY);
-		}
-
 	}
 }
 
@@ -295,8 +288,11 @@ void Player::Draw(void)
 		//// óºñ ï`âÊÇ∑ÇÈ
 		//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
-		// ÉÇÉfÉãÇï`âÊ
-		m_CSkinMesh->Draw(pDevice, m_mtxWorld);
+		//if (m_nNum == 0)
+		//{
+			// ÉÇÉfÉãÇï`âÊ
+			m_CSkinMesh->Draw(pDevice, m_mtxWorld);
+		//}
 
 		//// ó†ñ ÇÉJÉäÉìÉOÇ…ñﬂÇ∑
 		//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -304,16 +300,15 @@ void Player::Draw(void)
 		// ÉøÉeÉXÉgÇñ≥å¯Ç…
 		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 		//PrintDebugProc("Bone  [%d]\n", m_CSkinMesh->m_dwBoneCount);
-#endif
+//#endif
 		// ÉâÉCÉeÉBÉìÉOÇí èÌÇ…ñﬂÇ∑
 		//SetLight(LIGHT_SUB1, FALSE);
 		//SetLight(LIGHT_SUB2, FALSE);
 
 		// ÉâÉCÉìÉeÉBÉìÉOÇóLå¯Ç…Ç∑ÇÈ
 		pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-
 	}
 }
 
@@ -333,23 +328,23 @@ void Player::Move(void)
 
 		if (jcL.y > PLAYER_MARGIN_ATTACK)
 		{
-#ifdef _DEBUG
-			PrintDebugProc("ÅyAttack1Åz\n");
-#endif
+//#ifdef _DEBUG
+//			PrintDebugProc("ÅyAttack1Åz\n");
+//#endif
 		}
 		if (jcR.y > PLAYER_MARGIN_ATTACK)
 		{
-#ifdef _DEBUG
-			PrintDebugProc("ÅyAttack2Åz\n");
-#endif
+//#ifdef _DEBUG
+//			PrintDebugProc("ÅyAttack2Åz\n");
+//#endif
 		}
 
 
 		if (jcL.z < -PLAYER_MARGIN_GUARD && jcR.z > PLAYER_MARGIN_GUARD)
 		{
-#ifdef _DEBUG
-			PrintDebugProc("ÅyGuardÅz\n");
-#endif
+//#ifdef _DEBUG
+//			PrintDebugProc("ÅyGuardÅz\n");
+//#endif
 		}
 		else
 		{

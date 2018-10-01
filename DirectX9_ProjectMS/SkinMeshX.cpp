@@ -235,14 +235,9 @@ HRESULT MY_HIERARCHY::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA* pMesh
 				TCHAR strTexturePath[MAX_PATH];
 				//テクスチャのファイルパスを保存(再読み込み時に必要)
 				strcpy_s(strTexturePath, lstrlen(pMeshContainer->pMaterials[iMaterial].pTextureFilename) + 1, pMeshContainer->pMaterials[iMaterial].pTextureFilename);
-				//テクスチャ情報の読み込み（Debugはファイル／Releaseはアーカイブから）
-#ifdef _DEBUG
+				//テクスチャ情報の読み込み
 				if (FAILED(D3DXCreateTextureFromFile(pDevice, strTexturePath,
 					&pMeshContainer->ppTextures[iMaterial])))
-#else
-				if (FAILED(D3DXCreateTextureFromArchive(pDevice, strTexturePath,
-					&pMeshContainer->ppTextures[iMaterial])))
-#endif
 				{
 					//失敗時の処理
 					//テクスチャファイル名格納用
@@ -257,14 +252,10 @@ HRESULT MY_HIERARCHY::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA* pMesh
 					// strcpy_s( TexMeshPass, sizeof( TexMeshPass ) , "./../Source/Graph/" );
 					strcpy_s(TexMeshPass, sizeof(TexMeshPass), "./Graph/");
 					strcat_s(TexMeshPass, sizeof(TexMeshPass) - strlen(TexMeshPass) - strlen(strTexturePath) - 1, strTexturePath);
-					//テクスチャ情報の読み込み（Debugはファイル／Releaseはアーカイブから）
-#ifdef _DEBUG
+					//テクスチャ情報の読み込み
 					if (FAILED(D3DXCreateTextureFromFile(pDevice, TexMeshPass,
 						&pMeshContainer->ppTextures[iMaterial])))
-#else
-					if (FAILED(D3DXCreateTextureFromArchive(pDevice, TexMeshPass,
-						&pMeshContainer->ppTextures[iMaterial])))
-#endif
+
 					{
 						pMeshContainer->ppTextures[iMaterial] = NULL;
 					}
@@ -539,9 +530,9 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, MYMESHCONTAINER* 
 	//スキンメッシュの描画
 	if (pMeshContainer->pSkinInfo != NULL)
 	{
-#ifdef _DEBUG
-		PrintDebugProc("Container  [%d]\n", m_dwContainerCount);
-#endif
+//#ifdef _DEBUG
+//		PrintDebugProc("Container  [%d]\n", m_dwContainerCount);
+//#endif
 		//ボーンテーブルからバッファの先頭アドレスを取得
 		pBoneCombination = reinterpret_cast<LPD3DXBONECOMBINATION>(pMeshContainer->pBoneBuffer->GetBufferPointer());
 		//dwPrevBoneIDにUINT_MAXの値(0xffffffff)を格納
@@ -587,19 +578,23 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, MYMESHCONTAINER* 
 			//dwPrevBoneIDに属性テーブルの識別子を格納
 			dwPrevBoneID = pBoneCombination[i].AttribId;
 			//メッシュの描画
-			pMeshContainer->MeshData.pMesh->DrawSubset(i);
+			//pMeshContainer->MeshData.pMesh->DrawSubset(i);
+			if (FAILED(pMeshContainer->MeshData.pMesh->DrawSubset(i)))
+			{
+				MessageBox(NULL, "描画に失敗しました。", "SkinMeshX", MB_OK);
+			}
 
-#ifdef _DEBUG
-			PrintDebugProc("Bone  [Con:%d  ID:%d  Name:%s]\n", 
-				m_dwContainerCount,
-				m_dwBoneCount,
-				pMeshContainer->pSkinInfo->GetBoneName(i));
-#endif
+//#ifdef _DEBUG
+			//PrintDebugProc("Bone  [Con:%d  ID:%d  Name:%s]\n", 
+			//	m_dwContainerCount,
+			//	m_dwBoneCount,
+			//	pMeshContainer->pSkinInfo->GetBoneName(i));
+//#endif
 			m_dwBoneCount++;
 		}
-#ifdef _DEBUG
-		PrintDebugProc("BoneMax  [%d]\n", m_dwBoneCount);
-#endif
+//#ifdef _DEBUG
+//		PrintDebugProc("BoneMax  [%d]\n", m_dwBoneCount);
+//#endif
 	}
 	//通常メッシュの場合
 	else
@@ -730,20 +725,12 @@ VOID CSkinMesh::FreeAnim(LPD3DXFRAME pFrame)
 HRESULT CSkinMesh::Init(LPDIRECT3DDEVICE9 lpD3DDevice, LPSTR pMeshPass) {
 	CHAR TmpMeshPass[255];
 	strcpy_s(TmpMeshPass, sizeof(TmpMeshPass) - 1, pMeshPass);
-	// Xファイルからアニメーションメッシュを読み込み作成する（Debugはファイル／Releaseはアーカイブから）
-#ifdef _DEBUG
+	// Xファイルからアニメーションメッシュを読み込み作成する
 	if (FAILED(
 		D3DXLoadMeshHierarchyFromX(TmpMeshPass, D3DXMESH_MANAGED, lpD3DDevice, &m_cHierarchy,
 			NULL,
 			&m_pFrameRoot,
 			&m_pAnimController)))
-#else
-	if (FAILED(
-		D3DXLoadMeshHierarchyFromXInArchive(TmpMeshPass, D3DXMESH_MANAGED, lpD3DDevice, &m_cHierarchy,
-			NULL,
-			&m_pFrameRoot,
-			&m_pAnimController)))
-#endif
 	{
 		MessageBox(NULL, "Xファイルの読み込みに失敗しました", TmpMeshPass, MB_OK);
 		return E_FAIL;
@@ -875,9 +862,9 @@ VOID CSkinMesh::Update(void) {
 //=============================================================================
 VOID CSkinMesh::Draw(LPDIRECT3DDEVICE9 lpD3DDevice, D3DXMATRIX _World)
 {
-#ifdef _DEBUG
-	PrintDebugProc("【 SkinMesh 】\n");
-#endif
+//#ifdef _DEBUG
+//	PrintDebugProc("【 SkinMesh 】\n");
+//#endif
 	//マトリックス行列反映
 	m_World = _World;
 	// メッシュコンテナカウンタを初期化

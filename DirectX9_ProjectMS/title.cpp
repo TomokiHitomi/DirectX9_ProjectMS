@@ -44,6 +44,7 @@
 void TitleScene::Update(void)
 {
 	ObjectManager::UpdateAll();
+	pEffect->Update();
 }
 
 //=============================================================================
@@ -52,6 +53,7 @@ void TitleScene::Update(void)
 void TitleScene::Draw(void)
 {
 	ObjectManager::DrawAll();
+	pEffect->Draw();
 }
 
 //=============================================================================
@@ -71,7 +73,7 @@ TitleScene::TitleScene(void)
 	//new Cube;
 	//new Stencil;
 
-
+	pEffect = new Effect;
 	//// 指定オブジェクト取得テスト
 	//Object *pTest1 = Object::GetObjectPointer(Object::PLAYER);
 	//Object *pTest2 = Object::GetObjectPointer(Object::COPYRIGHT);
@@ -83,6 +85,11 @@ TitleScene::TitleScene(void)
 TitleScene::~TitleScene(void)
 {
 	ObjectManager::ReleaseAll();
+	if (pEffect != NULL)
+	{
+		delete pEffect;
+	}
+
 }
 
 //=============================================================================

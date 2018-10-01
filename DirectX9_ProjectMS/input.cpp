@@ -181,13 +181,13 @@ void UpdateInput(void)
 	// XInputの初期化
 	UpdateXinput();
 
+#ifdef _DEBUG
 	// デバッグ情報の表示非表示
 	if (GetKeyboardTrigger(DIK_C))
 	{
 		g_bDebug = g_bDebug ? false : true;
 	}
 
-#ifdef _DEBUG
 	//PrintDebugProc("【 INPUT 】\n");
 	//PrintDebugProc("Mouse[X:%l Y:%l Z:%l]\n", GetMobUseX(), GetMobUseY(), GetMobUseZ());
 	//PrintDebugProc("\n");

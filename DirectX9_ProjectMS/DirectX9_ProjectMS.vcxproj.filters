@@ -31,6 +31,15 @@
     <Filter Include="ソース ファイル\Camera">
       <UniqueIdentifier>{adb1bc6b-adb7-4879-8927-442ac6bff0d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Include\imgui">
+      <UniqueIdentifier>{4143b34c-33dc-4fb8-b4b2-ef8882beb958}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Effect">
+      <UniqueIdentifier>{7c547cdc-69bb-46de-9049-13cb21115dab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Include\Effekseer">
+      <UniqueIdentifier>{5d96cdc3-71b2-4b09-bad1-7afd0662b84e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -129,6 +138,57 @@
     <ClInclude Include="stage.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="include\imgui\imgui_internal.h">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imstb_rectpack.h">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imstb_textedit.h">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imstb_truetype.h">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\stb_rect_pack.h">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\stb_textedit.h">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\stb_truetype.h">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imconfig.h">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imgui.h">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imgui_impl_dx9.h">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="effect.h">
+      <Filter>ソース ファイル\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Effekseer\EffekseerRendererDX11.h">
+      <Filter>ソース ファイル\Include\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Effekseer\EffekseerRendererGL.h">
+      <Filter>ソース ファイル\Include\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Effekseer\EffekseerSoundAL.h">
+      <Filter>ソース ファイル\Include\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Effekseer\EffekseerSoundXAudio2.h">
+      <Filter>ソース ファイル\Include\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Effekseer\Effekseer.h">
+      <Filter>ソース ファイル\Include\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Effekseer\EffekseerRendererDX9.h">
+      <Filter>ソース ファイル\Include\Effekseer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -199,6 +259,24 @@
     </ClCompile>
     <ClCompile Include="stage.cpp">
       <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_draw.cpp">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_widgets.cpp">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui.cpp">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_demo.cpp">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_impl_dx9.cpp">
+      <Filter>ソース ファイル\Include\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="effect.cpp">
+      <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -229,13 +229,12 @@ void ObjectManager::RemoveList(void)
 //=============================================================================
 void ObjectManager::UpdateAll(void)
 {
+	ObjectManager *pList = ObjectManager::GetObjectRoot(UpdateRoot);
 
 #ifdef _DEBUG
 	PrintDebugProc("y Object z\n");
 	PrintDebugProc("ObjectCount [%d]\n", nObjectCount);
 	PrintDebugProc("\n");
-
-	ObjectManager *pList = ObjectManager::GetObjectRoot(UpdateRoot);
 
 	while (pList != NULL)
 	{
@@ -244,10 +243,8 @@ void ObjectManager::UpdateAll(void)
 		pList = pList->GetObjectNext(UpdateRoot);
 	}
 	PrintDebugProc("\n");
-#endif
-
-
 	pList = ObjectManager::GetObjectRoot(UpdateRoot);
+#endif
 
 	while (pList != NULL)
 	{

@@ -24,13 +24,13 @@
 class Camera
 {
 private:
-	static D3DXVECTOR3	s_vEye;				// カメラの視点
-	static D3DXVECTOR3	s_vAt;				// カメラの注視点
-	static D3DXVECTOR3	s_vUp;				// カメラの上方向ベクトル
+	static D3DXVECTOR3	s_vEye[3];				// カメラの視点
+	static D3DXVECTOR3	s_vAt[3];				// カメラの注視点
+	static D3DXVECTOR3	s_vUp[3];				// カメラの上方向ベクトル
 
-	static D3DXVECTOR3	s_vEyeNext;			// カメラの視点
-	static D3DXVECTOR3	s_vAtNext;			// カメラの注視点
-	static D3DXVECTOR3	s_vUpNext;			// カメラの上方向ベクトル
+	static D3DXVECTOR3	s_vEyeNext[3];			// カメラの視点
+	static D3DXVECTOR3	s_vAtNext[3];			// カメラの注視点
+	static D3DXVECTOR3	s_vUpNext[3];			// カメラの上方向ベクトル
 
 	static D3DXMATRIX	s_mtxView;			// ビューマトリックス
 	static D3DXMATRIX	s_mtxProjection;	// プロジェクションマトリックス
@@ -39,14 +39,16 @@ private:
 	static float		s_fEyeIner;			// カメラの視点
 	static float		s_fAtIner;			// カメラの注視点
 	static float		s_fUpIner;			// カメラの上方向ベクトル
+	static D3DVIEWPORT9	dvPort[3];
+	static float		fAspect[3];
 public:
 	static void Init(void);
 	static void Uninit(void);
 	static void Update(void);
 
-	static void SetAt(D3DXVECTOR3 vAt);
-	static void SetEye(D3DXVECTOR3 vEye);
-	static void SetUp(D3DXVECTOR3 vUp);
+	static void SetAt(D3DXVECTOR3 vAt, int nNum);
+	static void SetEye(D3DXVECTOR3 vEye, int nNum);
+	static void SetUp(D3DXVECTOR3 vUp, int nNum);
 
 	static void SetAtIner(float fIner);
 	static void SetEyeIner(float fIner);
@@ -62,7 +64,7 @@ public:
 
 	//static void SetEye(D3DXVECTOR3 vEye);
 	//static void SetUp(D3DXVECTOR3 vUp);
-	static void Set(void);
+	static void Set(int nMulti);
 	//D3DXMATRIX GetInvRotateMat(D3DXVECTOR3 pos);
 	static D3DXMATRIX GetMtxView(void);
 	static D3DXMATRIX GetMtxProjection(void);

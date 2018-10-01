@@ -53,6 +53,8 @@ int					SceneManager::m_nTotalBurnBonus;
 int					SceneManager::m_nTotalWetBonus;
 int					SceneManager::m_nTotalBurnChain;
 
+int					SceneManager::m_nMulti;
+
 //=============================================================================
 // シーン管理処理
 //=============================================================================
@@ -137,7 +139,7 @@ void SceneManager::Update(void)
 
 	m_pScene->Update();		// 現在のシーンの更新関数
 
-	Camera::Update();			// カメラ
+	Camera::Update();		// カメラ
 	UpdateSound();			// サウンド
 }
 
@@ -146,11 +148,15 @@ void SceneManager::Update(void)
 //=============================================================================
 void SceneManager::Draw(void)
 {
-	Camera::Set();			// カメラ
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		Camera::Set(i);			// カメラ
+		m_pScene->Draw();		// 現在のシーンの描画関数
+	}
 
-	m_pScene->Draw();		// 現在のシーンの描画関数
+	Camera::Set(2);
 
-	DrawFade();				// フェード
+	//DrawFade();				// フェード
 
 #ifdef _DEBUG
 	DrawDebugProc();

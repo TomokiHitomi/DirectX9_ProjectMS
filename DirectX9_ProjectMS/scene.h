@@ -84,6 +84,13 @@ public:
 	static void			SetPlayerTypeS(int nType)	{ m_nPlayerType = nType; }
 	// プレイヤータイプ取得
 	static int			GetPlayerTypeS(void)		{ return m_nPlayerType; }
+
+	// マルチ画面設定
+	static void			SetMulti(int nflag) { m_nMulti = nflag; }
+	// マルチ画面取得
+	static int			GetMulti(void) { return m_nMulti; }
+
+
 	// SEの終了関数
 	static void			EndSeS(void);
 
@@ -100,6 +107,7 @@ private:
 	static int			m_nAiLevel;			// AIの強さ
 	static int			m_nPlayerNum;		// プレイヤー人数
 	static int			m_nPlayerType;		// プレイヤータイプ
+	static int			m_nMulti;			// ２画面フラグ
 
 
 #ifdef _DEBUG
