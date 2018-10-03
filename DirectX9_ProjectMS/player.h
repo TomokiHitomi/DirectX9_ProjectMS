@@ -19,7 +19,7 @@
 // マクロ定義
 //*****************************************************************************
 //#define PLAYER_MODEL				("flower.X")
-#define PLAYER_MODEL				("hackadollMMD.x")
+#define PLAYER_MODEL				("data/MODEL/Yuko.x")
 #define PLAYER_MODEL_WING			("test_wing2.X")
 #define PLAYER_MODEL_SWORD			("sword.X")
 #define PLAYER_MODEL_SWORD_TEX		("UV_Yat.tga")
@@ -36,7 +36,7 @@
 #define PLAYER_MODEL_BONE_RM		("No_45_joint_RightMiddle2")
 
 // モデルスケール
-#define PLAYER_SCL					(0.1f)
+#define PLAYER_SCL					(0.3f)
 
 #define PLAYER_MOVE_SPEED			(1.0f)
 
@@ -137,36 +137,20 @@ public:
 
 	void SetPlayerAnime(DWORD dwAnime, FLOAT fShift);
 
+	// 追記は逆順（新しいものから格納される）
 	enum PLAYER_ANIME
-	{
-		PLAYER_ANIME_DRUNK,
-		PLAYER_ANIME_RUN,
-		PLAYER_ANIME_DANCE_SPIN,
-		PLAYER_ANIME_DANCE_YMCA,
-
-		PLAYER_ANIME_DEATH,
-		PLAYER_ANIME_HEADSHOT,
-		PLAYER_ANIME_IDLE_EX,
-		PLAYER_ANIME_RECOIL,
-		PLAYER_ANIME_OVERDRAW,
-
-		PLAYER_ANIME_JUMP_END,
-		PLAYER_ANIME_JUMP_LOOP,
-		PLAYER_ANIME_JUMP_START,
-		PLAYER_ANIME_AIM_RIGHT,
-		PLAYER_ANIME_AIM_LEFT,
-
-		PLAYER_ANIME_AIM_BACK,
-		PLAYER_ANIME_AIM_FORWARD,
-		PLAYER_ANIME_AIM_IDLE,
-		PLAYER_ANIME_RIGHT,
-		PLAYER_ANIME_LEFT,
-
-		PLAYER_ANIME_BACK,
-		PLAYER_ANIME_FORWARD,
-		PLAYER_ANIME_IDLE,
-		PLAYER_ANIME_HAND,
-		PLAYER_ANIME_MAX
+	{	// アニメーション
+		PLAYER_ANIME_HOSTAGE,	// 吹く（待機）
+		PLAYER_ANIME_RUN2,		// 吹く（歩き）
+		PLAYER_ANIME_CRYING,	// 負け
+		PLAYER_ANIME_CHEERING,	// 勝ち
+		PLAYER_ANIME_DIG,		// 吸う（水・待機）
+		PLAYER_ANIME_SNEAKING,	// 吸う（水・歩き）
+		PLAYER_ANIME_HANGING,	// 吸う（風）
+		PLAYER_ANIME_ANGRY,		// 待機（風）
+		PLAYER_ANIME_HAPPY,		// 待機（水）
+		PLAYER_ANIME_RUN,		// 走り
+		PLAYER_ANIME_MAX		// アニメージョン数
 	};
 };
 
@@ -220,7 +204,6 @@ public:
 	Fireman() : Player()
 	{
 		// モデルの初期化
-		m_CSkinMesh = new CSkinMesh;
 		LPDIRECT3DDEVICE9 pDevice = GetDevice();
 		m_CSkinMesh->Init(pDevice, PLAYER_MODEL);
 		m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN, 0.05f);

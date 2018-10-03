@@ -148,15 +148,11 @@ void SceneManager::Update(void)
 //=============================================================================
 void SceneManager::Draw(void)
 {
-	for (unsigned int i = 0; i < 2; i++)
-	{
-		Camera::Set(i);			// カメラ
-		m_pScene->Draw();		// 現在のシーンの描画関数
-	}
+	m_pScene->Draw();		// 現在のシーンの描画関数
 
 	Camera::Set(2);
 
-	//DrawFade();				// フェード
+	DrawFade();				// フェード
 
 #ifdef _DEBUG
 	DrawDebugProc();

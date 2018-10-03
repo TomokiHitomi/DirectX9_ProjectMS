@@ -43,6 +43,7 @@ HRESULT CXModel::Init(LPDIRECT3DDEVICE9 pDevice, LPSTR pMeshPass, LPSTR pTexPass
 		&m_nNumMat,				// D3DXMATERIAL構造体の数
 		&m_pD3DXMesh)))			// メッシュデータへのポインタ
 	{
+		MessageBox(NULL, "Xファイルの読み込みに失敗しました", pMeshPass, MB_OK);
 		return E_FAIL;
 	}
 
@@ -52,6 +53,7 @@ HRESULT CXModel::Init(LPDIRECT3DDEVICE9 pDevice, LPSTR pMeshPass, LPSTR pTexPass
 		pTexPass,				// ファイル名
 		&m_pD3DTexture)))		// 読み込むメモリ（複数なら配列に）
 	{
+		MessageBox(NULL, "Xファイルのテクスチャ読み込みに失敗しました", pTexPass, MB_OK);
 		return E_FAIL;
 	}
 }

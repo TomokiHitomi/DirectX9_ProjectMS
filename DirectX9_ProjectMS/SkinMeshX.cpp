@@ -236,7 +236,7 @@ HRESULT MY_HIERARCHY::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA* pMesh
 				//テクスチャのファイルパスを保存(再読み込み時に必要)
 				strcpy_s(strTexturePath, lstrlen(pMeshContainer->pMaterials[iMaterial].pTextureFilename) + 1, pMeshContainer->pMaterials[iMaterial].pTextureFilename);
 				//テクスチャ情報の読み込み
-				if (FAILED(D3DXCreateTextureFromFile(pDevice, strTexturePath,
+				if (FAILED(hr = D3DXCreateTextureFromFile(pDevice, strTexturePath,
 					&pMeshContainer->ppTextures[iMaterial])))
 				{
 					//失敗時の処理
@@ -253,14 +253,36 @@ HRESULT MY_HIERARCHY::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA* pMesh
 					strcpy_s(TexMeshPass, sizeof(TexMeshPass), "./Graph/");
 					strcat_s(TexMeshPass, sizeof(TexMeshPass) - strlen(TexMeshPass) - strlen(strTexturePath) - 1, strTexturePath);
 					//テクスチャ情報の読み込み
-					if (FAILED(D3DXCreateTextureFromFile(pDevice, TexMeshPass,
+					if (FAILED(hr = D3DXCreateTextureFromFile(pDevice, TexMeshPass,
 						&pMeshContainer->ppTextures[iMaterial])))
-
 					{
+						MessageBox(NULL, "アニメーションXファイルのテクスチャ読み込みに失敗しました", TexMeshPass, MB_OK);
 						pMeshContainer->ppTextures[iMaterial] = NULL;
 					}
 					//テクスチャのファイルパスをNULLにする
 					pMeshContainer->pMaterials[iMaterial].pTextureFilename = NULL;
+				}
+				int test = 0;
+				switch (hr)
+				{
+				case D3D_OK:
+					test = 0;
+					break;
+				case D3DERR_NOTAVAILABLE:
+					test = 0;
+					break;
+				case D3DERR_OUTOFVIDEOMEMORY:
+					test = 0;
+					break;
+				case D3DERR_INVALIDCALL:
+					test = 0;
+					break;
+				case D3DXERR_INVALIDDATA:
+					test = 0;
+					break;
+				case E_OUTOFMEMORY:
+					test = 0;
+					break;
 				}
 			}
 		}
@@ -337,13 +359,6 @@ HRESULT MY_HIERARCHY::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA* pMesh
 //フレームを破棄する
 HRESULT MY_HIERARCHY::DestroyFrame(LPD3DXFRAME pFrameToFree)
 {
-
-	testDestroy++;
-	if (testDestroy > 139)
-	{
-		testDestroy++;
-	}
-
 	// 2重解放防止
 	// if (pFrameToFree == NULL)return S_FALSE;
 	SAFE_DELETE_ARRAY(pFrameToFree->Name);
@@ -727,12 +742,16 @@ HRESULT CSkinMesh::Init(LPDIRECT3DDEVICE9 lpD3DDevice, LPSTR pMeshPass) {
 	strcpy_s(TmpMeshPass, sizeof(TmpMeshPass) - 1, pMeshPass);
 	// Xファイルからアニメーションメッシュを読み込み作成する
 	if (FAILED(
-		D3DXLoadMeshHierarchyFromX(TmpMeshPass, D3DXMESH_MANAGED, lpD3DDevice, &m_cHierarchy,
+		D3DXLoadMeshHierarchyFromX(
+			TmpMeshPass, 
+			D3DXMESH_MANAGED, 
+			lpD3DDevice, 
+			&m_cHierarchy,
 			NULL,
 			&m_pFrameRoot,
 			&m_pAnimController)))
 	{
-		MessageBox(NULL, "Xファイルの読み込みに失敗しました", TmpMeshPass, MB_OK);
+		MessageBox(NULL, "アニメーションXファイルの読み込みに失敗しました", TmpMeshPass, MB_OK);
 		return E_FAIL;
 	}
 	//ボーン行列初期化

@@ -52,8 +52,12 @@ void TitleScene::Update(void)
 //=============================================================================
 void TitleScene::Draw(void)
 {
-	ObjectManager::DrawAll();
-	pEffect->Draw();
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		Camera::Set(i);			// ƒJƒƒ‰
+		ObjectManager::DrawAll();
+		pEffect->Draw();
+	}
 }
 
 //=============================================================================
@@ -65,7 +69,7 @@ TitleScene::TitleScene(void)
 	//new AirWaterFream;
 	//ObjectManager::CreateObject<Player>();
 	ObjectManager::CreateObject<Skydome>();
-	ObjectManager::CreateObject<Cube>();
+	//ObjectManager::CreateObject<Cube>();
 	ObjectManager::CreateObject<StageManager>();
 	ObjectManager::CreateObject<PlayerManager>();
 	//new Player;

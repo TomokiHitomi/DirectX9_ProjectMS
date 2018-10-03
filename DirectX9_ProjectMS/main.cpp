@@ -251,8 +251,8 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;	// 映像信号に同期してフリップする
 	d3dpp.Windowed = bWindow;					// ウィンドウモード
 	d3dpp.EnableAutoDepthStencil = TRUE;		// デプスバッファ（Ｚバッファ）とステンシルバッファを作成
-	//d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;// デプスバッファとして24ビットZバッファ8ビットステンシルバッファ作成
-	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;// デプスバッファとして16ビットZバッファ
+	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;// デプスバッファとして24ビットZバッファ8ビットステンシルバッファ作成
+	//d3dpp.AutoDepthStencilFormat = D3DFMT_D16;// デプスバッファとして16ビットZバッファ
 
 
 	if (bWindow)
@@ -378,8 +378,8 @@ void Update(void)
 void Draw(void)
 {
 	// ステンシルバッファ＆バックバッファ＆Ｚバッファのクリア
-	//g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
-	g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+	g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+	//g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
 
 	// 描画の開始
 	if (SUCCEEDED(g_pD3DDevice->BeginScene()))

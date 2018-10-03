@@ -57,6 +57,7 @@ PlayerManager::~PlayerManager(void)
 	for (unsigned int i = 0; i < PLAYER_MAX; i++)
 	{
 		delete m_pPlayer[i];
+		m_pPlayer[i] = NULL;
 	}
 }
 
@@ -118,8 +119,8 @@ void PlayerManager::SetTag(void)
 		{
 			if (m_pPlayer[i]->m_bUse)
 			{
-				//m_pPlayer[i]->SetTag(m_pPlayer[m_pPlayer[i]->m_nTagNum]->GetPos());
-				m_pPlayer[i]->SetTag(ZERO_D3DXVECTOR3);
+				m_pPlayer[i]->SetTag(m_pPlayer[m_pPlayer[i]->m_nTagNum]->GetPos());
+				//m_pPlayer[i]->SetTag(ZERO_D3DXVECTOR3);
 			}
 		}
 	}
@@ -159,6 +160,9 @@ Player::Player(void)
 	m_fMoveSpeed = PLAYER_MOVE_SPEED;
 	m_fRiseSpeed = 0.0f;
 	m_bUse = true;
+
+	// ƒ‚ƒfƒ‹‚Ì‰Šú‰»
+	m_CSkinMesh = new CSkinMesh;
 }
 
 //=============================================================================
@@ -170,6 +174,7 @@ Player::~Player(void)
 	{
 		m_CSkinMesh->Release();
 		delete m_CSkinMesh;
+		m_CSkinMesh = NULL;
 	}
 }
 

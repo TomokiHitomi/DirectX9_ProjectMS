@@ -193,7 +193,7 @@ void SetFade(FADE fade)
 //=============================================================================
 void SetFadeScene(SceneManager::SCENE eScene)
 {
-	g_color = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+	g_color = D3DXCOLOR(FADE_COLOR_R, FADE_COLOR_G, FADE_COLOR_B, 0.0f);
 	g_eFade = FADE_OUT;
 	g_eNextScene = eScene;
 }

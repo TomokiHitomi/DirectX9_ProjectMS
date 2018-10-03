@@ -46,6 +46,7 @@ void GameScene::Update(void)
 //=============================================================================
 void GameScene::Draw(void)
 {
+	Camera::Set(2);
 	ObjectManager::DrawAll();
 }
 

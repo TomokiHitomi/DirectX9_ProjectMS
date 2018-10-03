@@ -45,6 +45,7 @@ void ResultScene::Update(void)
 //=============================================================================
 void ResultScene::Draw(void)
 {
+	Camera::Set(2);
 	ObjectManager::DrawAll();
 }
 
