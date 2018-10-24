@@ -28,7 +28,6 @@ public:
 	void Update(void);
 	void Draw(void);
 private:
-	Effect *pEffect;
 	void DemoRestart(void);
 };
 

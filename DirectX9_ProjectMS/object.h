@@ -43,12 +43,13 @@ public:
 	{
 		NON,
 		COPYRIGHT,
-		FRAME,
 		PLAYER,
+		EFFECT,
 		SKYDOME,
 		CUBE,
 		STENCIL,
-		STAGE
+		STAGE,
+		SELECTFACE
 	};
 	// ルートポインタ
 	enum ObjectRoot

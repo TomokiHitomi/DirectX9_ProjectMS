@@ -111,9 +111,6 @@
     <ClInclude Include="XTexture.h">
       <Filter>ソース ファイル\Model</Filter>
     </ClInclude>
-    <ClInclude Include="SkinMeshX.h">
-      <Filter>ソース ファイル\Model</Filter>
-    </ClInclude>
     <ClInclude Include="object.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
@@ -189,6 +186,18 @@
     <ClInclude Include="player.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="SkinMeshX.h">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="selectface.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="select.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="character.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -233,9 +242,6 @@
     <ClCompile Include="XTexture.cpp">
       <Filter>ソース ファイル\Model</Filter>
     </ClCompile>
-    <ClCompile Include="SkinMeshX.cpp">
-      <Filter>ソース ファイル\Model</Filter>
-    </ClCompile>
     <ClCompile Include="object.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
@@ -277,6 +283,18 @@
     </ClCompile>
     <ClCompile Include="effect.cpp">
       <Filter>ソース ファイル\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinMeshX.cpp">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="selectface.h.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="select.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="character.cpp">
+      <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

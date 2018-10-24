@@ -8,6 +8,7 @@
 
 /* Scene */
 #include "title.h"
+#include "select.h"
 #include "game.h"
 #include "result.h"
 
@@ -39,21 +40,17 @@
 // グローバル変数
 //*****************************************************************************
 //始めはシーンを空にしておく
-BaseScene *SceneManager::m_pScene = NULL;
+BaseScene			*SceneManager::m_pScene = NULL;
 
 SceneManager::SCENE	SceneManager::m_eScene;
-float				SceneManager::m_fRate;
-float				SceneManager::m_fRateInBonus;
-int					SceneManager::m_nWin;
-int					SceneManager::m_nAiLevel;
-int					SceneManager::m_nPlayerNum;
-int					SceneManager::m_nPlayerType;
 
 int					SceneManager::m_nTotalBurnBonus;
 int					SceneManager::m_nTotalWetBonus;
 int					SceneManager::m_nTotalBurnChain;
 
 int					SceneManager::m_nMulti;
+CharacterManager	*SceneManager::CharMgr = NULL;
+
 
 //=============================================================================
 // シーン管理処理
@@ -77,6 +74,9 @@ void SceneManager::ChangeScene(SCENE scene)
 	case SCENE::TITLE:
 		SetSoundBgm(SOUND_BGM_NON);
 		m_pScene = new TitleScene();	// タイトルシーンを現在のシーンにする
+		break;
+	case SCENE::SELECT:
+		m_pScene = new SelectScene();	// セレクトシーンを現在のシーンにする
 		break;
 	case SCENE::GAME:
 		SetSoundBgm(SOUND_BGM_NON);
@@ -104,6 +104,7 @@ void SceneManager::Init(HINSTANCE hInst, HWND hWnd)
 
 	ChangeScene(m_eScene);	// 初期シーン設定
 
+	CharMgr = new CharacterManager;
 #ifdef _DEBUG
 	InitDebugProc();		// デバッグ
 #endif
@@ -123,6 +124,15 @@ void SceneManager::Uninit(void)
 #ifdef _DEBUG
 	UninitDebugProc();		// デバッグ
 #endif
+
+	if (m_pScene != NULL)
+	{
+		delete m_pScene;
+	}
+	if (CharMgr != NULL)
+	{
+		delete CharMgr;
+	}
 }
 
 //=============================================================================
@@ -168,12 +178,6 @@ SceneManager::SceneManager(void)
 	m_eScene = TITLE;
 
 	// 各変数を初期化
-	m_nWin = 0;				// 勝利プレイヤー
-	m_nAiLevel = 0;			// AIの強さ
-	m_fRate = 0.0f;			// 残存割合
-	m_fRateInBonus = 0.0f;	// 残存割合（ボーナス込み）
-	m_nPlayerNum = 0;		// プレイヤー人数
-	m_nPlayerType = 0;		// プレイヤータイプ
 }
 
 //=============================================================================
@@ -181,10 +185,7 @@ SceneManager::SceneManager(void)
 //=============================================================================
 SceneManager::~SceneManager(void)
 {
-	if (m_pScene != NULL)
-	{
-		delete m_pScene;
-	}
+
 }
 
 //=============================================================================
@@ -226,11 +227,6 @@ void SceneManager::DebugScene(void)
 		break;
 	}
 
-
-	// プレイヤー人数、コントローラー番号、残存割合を表示
-	PrintDebugProc("Rate[%f]  1P:Num[%d]  Type[%d]\n",
-		m_fRate, m_nPlayerNum, m_nPlayerType);
-
 	//PrintDebugProc("【 Result 】\n");
 	//PrintDebugProc("Rate [%f]  ", GetStageRate());
 	//switch (GetStageWinPlayer())
@@ -253,10 +249,15 @@ void SceneManager::DebugScene(void)
 	}
 	if (GetKeyboardTrigger(DIK_F3))
 	{
-		SetFadeScene(GAME);
+		SetFadeScene(SELECT);
 		//ChangeScene(RESULT);
 	}
 	if (GetKeyboardTrigger(DIK_F4))
+	{
+		SetFadeScene(GAME);
+		//ChangeScene(SELECT);
+	}
+	if (GetKeyboardTrigger(DIK_F5))
 	{
 		SetFadeScene(RESULT);
 		//ChangeScene(SELECT);

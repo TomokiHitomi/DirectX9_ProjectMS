@@ -29,15 +29,17 @@
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-extern float fGyroX;
-extern float fGyroY;
-extern float fGyroZ;
+extern float		fGyroX;
+extern float		fGyroY;
+extern float		fGyroZ;
 
 //=============================================================================
 // コンストラクタ（初期化処理）
 //=============================================================================
 PlayerManager::PlayerManager(void)
 {
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
 	// オブジェクトIDとプライオリティの設定処理
 	SetIdAndPriority(ObjectID::PLAYER, Priority::Middle, Priority::Middle);
 
@@ -45,8 +47,9 @@ PlayerManager::PlayerManager(void)
 	{
 		m_pPlayer[i] = NULL;
 	}
-	Set<Fireman>(PLAYER_1P);
-	Set<Doctor>(PLAYER_2P);
+
+	Set<Fireman>(PLAYER_1P, CharacterManager::FIREMAN);
+	Set<Doctor>(PLAYER_2P, CharacterManager::DOCTOR);
 }
 
 //=============================================================================
@@ -66,6 +69,16 @@ PlayerManager::~PlayerManager(void)
 //=============================================================================
 void PlayerManager::Update(void)
 {
+	//if (GetKeyboardTrigger(DIK_L))
+	//{
+	//	m_pPlayer[PLAYER_1P]->m_CSkinMesh = m_CSkinMesh[FIREMAN];
+	//	m_pPlayer[PLAYER_1P]->m_CSkinMesh->ChangeAnim(Player::PLAYER_ANIME_RUN, 0.05f);
+	//}
+	//if (GetKeyboardTrigger(DIK_K))
+	//{
+	//	m_pPlayer[PLAYER_1P]->m_CSkinMesh = m_CSkinMesh[TEST2];
+	//	m_pPlayer[PLAYER_1P]->m_CSkinMesh->ChangeAnim(Player::PLAYER_ANIME_RUN, 0.05f);
+	//}
 	for (unsigned int i = 0; i < PLAYER_MAX; i++)
 	{
 		if (m_pPlayer[i] != NULL)
@@ -119,8 +132,8 @@ void PlayerManager::SetTag(void)
 		{
 			if (m_pPlayer[i]->m_bUse)
 			{
-				m_pPlayer[i]->SetTag(m_pPlayer[m_pPlayer[i]->m_nTagNum]->GetPos());
-				//m_pPlayer[i]->SetTag(ZERO_D3DXVECTOR3);
+				//m_pPlayer[i]->SetTag(m_pPlayer[m_pPlayer[i]->m_nTagNum]->GetPos());
+				m_pPlayer[i]->SetTag(ZERO_D3DXVECTOR3);
 			}
 		}
 	}
@@ -161,8 +174,7 @@ Player::Player(void)
 	m_fRiseSpeed = 0.0f;
 	m_bUse = true;
 
-	// モデルの初期化
-	m_CSkinMesh = new CSkinMesh;
+	m_CSkinMesh = NULL;
 }
 
 //=============================================================================
@@ -172,8 +184,8 @@ Player::~Player(void)
 {
 	if (m_CSkinMesh != NULL)
 	{
-		m_CSkinMesh->Release();
-		delete m_CSkinMesh;
+		//m_CSkinMesh->Release();
+		//delete m_CSkinMesh;
 		m_CSkinMesh = NULL;
 	}
 }
@@ -207,8 +219,11 @@ void Player::Update(void)
 //		PrintDebugProc("mtxA[%f,%f,%f]\n",
 //			m_mtxWorld._41, m_mtxWorld._42, m_mtxWorld._43);
 //#endif
-		// モデルを更新
-		m_CSkinMesh->Update();
+		if (m_CSkinMesh != NULL)
+		{
+			// モデルを更新
+			m_CSkinMesh->Update();
+		}
 	}
 
 //#ifdef _DEBUG
@@ -295,8 +310,11 @@ void Player::Draw(void)
 
 		//if (m_nNum == 0)
 		//{
+		if (m_CSkinMesh != NULL)
+		{
 			// モデルを描画
 			m_CSkinMesh->Draw(pDevice, m_mtxWorld);
+		}
 		//}
 
 		//// 裏面をカリングに戻す
@@ -560,7 +578,9 @@ void Player::SetPlayerAnime(DWORD dwAnime, FLOAT fShift)
 	//dAnime = ANIME_MAX - dAnime - 1;
 	//if (dwAnime != m_CSkinMesh->GetAnimTrack())
 	//{
+		//m_CSkinMesh->ChangeAnim(dwAnime);
 		m_CSkinMesh->ChangeAnim(dwAnime, fShift);
+
 	//};
 }
 

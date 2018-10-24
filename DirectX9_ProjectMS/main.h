@@ -12,8 +12,18 @@
 //*****************************************************************************
 #include <windows.h>
 #include "d3dx9.h"
-#include <stdio.h>
 #include <time.h>
+#include <stdio.h>
+
+#if _DEBUG
+// メモリリーク検出
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#include <cstdlib>
+#include <stdlib.h>
+#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define malloc(X) _malloc_dbg(X,_NORMAL_BLOCK,__FILE__,__LINE__)
+#endif
 
 #define DIRECTINPUT_VERSION (0x0800)	// 警告対処用
 #include "dinput.h"
@@ -48,6 +58,8 @@
 #define DEBUG_RECT		(50)	// デバッグ
 
 #define MOUSE_MARGIN	(10)
+
+#define FRAME			(60)
 
 // ３Ｄポリゴン頂点フォーマット
 #define FVF_VERTEX_3D (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)

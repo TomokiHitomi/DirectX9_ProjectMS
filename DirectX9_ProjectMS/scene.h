@@ -12,6 +12,7 @@
 //*****************************************************************************
 #include "main.h"
 #include "object.h"
+#include "character.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -38,7 +39,7 @@ class SceneManager
 {
 public:
 	// シーンリスト
-	enum SCENE 	{TITLE, GAME, RESULT, MAX	};
+	enum SCENE 	{TITLE, SELECT, GAME, RESULT, MAX	};
 	// コンストラクタ
 	SceneManager(void);
 	// デストラクタ
@@ -57,34 +58,6 @@ public:
 	// 現在のシーン取得
 	static SCENE		GetScene(void)				{ return m_eScene; }
 
-	// 残存割合設定
-	static void			SetRate(float fRate)		{ m_fRate = fRate; }
-	// 残存割合取得
-	static float		GetRate(void)				{ return m_fRate; }
-	// 残存割合設定（ボーナス込み）
-	static void			SetRateInBonus(float fRateInBonus)	{ m_fRateInBonus = fRateInBonus; }
-	// 残存割合取得（ボーナス込み）
-	static float		GetRateInBonus(void)				{ return m_fRateInBonus; }
-
-	// 勝利プレイヤー設定
-	static void			SetWin(int nWin)			{ m_nWin = nWin; }
-	// 勝利プレイヤー取得
-	static int			GetWin(void)				{ return m_nWin; }
-
-	// AIの強さ設定
-	static void			SetAiLevel(int nAiLevel)	{ m_nAiLevel = nAiLevel; }
-	// AIの強さ取得
-	static int			GetAiLevel(void)			{ return m_nAiLevel; }
-
-	// プレイヤー人数設定
-	static void			SetPlayerNumS(int nNum)		{ m_nPlayerNum = nNum; }
-	// プレイヤー人数取得
-	static int			GetPlayerNumS(void)			{ return m_nPlayerNum; }
-	// プレイヤータイプ設定
-	static void			SetPlayerTypeS(int nType)	{ m_nPlayerType = nType; }
-	// プレイヤータイプ取得
-	static int			GetPlayerTypeS(void)		{ return m_nPlayerType; }
-
 	// マルチ画面設定
 	static void			SetMulti(int nflag) { m_nMulti = nflag; }
 	// マルチ画面取得
@@ -99,16 +72,12 @@ public:
 	static int			m_nTotalBurnChain;
 
 private:
-	static BaseScene	*m_pScene;			// 現在のシーン
-	static SCENE		m_eScene;			// 現在のシーン番号
-	static float		m_fRate;			// 残存割合
-	static float		m_fRateInBonus;		// 残存割合（ボーナス込み）
-	static int			m_nWin;				// 勝利プレイヤー
-	static int			m_nAiLevel;			// AIの強さ
-	static int			m_nPlayerNum;		// プレイヤー人数
-	static int			m_nPlayerType;		// プレイヤータイプ
-	static int			m_nMulti;			// ２画面フラグ
-
+	static BaseScene		*m_pScene;			// 現在のシーン
+	static SCENE			m_eScene;			// 現在のシーン番号
+	static int				m_nMulti;			// ２画面フラグ
+	static CharacterManager *CharMgr;
+public:
+	static CharacterManager *GetCharMgr(void) { return CharMgr; }
 
 #ifdef _DEBUG
 	// デバッグ用シーン遷移

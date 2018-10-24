@@ -11,6 +11,12 @@
 // インクルードファイル
 //*****************************************************************************
 #include "main.h"
+#include "object.h"
+#include <tchar.h>
+
+#include <Effekseer\Effekseer.h>
+#include <Effekseer\EffekseerRendererDX9.h>
+#include <Effekseer\EffekseerSoundXAudio2.h>
 
 //*****************************************************************************
 // マクロ定義
@@ -19,16 +25,61 @@
 //*****************************************************************************
 // クラス定義
 //*****************************************************************************
-class Effect
+class EffectManager : public ObjectManager
 {
-public:
-	Effect(void);
-	~Effect(void);
-	void Update(void);
-	void Draw(void);
 private:
-	
+	static const WCHAR* c_filename[];
+	//= {
+	//	// BGM
+	//	_T("data/SOUND/BGM/WhiteLily_WithoutV.wav"),
+	//	_T("data/SOUND/BGM/WhiteLily_Violin.wav")
+	//};
+
+public:
+	//struct Prop
+	//{
+	//	CXModel			*CXModel;			// モデル格納用
+	//	D3DXVECTOR3		vPos;				// 座標情報
+	//	D3DXVECTOR3		vRot;				// 回転情報
+	//	D3DXVECTOR3		vScl;				// 拡縮情報
+	//	D3DXMATRIX		mtxWorld;			// ワールドマトリクス
+	//	bool			bUse;
+	//}*prop;
+
+	enum EFFECT
+	{	// プレイヤー管理
+		EFFECT1,
+		EFFECT2,
+		EFFECT3,
+		EFFECT4,
+		EFFECT_MAX
+	};
+	//static const TCHAR* c_filename[EFFECT_MAX];
+
+	::Effekseer::Manager*				m_manager;
+	::EffekseerRendererDX9::Renderer*	m_renderer;
+	::EffekseerSound::Sound*			m_sound;
+	::Effekseer::Effect*				m_effect[EFFECT_MAX];
+	::Effekseer::Handle					m_handle;
+	::Effekseer::Vector3D				m_position;
+	::Effekseer::Vector3D				m_rotation;
+	::Effekseer::Matrix44				mtx44View, mtx44Pro;
+
+	// サウンド
+	//IXAudio2*						g_xa2 = NULL;
+	//IXAudio2MasteringVoice*			g_xa2_master = NULL;
+
+	// コンストラクタ（初期化処理）
+	EffectManager(void);
+	//デストラクタ（終了処理）
+	~EffectManager(void);
+
+	// 更新処理
+	void	Update(void);
+	// 描画処理
+	void	Draw(void);
 };
+
 
 //*****************************************************************************
 // プロトタイプ宣言

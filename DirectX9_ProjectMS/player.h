@@ -14,29 +14,24 @@
 #include "SkinMeshX.h"
 #include "XModel.h"
 #include "XTexture.h"
+#include "character.h"
+#include "scene.h"
 
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
 //#define PLAYER_MODEL				("flower.X")
 #define PLAYER_MODEL				("data/MODEL/Yuko.x")
-#define PLAYER_MODEL_WING			("test_wing2.X")
-#define PLAYER_MODEL_SWORD			("sword.X")
-#define PLAYER_MODEL_SWORD_TEX		("UV_Yat.tga")
+#define PLAYER_MODEL_FIREMAN		("data/MODEL/hackadollMMD.x")
+#define PLAYER_MODEL_DOCTOR			("data/MODEL/Yuko.x")
 
 #define PLAYER_POS					(D3DXVECTOR3(0.0f,0.0f,-20.0f))
-
-#define PLAYER_WING_SCL				(5.0f)
-#define PLAYER_WING_ROT_X			(1.7f)
-
-#define PLAYER_SWORD_MAX			(10)
-#define PLAYER_SWORD_SCL			(0.5f)
 
 #define PLAYER_MODEL_BONE_WING		("No_9_joint_Torso2")
 #define PLAYER_MODEL_BONE_RM		("No_45_joint_RightMiddle2")
 
 // モデルスケール
-#define PLAYER_SCL					(0.3f)
+#define PLAYER_SCL					(0.1f)
 
 #define PLAYER_MOVE_SPEED			(1.0f)
 
@@ -163,7 +158,7 @@ public:
 		PLAYER_2P,
 		PLAYER_MAX
 	};
-	Player *m_pPlayer[PLAYER_MAX];
+	Player		*m_pPlayer[PLAYER_MAX];
 
 public:
 	// コンストラクタ（初期化処理）
@@ -177,12 +172,14 @@ public:
 	void	Draw(void);
 
 	template <typename Type>
-	void Set(PLAYER player)
+	void Set(PLAYER player, CharacterManager::TYPE type)
 	{
 		delete m_pPlayer[player];
 		m_pPlayer[player] = new Type;
 		m_pPlayer[player]->m_nNum = int(player);
 		m_pPlayer[player]->m_nTagNum = int(PLAYER_2P - player);
+		m_pPlayer[player]->m_CSkinMesh = SceneManager::GetCharMgr()->GetCharData(type);
+		m_pPlayer[player]->m_CSkinMesh->ChangeAnim(Player::PLAYER_ANIME_RUN, 0.05f);
 	}
 	//void ReleaseStage(void)
 	//{
@@ -204,9 +201,8 @@ public:
 	Fireman() : Player()
 	{
 		// モデルの初期化
-		LPDIRECT3DDEVICE9 pDevice = GetDevice();
-		m_CSkinMesh->Init(pDevice, PLAYER_MODEL);
-		m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN, 0.05f);
+		//m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN, 0.05f);
+		//m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN);
 	}
 	~Fireman();
 
@@ -218,10 +214,8 @@ public:
 	Doctor() : Player()
 	{
 		// モデルの初期化
-		m_CSkinMesh = new CSkinMesh;
-		LPDIRECT3DDEVICE9 pDevice = GetDevice();
-		m_CSkinMesh->Init(pDevice, PLAYER_MODEL);
-		m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN, 0.05f);
+		//m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN, 0.05f);
+		//m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN);
 	}
 	~Doctor()
 	{

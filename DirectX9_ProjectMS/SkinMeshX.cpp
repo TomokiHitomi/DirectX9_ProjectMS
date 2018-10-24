@@ -18,9 +18,6 @@
 #include "debugproc.h"
 #endif
 
-static int testCreate = 0;
-static int testDestroy = 0;
-
 CHAR* HeapCopy(CHAR* sName)
 {
 	DWORD dwLen = (DWORD)strlen(sName) + 1;
@@ -238,6 +235,21 @@ HRESULT MY_HIERARCHY::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA* pMesh
 				//テクスチャ情報の読み込み
 				if (FAILED(hr = D3DXCreateTextureFromFile(pDevice, strTexturePath,
 					&pMeshContainer->ppTextures[iMaterial])))
+				//if (FAILED(hr = D3DXCreateTextureFromFileEx(
+				//	pDevice,			// pDevice デバイス
+				//	strTexturePath,		// pSrcFile テクスチャパス
+				//	0,					// Width 幅。イメージから自動的に取得するなら0。
+				//	0,					// Height 高さ。イメージから自動的に取得するなら0。
+				//	0,					// MipLevels ミップマップレベル。使わない場合は0
+				//	0,					// Usage テクスチャの使い方。D3DUSAGE_RENDERTARGETや、D3DUSAGE_DYNAMICなどを指定
+				//	D3DFMT_A8R8G8B8,	// Format
+				//	D3DPOOL_MANAGED,	// Pool D3DPOOL列挙型メンバ。
+				//	D3DX_FILTER_NONE,	// Filter フィルタリング方法を制御するD3DX_FILTERの組み合わせ
+				//	D3DX_DEFAULT,		// MipFilter
+				//	0,					// ColorKey
+				//	NULL,				// pSrcInfo ソースイメージファイル内のデータの記述を格納するD3DXIMAGE_INFO 
+				//	NULL,				// pPalette 256色パレットを表すPALETTEENTRY構造体へのポインタ
+				//	&pMeshContainer->ppTextures[iMaterial]))) // テクスチャ格納先のポインタ
 				{
 					//失敗時の処理
 					//テクスチャファイル名格納用
@@ -253,10 +265,10 @@ HRESULT MY_HIERARCHY::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA* pMesh
 					strcpy_s(TexMeshPass, sizeof(TexMeshPass), "./Graph/");
 					strcat_s(TexMeshPass, sizeof(TexMeshPass) - strlen(TexMeshPass) - strlen(strTexturePath) - 1, strTexturePath);
 					//テクスチャ情報の読み込み
-					if (FAILED(hr = D3DXCreateTextureFromFile(pDevice, TexMeshPass,
+					if (FAILED(D3DXCreateTextureFromFile(pDevice, TexMeshPass,
 						&pMeshContainer->ppTextures[iMaterial])))
 					{
-						MessageBox(NULL, "アニメーションXファイルのテクスチャ読み込みに失敗しました", TexMeshPass, MB_OK);
+						//MessageBox(NULL, "アニメーションXファイルのテクスチャ読み込みに失敗しました", TexMeshPass, MB_OK);
 						pMeshContainer->ppTextures[iMaterial] = NULL;
 					}
 					//テクスチャのファイルパスをNULLにする
@@ -384,10 +396,9 @@ HRESULT MY_HIERARCHY::DestroyMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBas
 	int iMaterial;
 	MYMESHCONTAINER *pMeshContainer = (MYMESHCONTAINER*)pMeshContainerBase;
 	SAFE_DELETE_ARRAY(pMeshContainer->Name);
-	SAFE_RELEASE(pMeshContainer->pSkinInfo);
+	SAFE_RELEASE(pMeshContainer->MeshData.pMesh);
 	SAFE_DELETE_ARRAY(pMeshContainer->pAdjacency);
 	SAFE_DELETE_ARRAY(pMeshContainer->pMaterials);
-	SAFE_DELETE_ARRAY(pMeshContainer->ppBoneMatrix);
 	if (pMeshContainer->ppTextures != NULL)
 	{
 		for (iMaterial = 0; (DWORD)iMaterial < pMeshContainer->NumMaterials; iMaterial++)
@@ -397,7 +408,13 @@ HRESULT MY_HIERARCHY::DestroyMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBas
 		}
 	}
 	SAFE_DELETE_ARRAY(pMeshContainer->ppTextures);
-	SAFE_RELEASE(pMeshContainer->MeshData.pMesh);
+	SAFE_RELEASE(pMeshContainer->pSkinInfo);
+
+
+	SAFE_DELETE_ARRAY(pMeshContainer->ppBoneMatrix);
+
+
+
 	SAFE_RELEASE(pMeshContainer->pOriMesh);
 	if (pMeshContainer->pBoneBuffer != NULL)
 	{
@@ -450,6 +467,11 @@ VOID CSkinMesh::Release()
 		//その他情報(テクスチャの参照データなど)の解放
 		m_cHierarchy.DestroyFrame(m_pFrameRoot);
 		m_pFrameRoot = NULL;
+	}
+	for (DWORD i = 0; i<m_pAnimController->GetNumAnimationSets(); i++)
+	{
+		//アニメーションセットの解放
+		SAFE_RELEASE(m_pAnimSet[i]);
 	}
 	//アニメーションコントローラー解放
 	SAFE_RELEASE(m_pAnimController);
@@ -754,6 +776,7 @@ HRESULT CSkinMesh::Init(LPDIRECT3DDEVICE9 lpD3DDevice, LPSTR pMeshPass) {
 		MessageBox(NULL, "アニメーションXファイルの読み込みに失敗しました", TmpMeshPass, MB_OK);
 		return E_FAIL;
 	}
+
 	//ボーン行列初期化
 	AllocateAllBoneMatrices(m_pFrameRoot, m_pFrameRoot);
 	//アニメーショントラックの取得

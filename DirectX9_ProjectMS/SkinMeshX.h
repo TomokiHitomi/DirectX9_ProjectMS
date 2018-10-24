@@ -58,12 +58,12 @@ struct MYMESHCONTAINER : public D3DXMESHCONTAINER
 	LPD3DXBUFFER pBoneBuffer; //ボーン・テーブル
 	D3DXMATRIX** ppBoneMatrix; //全てのボーンのワールド行列の先頭ポインター
 	D3DXMATRIX* pBoneOffsetMatrices; //フレームとしてのボーンのワールド行列のポインター
-	LPD3DXMESH pOriMesh; //オリジナルメッシュ用aaaaaaa
+	LPD3DXMESH pOriMesh; //オリジナルメッシュ用
 	DWORD NumPaletteEntries; //パレットサイズ
-							 // Work用
-	std::vector<D3DXMATRIX> m_WorkBoneMatArray;
+	// Work用
+	//std::vector<D3DXMATRIX> m_WorkBoneMatArray;
 	// 影響するフレームへの参照配列。描画時にこのフレームの行列を使う。
-	std::vector<MYFRAME*> BoneFrameArray;
+	//std::vector<MYFRAME*> BoneFrameArray;
 	MYMESHCONTAINER() {
 		ppBoneMatrix = NULL;
 		pBoneOffsetMatrices = NULL;
@@ -106,7 +106,7 @@ public:
 	HRESULT AllocateAllBoneMatrices(LPD3DXFRAME pFrameRoot, LPD3DXFRAME pFrameBase);
 	VOID RenderMeshContainer(LPDIRECT3DDEVICE9 lpD3DDevice, MYMESHCONTAINER*, MYFRAME*);
 	VOID UpdateFrameMatrices(LPD3DXFRAME pFrameBase, LPD3DXMATRIX pParentMatrix);
-	VOID DrawFrame(PDIRECT3DDEVICE9 lpD3DDevice, LPD3DXFRAME);
+	VOID DrawFrame(PDIRECT3DDEVICE9 lpD3DDevice, LPD3DXFRAME pFrameBase);
 	//フレーム解放
 	VOID FreeAnim(LPD3DXFRAME pFrame);
 	//解放処理

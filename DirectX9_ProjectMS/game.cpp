@@ -14,6 +14,9 @@
 /* ゲームで必要なインクルード */
 #include "fade.h"
 #include "skydome.h"
+#include "stage.h"
+#include "player.h"
+#include "effect.h"
 
 /* デバッグ */
 #ifdef _DEBUG
@@ -46,8 +49,11 @@ void GameScene::Update(void)
 //=============================================================================
 void GameScene::Draw(void)
 {
-	Camera::Set(2);
-	ObjectManager::DrawAll();
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		Camera::Set(i);			// カメラ
+		ObjectManager::DrawAll();
+	}
 }
 
 //=============================================================================
@@ -55,9 +61,22 @@ void GameScene::Draw(void)
 //=============================================================================
 GameScene::GameScene(void)
 {
-	new Skydome;
-	m_nStopCount = 0;
-	m_bGameStart = false;
+	//new Copyright;
+	//new AirWaterFream;
+	ObjectManager::CreateObject<Skydome>();
+	//ObjectManager::CreateObject<Cube>();
+	ObjectManager::CreateObject<StageManager>();
+	ObjectManager::CreateObject<PlayerManager>();
+	ObjectManager::CreateObject<EffectManager>();
+	//new Player;
+	//new Skydome;
+	//new Cube;
+	//new Stencil;
+
+	//// 指定オブジェクト取得テスト
+	//Object *pTest1 = Object::GetObjectPointer(Object::PLAYER);
+	//Object *pTest2 = Object::GetObjectPointer(Object::COPYRIGHT);
+
 }
 
 //=============================================================================
