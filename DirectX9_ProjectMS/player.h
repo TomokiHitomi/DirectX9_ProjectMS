@@ -179,7 +179,7 @@ public:
 		m_pPlayer[player]->m_nNum = int(player);
 		m_pPlayer[player]->m_nTagNum = int(PLAYER_2P - player);
 		m_pPlayer[player]->m_CSkinMesh = SceneManager::GetCharMgr()->GetCharData(type);
-		m_pPlayer[player]->m_CSkinMesh->ChangeAnim(Player::PLAYER_ANIME_RUN, 0.05f);
+		m_pPlayer[player]->m_CSkinMesh->ChangeAnim(Player::PLAYER_ANIME_HOSTAGE, 0.05f);
 	}
 	//void ReleaseStage(void)
 	//{

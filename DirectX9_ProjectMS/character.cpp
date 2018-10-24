@@ -39,8 +39,8 @@ CharacterManager::CharacterManager(void)
 
 	m_CSkinMesh[FIREMAN]->Init(pDevice, CHARACTER_FIREMAN);
 	m_CSkinMesh[DOCTOR]->Init(pDevice, CHARACTER_DOCTOR);
-	m_CSkinMesh[PASTRY]->Init(pDevice, CHARACTER_DOCTOR);
-	m_CSkinMesh[IDOL]->Init(pDevice, CHARACTER_DOCTOR);
+	m_CSkinMesh[PASTRY]->Init(pDevice, CHARACTER_PASTRY);
+	m_CSkinMesh[IDOL]->Init(pDevice, CHARACTER_IDOL);
 }
 
 //=============================================================================
