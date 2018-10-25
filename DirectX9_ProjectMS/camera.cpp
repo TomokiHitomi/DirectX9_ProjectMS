@@ -41,6 +41,22 @@ D3DVIEWPORT9	Camera::dvPort[3];
 float			Camera::fAspect[3];
 
 //=============================================================================
+// コンストラクタ（初期化）
+//=============================================================================
+Camera::Camera(void)
+{
+
+}
+
+//=============================================================================
+// デストラクタ（終了）
+//=============================================================================
+Camera::~Camera(void)
+{
+
+}
+
+//=============================================================================
 // 初期化処理
 //=============================================================================
 void Camera::Init(void)
@@ -60,13 +76,12 @@ void Camera::Init(void)
 	s_fAtIner	= 1.0f;
 	s_fUpIner	= 1.0f;
 
-
-	dvPort[0] = D3DVIEWPORT9{ 0, 0, DWORD(SCREEN_WIDTH / 2), DWORD(SCREEN_HEIGHT), 0.0f, DWORD(1.0f) };
-	dvPort[1] = D3DVIEWPORT9{ DWORD(SCREEN_WIDTH / 2), 0, DWORD(SCREEN_WIDTH / 2), DWORD(SCREEN_HEIGHT),0.0f,DWORD(1.0f) };
+	dvPort[0] = D3DVIEWPORT9{ 0, 0, DWORD(SCREEN_WIDTH / 2 - SCREEN_MARGIN), DWORD(SCREEN_HEIGHT), 0.0f, DWORD(1.0f) };
+	dvPort[1] = D3DVIEWPORT9{ DWORD(SCREEN_WIDTH / 2 + SCREEN_MARGIN), 0, DWORD(SCREEN_WIDTH / 2), DWORD(SCREEN_HEIGHT),0.0f,DWORD(1.0f) };
 	dvPort[2] = D3DVIEWPORT9{ 0, 0, DWORD(SCREEN_WIDTH), DWORD(SCREEN_HEIGHT), 0.0f, DWORD(1.0f) };
 
-	fAspect[0] = ((float)SCREEN_WIDTH / 2) / ((float)SCREEN_HEIGHT);
-	fAspect[1] = ((float)SCREEN_WIDTH / 2) / ((float)SCREEN_HEIGHT);
+	fAspect[0] = ((float)SCREEN_WIDTH / 2 - SCREEN_MARGIN) / ((float)SCREEN_HEIGHT);
+	fAspect[1] = ((float)SCREEN_WIDTH / 2 - SCREEN_MARGIN) / ((float)SCREEN_HEIGHT);
 	fAspect[2] = ((float)SCREEN_WIDTH) / ((float)SCREEN_HEIGHT);
 
 }

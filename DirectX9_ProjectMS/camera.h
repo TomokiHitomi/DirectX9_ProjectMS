@@ -21,6 +21,8 @@
 #define	VIEW_NEAR_Z				(10.0f)											// ビュー平面のNearZ値
 #define	VIEW_FAR_Z				(5000.0f)										// ビュー平面のFarZ値
 
+#define SCREEN_MARGIN			(2)
+
 class Camera
 {
 private:
@@ -42,6 +44,8 @@ private:
 	static D3DVIEWPORT9	dvPort[3];
 	static float		fAspect[3];
 public:
+	Camera();
+	~Camera();
 	static void Init(void);
 	static void Uninit(void);
 	static void Update(void);
@@ -68,6 +72,19 @@ public:
 	//D3DXMATRIX GetInvRotateMat(D3DXVECTOR3 pos);
 	static D3DXMATRIX GetMtxView(void);
 	static D3DXMATRIX GetMtxProjection(void);
+};
+
+class CameraManager
+{
+	enum CameraType
+	{
+		MULTI1,
+		MULTI2,
+		SINGLE,
+		TYPE_MAX
+	};
+	Camera *m_pCamera;
+
 };
 
 //*****************************************************************************

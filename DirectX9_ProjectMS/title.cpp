@@ -42,6 +42,7 @@
 void TitleScene::Update(void)
 {
 	ObjectManager::UpdateAll();
+
 }
 
 //=============================================================================
@@ -51,6 +52,7 @@ void TitleScene::Draw(void)
 {
 	Camera::Set(2);
 	ObjectManager::DrawAll();
+
 }
 
 //=============================================================================
