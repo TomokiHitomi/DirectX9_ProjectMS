@@ -12,6 +12,7 @@
 #include "cube.h"
 #include "sound.h"
 #include "joycon.h"
+#include "character.h"
 
 // デバッグ用
 #ifdef _DEBUG

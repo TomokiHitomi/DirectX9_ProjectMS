@@ -46,6 +46,7 @@ public:
 	//デストラクタ（終了処理）
 	~CharacterManager(void);
 	CSkinMesh *GetCharData(CharacterManager::TYPE);
+	static bool m_bUse;
 private:
 };
 

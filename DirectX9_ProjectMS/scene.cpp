@@ -104,7 +104,7 @@ void SceneManager::Init(HINSTANCE hInst, HWND hWnd)
 
 	ChangeScene(m_eScene);	// 初期シーン設定
 
-	CharMgr = new CharacterManager;
+	//CharMgr = new CharacterManager;
 #ifdef _DEBUG
 	InitDebugProc();		// デバッグ
 #endif
