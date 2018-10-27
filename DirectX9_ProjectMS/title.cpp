@@ -69,6 +69,7 @@ TitleScene::TitleScene(void)
 TitleScene::~TitleScene(void)
 {
 	ObjectManager::ReleaseAll();
+	//
 }
 
 //=============================================================================
