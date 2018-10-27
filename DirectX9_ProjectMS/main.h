@@ -44,7 +44,7 @@
 #define WINDOW_NAME			("MS")		// ウインドウのキャプション名
 
 // 起動時のコメント
-#define START_UP_COMMENT	("本ゲームは1920x1080解像度で起動します。\nフルスクリーンモードで起動しますか？")
+#define START_UP_COMMENT	("ウインドウモードで起動しますか？")
 
 #define SCREEN_SCALE	(2.0f)
 #define SCREEN_WIDTH	(1280 * SCREEN_SCALE)		// ウインドウの幅

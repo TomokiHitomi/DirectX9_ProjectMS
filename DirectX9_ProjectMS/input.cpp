@@ -415,16 +415,16 @@ HRESULT UpdateMobUse()
 				mobUseState.rgbButtons[i]) & mobUseState.rgbButtons[i]);
 		}
 
-		// マウス操作中
-		if (lastMobUseState.lX != mobUseState.lX
-			|| lastMobUseState.lY != mobUseState.lY
-			|| lastMobUseState.lZ != mobUseState.lZ)
-		{
-			// マウスカーソル表示
-			ShowCursor(true);
-			// マウス操作カウントを初期化
-			g_nMobCount = 0;
-		}
+		//// マウス操作中
+		//if (lastMobUseState.lX != mobUseState.lX
+		//	|| lastMobUseState.lY != mobUseState.lY
+		//	|| lastMobUseState.lZ != mobUseState.lZ)
+		//{
+		//	// マウスカーソル表示
+		//	ShowCursor(true);
+		//	// マウス操作カウントを初期化
+		//	g_nMobCount = 0;
+		//}
 
 	}
 	else	// 取得失敗
@@ -434,12 +434,12 @@ HRESULT UpdateMobUse()
 	}
 
 	// マウス操作カウント
-	g_nMobCount++;
-	if (g_nMobCount > MOUSE_COUNT_MAX)
-	{
-		// マウスカーソル非表示
-		ShowCursor(false);
-	}
+	//g_nMobCount++;
+	//if (g_nMobCount > MOUSE_COUNT_MAX)
+	//{
+	//	// マウスカーソル非表示
+	//	ShowCursor(false);
+	//}
 
 	return result;
 }
