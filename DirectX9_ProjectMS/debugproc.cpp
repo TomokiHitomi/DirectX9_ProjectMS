@@ -238,3 +238,15 @@ double Debugtimer::End(void)
 	// 終了 - 開始 / 単位を計算した値を返す
 	return (double)(liEnd.QuadPart - m_liStart.QuadPart) / m_liFreq.QuadPart;
 }
+
+//=============================================================================
+// デバッグ用メッセージボックス
+// 引数：ハンドル, テキスト, ウィンドウタイトル, 変更したいフラグ, 「はい」を選択時に設定する値
+//=============================================================================
+void DebugMB(HWND hWnd, LPSTR lpText, LPSTR lpTitle, bool *pFlag, bool bValue)
+{
+	if (MessageBox(hWnd, lpText, lpTitle, MB_YESNO) == IDYES)
+	{
+		*pFlag = bValue;
+	}
+}

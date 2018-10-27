@@ -19,7 +19,6 @@
 #include "debugproc.h"
 #endif
 
-
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
@@ -99,6 +98,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	{
 		flag = true;
 	}
+
+#ifdef _DEBUG
+	DebugMB(hWnd,
+		"キャラクターデータの読み込みを省略しますか？\n※読み込まない場合はキャラクター描画シーンでエラーになります。",
+		"キャラクター読み込み",
+		&CharacterManager::m_bUse,
+		false);
+#endif
 
 	// 初期化処理(ウィンドウを作成してから行う)
 	if (FAILED(Init(hInstance, hWnd, flag)))
