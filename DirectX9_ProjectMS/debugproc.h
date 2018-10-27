@@ -39,4 +39,8 @@ void DebugHowTo(void);
 
 void PrintDebugProc(char *fmt,...);
 
+// デバッグ用メッセージボックス
+// 引数：ハンドル, テキスト, ウィンドウタイトル, 変更したいフラグ, 「はい」を選択時に設定する値
+void DebugMB(HWND hWnd, LPSTR lpText, LPSTR lpTitle,
+	bool *pFlag, bool bValue);
 #endif
