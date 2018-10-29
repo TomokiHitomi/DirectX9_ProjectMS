@@ -1000,10 +1000,3 @@ void Selectface::SetTextureSelect(int CreateSelectCount)
 	}
 
 }
-////=============================================================================
-////SELECT *GetSelectä÷êî
-////=============================================================================
-//Selectface *Selectface::GetSelect(int Number)
-//{
-//	return (&Select[Number]);
-//}
