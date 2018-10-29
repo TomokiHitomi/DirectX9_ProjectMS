@@ -270,10 +270,12 @@ void Player::LateUpdate(void)
 
 
 			// カメラをAtをモデルに設定
-			Camera::SetAt(m_vTag, m_nNum);
+			CameraManager::pCamera[m_nNum]->SetAt(m_vTag);
+			//Camera::SetAt(m_vTag, m_nNum);
 
 			// カメラEyeをモデル後方にセット
-			Camera::SetEye(m_vPos + vEye, m_nNum);
+			CameraManager::pCamera[m_nNum]->SetEye(m_vPos + vEye);
+			//Camera::SetEye(m_vPos + vEye, m_nNum);
 
 			//// カメラUpをモデル上部に設定
 			//Camera::SetUp(m_vY);

@@ -25,27 +25,274 @@
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-D3DXVECTOR3		Camera::s_vEye[3];
-D3DXVECTOR3		Camera::s_vAt[3];
-D3DXVECTOR3		Camera::s_vUp[3];
-D3DXVECTOR3		Camera::s_vEyeNext[3];
-D3DXVECTOR3		Camera::s_vAtNext[3];
-D3DXVECTOR3		Camera::s_vUpNext[3];
-D3DXMATRIX		Camera::s_mtxView;
-D3DXMATRIX		Camera::s_mtxProjection;
-D3DXMATRIX		Camera::s_mtxWorld;
-float			Camera::s_fEyeIner;
-float			Camera::s_fAtIner;
-float			Camera::s_fUpIner;
-D3DVIEWPORT9	Camera::dvPort[3];
-float			Camera::fAspect[3];
+Camera						*CameraManager::pCamera[TYPE_MAX];
+CameraManager::CameraPort	CameraManager::eCameraPort;
 
 //=============================================================================
 // コンストラクタ（初期化）
 //=============================================================================
-Camera::Camera(void)
+CameraManager::CameraManager(void)
 {
+	eCameraPort = CENTER;
+	for (unsigned int i = 0; i < TYPE_MAX; i++)
+	{
+		pCamera[i] = NULL;
+		pCamera[i] = new Camera(CameraType(i));
+	}
+}
 
+//=============================================================================
+// デストラクタ（終了）
+//=============================================================================
+CameraManager::~CameraManager(void)
+{
+	for (unsigned int i = 0; i < TYPE_MAX; i++)
+	{
+		if (pCamera[i] != NULL)
+		{
+			delete pCamera[i];
+		}
+	}
+}
+
+//=============================================================================
+// 初期化処理
+//=============================================================================
+void CameraManager::Init(void)
+{
+	for (unsigned int i = 0; i < TYPE_MAX; i++)
+	{
+		if (pCamera[i] != NULL)
+		{
+			pCamera[i]->Init(CameraType(i));
+		}
+	}
+}
+
+//=============================================================================
+// 更新処理
+//=============================================================================
+void CameraManager::Update(void)
+{
+#ifdef _DEBUG
+	PrintDebugProc("【 Camera 】\n");
+#endif
+	if (GetKeyboardTrigger(DIK_B))
+	{
+		SetExtension(EXTENSION_L);
+	}
+	if (GetKeyboardTrigger(DIK_N))
+	{
+		SetExtension(CENTER);
+	}
+	if (GetKeyboardTrigger(DIK_M))
+	{
+		SetExtension(EXTENSION_R);
+	}
+	Extension();
+
+	for (unsigned int i = 0; i < TYPE_MAX; i++)
+	{
+		if (pCamera[i] != NULL)
+		{
+			pCamera[i]->Update();
+			PrintDebugProc("Multi%d  PortX:%d PortW:%d PortExt:%d\n",
+				i + 1, pCamera[i]->dvPort.X, pCamera[i]->dvPort.Width
+			, pCamera[i]->bExtension);
+			PrintDebugProc("\n");
+		}
+	}
+#ifdef _DEBUG
+#endif
+}
+
+//=============================================================================
+// 設定処理
+//=============================================================================
+void CameraManager::Set(CameraType eCT)
+{
+	if (pCamera[eCT] != NULL)
+	{
+		pCamera[eCT]->Set();
+	}
+}
+
+//=============================================================================
+// 画面拡張設定処理
+//=============================================================================
+void CameraManager::SetExtension(CameraPort eCP)
+{
+	eCameraPort = eCP;
+	for (unsigned int i = 0; i < MULTI_MAX; i++)
+	{
+		if (pCamera[i] != NULL)
+		{
+			pCamera[i]->bExtension = true;
+		}
+	}
+}
+
+//=============================================================================
+// 画面拡張処理
+//=============================================================================
+void CameraManager::Extension(void)
+{
+	int PortWidth, PortX;
+
+	for (unsigned int i = 0; i < MULTI_MAX; i++)
+	{
+		if (pCamera[i] != NULL && pCamera[i]->bExtension)
+		{
+			PortWidth = int(pCamera[i]->dvPort.Width);
+			PortX = int(pCamera[i]->dvPort.X);
+			switch (CameraType(i))
+			{
+			case MULTI1:
+				switch (eCameraPort)
+				{
+				case CENTER:
+					if (PortWidth > int(CAMERA_MULTI_WIDTH))
+					{
+						PortWidth -= int(CAMERA_EXTENSION_SPEED);
+						if (PortWidth < int(CAMERA_MULTI_WIDTH))
+						{
+							PortWidth = int(CAMERA_MULTI_WIDTH);
+							pCamera[i]->bExtension = false;
+						}
+					}
+					else if (PortWidth < int(CAMERA_MULTI_WIDTH))
+					{
+						PortWidth += int(CAMERA_EXTENSION_SPEED);
+						if (PortWidth > int(CAMERA_MULTI_WIDTH))
+						{
+							PortWidth = int(CAMERA_MULTI_WIDTH);
+							pCamera[i]->bExtension = false;
+						}
+					}
+					break;
+				case EXTENSION_L:
+					//min(PortWidth += int(CAMERA_EXTENSION_SPEED), int(SCREEN_WIDTH));
+					if (PortWidth < int(SCREEN_WIDTH))
+					{
+						PortWidth += int(CAMERA_EXTENSION_SPEED);
+						if (PortWidth > int(SCREEN_WIDTH))
+						{
+							PortWidth = int(SCREEN_WIDTH);
+							pCamera[i]->bExtension = false;
+						}
+					}
+					break;
+				case EXTENSION_R:
+					if (PortWidth > 0)
+					{
+						PortWidth -= int(CAMERA_EXTENSION_SPEED);
+						if (PortWidth < 0)
+						{
+							PortWidth = 0;
+							pCamera[i]->bExtension = false;
+						}
+					}
+					break;
+				}
+				break;
+			case MULTI2:
+				switch (eCameraPort)
+				{
+				case CENTER:
+					if (PortWidth > int(CAMERA_MULTI_WIDTH) || PortX < int(CAMERA_MULTI_2_X))
+					{
+						if (PortX == 0)
+						{
+							PortX += CAMERA_MULTI_MARGIN * 2;
+						}
+						PortX += int(CAMERA_EXTENSION_SPEED);
+						if (PortX > int(CAMERA_MULTI_2_X))
+						{
+							PortX = int(CAMERA_MULTI_2_X);
+						}
+						PortWidth -= int(CAMERA_EXTENSION_SPEED);
+						if (PortWidth < int(CAMERA_MULTI_WIDTH))
+						{
+							PortWidth = int(CAMERA_MULTI_WIDTH);
+							pCamera[i]->bExtension = false;
+						}
+					}
+					else if (PortWidth < int(CAMERA_MULTI_WIDTH) || PortX > int(CAMERA_MULTI_2_X))
+					{
+						if (PortX == int(SCREEN_WIDTH))
+						{
+							PortX += CAMERA_MULTI_MARGIN * 2;
+						}
+						PortX -= int(CAMERA_EXTENSION_SPEED);
+						if (PortX < int(CAMERA_MULTI_2_X))
+						{
+							PortX = int(CAMERA_MULTI_2_X);
+							pCamera[i]->bExtension = false;
+						}
+						PortWidth += int(CAMERA_EXTENSION_SPEED);
+						if (PortWidth > int(CAMERA_MULTI_WIDTH))
+						{
+							PortWidth = int(CAMERA_MULTI_WIDTH);
+						}
+					}
+					break;
+				case EXTENSION_L:
+					if (PortWidth > int(0))
+					{
+						if (PortX == 0)
+						{
+							PortX += CAMERA_MULTI_MARGIN * 2;
+						}
+						PortX += int(CAMERA_EXTENSION_SPEED);
+						if (PortX > int(SCREEN_WIDTH))
+						{
+							PortX = int(SCREEN_WIDTH);
+						}
+						PortWidth -= int(CAMERA_EXTENSION_SPEED);
+						if (PortWidth < 0)
+						{
+							PortWidth = 0;
+							pCamera[i]->bExtension = false;
+						}
+					}
+					break;
+				case EXTENSION_R:
+					if (PortWidth < int(SCREEN_WIDTH))
+					{
+						if (PortX == int(SCREEN_WIDTH))
+						{
+							PortX += CAMERA_MULTI_MARGIN * 2;
+						}
+						PortX -= int(CAMERA_EXTENSION_SPEED);
+						if (PortX < 0)
+						{
+							PortX = 0;
+						}
+						PortWidth += int(CAMERA_EXTENSION_SPEED);
+						if (PortWidth > int(SCREEN_WIDTH))
+						{
+							PortWidth = int(SCREEN_WIDTH);
+							pCamera[i]->bExtension = false;
+						}
+					}
+					break;
+				}
+				break;
+			}
+			pCamera[i]->dvPort.Width = DWORD(PortWidth);
+			pCamera[i]->dvPort.X = DWORD(PortX);
+			pCamera[i]->fAspect = float(pCamera[i]->dvPort.Width) / float(SCREEN_HEIGHT);
+		}
+	}
+}
+
+
+//=============================================================================
+// コンストラクタ（初期化）
+//=============================================================================
+Camera::Camera(CameraManager::CameraType eCameraType)
+{
+	Init(eCameraType);
 }
 
 //=============================================================================
@@ -59,31 +306,38 @@ Camera::~Camera(void)
 //=============================================================================
 // 初期化処理
 //=============================================================================
-void Camera::Init(void)
+void Camera::Init(CameraManager::CameraType eCameraType)
 {
-	for (unsigned int i = 0; i < 3; i++)
+	vEye = D3DXVECTOR3(POS_X_CAM, POS_Y_CAM, POS_Z_CAM);
+	vAt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	vUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+	vEyeNext = vEye;
+	vAtNext = vAt;
+	vUpNext = vUp;
+
+	fEyeIner = 1.0f;
+	fAtIner = 1.0f;
+	fUpIner = 1.0f;
+
+	bExtension = false;
+
+	switch (eCameraType)
 	{
-		s_vEye[i] = D3DXVECTOR3(POS_X_CAM, POS_Y_CAM, POS_Z_CAM);
-		s_vAt[i] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		s_vUp[i] = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-
-		s_vEyeNext[i] = s_vEye[i];
-		s_vAtNext[i] = s_vAt[i];
-		s_vUpNext[i] = s_vUp[i];
+	case CameraManager::CameraType::MULTI1:
+		dvPort = D3DVIEWPORT9{ 0, 0, DWORD(CAMERA_MULTI_WIDTH), DWORD(CAMERA_MULTI_HEIGHT), 0.0f, DWORD(1.0f) };
+		//fAspect = ((float)SCREEN_WIDTH / 2 - SCREEN_MARGIN) / ((float)SCREEN_HEIGHT);
+		break;
+	case CameraManager::CameraType::MULTI2:
+		dvPort = D3DVIEWPORT9{ DWORD(CAMERA_MULTI_2_X), 0, DWORD(CAMERA_MULTI_WIDTH), DWORD(CAMERA_MULTI_HEIGHT),0.0f,DWORD(1.0f) };
+		//fAspect = ((float)SCREEN_WIDTH / 2 - SCREEN_MARGIN) / ((float)SCREEN_HEIGHT);
+		break;
+	case CameraManager::CameraType::SINGLE:
+		dvPort = D3DVIEWPORT9{ 0, 0, DWORD(SCREEN_WIDTH), DWORD(SCREEN_HEIGHT), 0.0f, DWORD(1.0f) };
+		//fAspect = ((float)SCREEN_WIDTH) / ((float)SCREEN_HEIGHT);
+		break;
 	}
-
-	s_fEyeIner	= 1.0f;
-	s_fAtIner	= 1.0f;
-	s_fUpIner	= 1.0f;
-
-	dvPort[0] = D3DVIEWPORT9{ 0, 0, DWORD(SCREEN_WIDTH / 2 - SCREEN_MARGIN), DWORD(SCREEN_HEIGHT), 0.0f, DWORD(1.0f) };
-	dvPort[1] = D3DVIEWPORT9{ DWORD(SCREEN_WIDTH / 2 + SCREEN_MARGIN), 0, DWORD(SCREEN_WIDTH / 2), DWORD(SCREEN_HEIGHT),0.0f,DWORD(1.0f) };
-	dvPort[2] = D3DVIEWPORT9{ 0, 0, DWORD(SCREEN_WIDTH), DWORD(SCREEN_HEIGHT), 0.0f, DWORD(1.0f) };
-
-	fAspect[0] = ((float)SCREEN_WIDTH / 2 - SCREEN_MARGIN) / ((float)SCREEN_HEIGHT);
-	fAspect[1] = ((float)SCREEN_WIDTH / 2 - SCREEN_MARGIN) / ((float)SCREEN_HEIGHT);
-	fAspect[2] = ((float)SCREEN_WIDTH) / ((float)SCREEN_HEIGHT);
-
+	fAspect = float(dvPort.Width) / float(SCREEN_HEIGHT);
 }
 
 //=============================================================================
@@ -99,45 +353,35 @@ void Camera::Uninit(void)
 //=============================================================================
 void Camera::Update(void)
 {
-	for (unsigned int i = 0; i < 2; i++)
-	{
-		s_vEye[i] = s_vEye[i] + ((s_vEyeNext[i] - s_vEye[i]) * s_fEyeIner);
-		s_vAt[i] = s_vAt[i] + ((s_vAtNext[i] - s_vAt[i]) * s_fAtIner);
+		vEye = vEye + ((vEyeNext - vEye) * fEyeIner);
+		vAt = vAt + ((vAtNext - vAt) * fAtIner);
 
-	}
-//#ifdef _DEBUG
-//	PrintDebugProc("【 Camera 】\n");
-//	PrintDebugProc("Eye [%f,%f,%f]  Iner[%f]\n", s_vEye.x, s_vEye.y, s_vEye.z, s_fEyeIner);
-//	PrintDebugProc("At  [%f,%f,%f]  Iner[%f]\n", s_vAt.x, s_vAt.y, s_vAt.z, s_fAtIner);
-//	PrintDebugProc("Up  [%f,%f,%f]  Iner[%f]\n", s_vUp.x, s_vUp.y, s_vUp.z, s_fUpIner);
-//	PrintDebugProc("\n");
-//#endif
 }
 
 //=============================================================================
 // カメラの注視点設定処理
 //=============================================================================
-void Camera::SetAt(D3DXVECTOR3 vAt, int nNum)
+void Camera::SetAt(D3DXVECTOR3 vAt)
 {
 	//camera->posCameraAt = vAt;
-	s_vAtNext[nNum] = vAt;
+	vAtNext = vAt;
 }
 
 //=============================================================================
 // カメラの視点設定処理
 //=============================================================================
-void Camera::SetEye(D3DXVECTOR3 vEye, int nNum)
+void Camera::SetEye(D3DXVECTOR3 vEye)
 {
 	//camera->posCameraEye = vEye;
-	s_vEyeNext[nNum] = vEye;
+	vEyeNext = vEye;
 }
 
 //=============================================================================
 // カメラの上部設定処理
 //=============================================================================
-void Camera::SetUp(D3DXVECTOR3 vUp, int nNum)
+void Camera::SetUp(D3DXVECTOR3 vUp)
 {
-	s_vUp[nNum] = vUp;
+	vUp = vUp;
 	//camera->vUpNext = vUp;
 }
 
@@ -146,7 +390,7 @@ void Camera::SetUp(D3DXVECTOR3 vUp, int nNum)
 //=============================================================================
 void Camera::SetAtIner(float fIner)
 {
-	s_fAtIner = SetLimit(fIner, 1.0f, 0.0f);
+	fAtIner = SetLimit(fIner, 1.0f, 0.0f);
 }
 
 //=============================================================================
@@ -154,7 +398,7 @@ void Camera::SetAtIner(float fIner)
 //=============================================================================
 void Camera::SetEyeIner(float fIner)
 {
-	s_fEyeIner = SetLimit(fIner, 1.0f, 0.0f);
+	fEyeIner = SetLimit(fIner, 1.0f, 0.0f);
 }
 
 //=============================================================================
@@ -162,7 +406,7 @@ void Camera::SetEyeIner(float fIner)
 //=============================================================================
 void Camera::SetUpIner(float fIner)
 {
-	s_fUpIner = SetLimit(fIner, 1.0f, 0.0f);
+	fUpIner = SetLimit(fIner, 1.0f, 0.0f);
 }
 
 //=============================================================================
@@ -170,7 +414,7 @@ void Camera::SetUpIner(float fIner)
 //=============================================================================
 void Camera::AddAtIner(float fIner)
 {
-	s_fAtIner = SetLimit(s_fAtIner + fIner, 1.0f, 0.0f);
+	fAtIner = SetLimit(fAtIner + fIner, 1.0f, 0.0f);
 }
 
 //=============================================================================
@@ -178,7 +422,7 @@ void Camera::AddAtIner(float fIner)
 //=============================================================================
 void Camera::AddEyeIner(float fIner)
 {
-	s_fEyeIner = SetLimit(s_fEyeIner + fIner, 1.0f, 0.0f);
+	fEyeIner = SetLimit(fEyeIner + fIner, 1.0f, 0.0f);
 }
 
 //=============================================================================
@@ -186,48 +430,48 @@ void Camera::AddEyeIner(float fIner)
 //=============================================================================
 void Camera::AddUpIner(float fIner)
 {
-	s_fUpIner = SetLimit(s_fUpIner + fIner, 1.0f, 0.0f);
+	fUpIner = SetLimit(fUpIner + fIner, 1.0f, 0.0f);
 }
 
 
 //=============================================================================
 // カメラの設定処理
 //=============================================================================
-void Camera::Set(int nMulti)
+void Camera::Set()
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	/******************** ビューイング変換 ********************/
 	// ビューマトリクスの初期化
-	D3DXMatrixIdentity(&s_mtxView);
+	D3DXMatrixIdentity(&mtxView);
 
 	// ビューマトリクスの作成
-	D3DXMatrixLookAtLH(&s_mtxView,
-		&s_vEye[nMulti],	// 視点
-		&s_vAt[nMulti],		// 注視点
-		&s_vUp[nMulti]);	// 上方向
+	D3DXMatrixLookAtLH(&mtxView,
+		&vEye,	// 視点
+		&vAt,		// 注視点
+		&vUp);	// 上方向
 
-	pDevice->SetViewport(&dvPort[nMulti]);
+	pDevice->SetViewport(&dvPort);
 
 	// ビューマトリクスの設定
-	pDevice->SetTransform(D3DTS_VIEW, &s_mtxView);
+	pDevice->SetTransform(D3DTS_VIEW, &mtxView);
 
 	//pDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(g_color[i].r, g_color[i].b, g_color[i].g), 1.0f, 0);
 	//pDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
 
 	/******************** プロジェクション変換 ********************/
 	// プロジェクションマトリクスの初期化
-	D3DXMatrixIdentity(&s_mtxProjection);
+	D3DXMatrixIdentity(&mtxProjection);
 
 	// プロジェクションマトリクスの作成
-	D3DXMatrixPerspectiveFovLH(&s_mtxProjection,
+	D3DXMatrixPerspectiveFovLH(&mtxProjection,
 		VIEW_ANGLE,			// ビュー平面の視野角
 		//VIEW_ASPECT,		// ビュー平面のアスペクト比
-		fAspect[nMulti],
+		fAspect,
 		VIEW_NEAR_Z,		// ビュー平面のNearZ値（近いと描画しない）
 		VIEW_FAR_Z);		// ビュー平面のFarZ値（遠いと描画しない）
 
 	// プロジェクションマトリクスの設定
-	pDevice->SetTransform(D3DTS_PROJECTION, &s_mtxProjection);
+	pDevice->SetTransform(D3DTS_PROJECTION, &mtxProjection);
 
 
 
@@ -272,7 +516,7 @@ void Camera::Set(int nMulti)
 //=============================================================================
 D3DXMATRIX Camera::GetMtxView(void)
 {
-	return s_mtxView;
+	return mtxView;
 }
 
 //=============================================================================
@@ -280,5 +524,5 @@ D3DXMATRIX Camera::GetMtxView(void)
 //=============================================================================
 D3DXMATRIX Camera::GetMtxProjection(void)
 {
-	return s_mtxProjection;
+	return mtxProjection;
 }

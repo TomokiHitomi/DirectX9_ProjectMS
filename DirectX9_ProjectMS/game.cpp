@@ -49,11 +49,13 @@ void GameScene::Update(void)
 //=============================================================================
 void GameScene::Draw(void)
 {
-	for (unsigned int i = 0; i < 2; i++)
+	for (unsigned int i = 0; i < CameraManager::MULTI_MAX; i++)
 	{
-		Camera::Set(i);			// ƒJƒƒ‰
+		CameraManager::Set(CameraManager::CameraType(i));
+
 		ObjectManager::DrawAll();
 	}
+	CameraManager::Set(CameraManager::SINGLE);
 }
 
 //=============================================================================
@@ -66,7 +68,7 @@ GameScene::GameScene(void)
 	ObjectManager::CreateObject<Skydome>();
 	//ObjectManager::CreateObject<Cube>();
 	ObjectManager::CreateObject<StageManager>();
-	ObjectManager::CreateObject<PlayerManager>();
+	//ObjectManager::CreateObject<PlayerManager>();
 	ObjectManager::CreateObject<EffectManager>();
 	//new Player;
 	//new Skydome;

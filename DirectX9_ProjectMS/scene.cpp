@@ -50,7 +50,7 @@ int					SceneManager::m_nTotalBurnChain;
 
 int					SceneManager::m_nMulti;
 CharacterManager	*SceneManager::CharMgr = NULL;
-
+CameraManager		*SceneManager::CameraMgr = NULL;
 
 //=============================================================================
 // シーン管理処理
@@ -61,6 +61,7 @@ void SceneManager::ChangeScene(SCENE scene)
 	if (m_pScene != NULL)
 	{
 		delete m_pScene;
+		CameraManager::Init();	// カメラ
 	}
 
 	// SEの停止処理
@@ -100,12 +101,16 @@ void SceneManager::Init(HINSTANCE hInst, HWND hWnd)
 	InitInput(hInst, hWnd);	// 入力
 	InitSound(hWnd);		// サウンド
 	InitFade();				// フェード
-	Camera::Init();			// カメラ(終了処理はシーンマネージャーのみ）
 
 	ChangeScene(m_eScene);	// 初期シーン設定
 
+	// カメラマネージャーを実体化
+	CameraMgr = new CameraManager;
+
+	// キャラクターマネージャーをを使う場合
 	if (CharacterManager::m_bUse)
 	{
+		// キャラクターマネージャーを実体化
 		CharMgr = new CharacterManager;
 	}
 #ifdef _DEBUG
@@ -120,7 +125,6 @@ void SceneManager::Uninit(void)
 {
 
 	UninitInput();			// 入力
-	Camera::Uninit();			// カメラ
 	UninitSound();			// サウンド
 	UninitFade();			// フェード
 
@@ -136,6 +140,10 @@ void SceneManager::Uninit(void)
 	{
 		delete CharMgr;
 	}
+	if (CameraMgr != NULL)
+	{
+		delete CameraMgr;
+	}
 }
 
 //=============================================================================
@@ -143,17 +151,17 @@ void SceneManager::Uninit(void)
 //=============================================================================
 void SceneManager::Update(void)
 {
-	UpdateInput();			// 入力
-	UpdateFade();			// フェード
+	UpdateInput();				// 入力
+	UpdateFade();				// フェード
 
 #ifdef _DEBUG
-	DebugScene();			// デバッグ用
+	DebugScene();				// デバッグ用
 #endif
 
-	m_pScene->Update();		// 現在のシーンの更新関数
+	m_pScene->Update();			// 現在のシーンの更新関数
 
-	Camera::Update();		// カメラ
-	UpdateSound();			// サウンド
+	CameraManager::Update();	// カメラ
+	UpdateSound();				// サウンド
 }
 
 //=============================================================================
@@ -162,8 +170,6 @@ void SceneManager::Update(void)
 void SceneManager::Draw(void)
 {
 	m_pScene->Draw();		// 現在のシーンの描画関数
-
-	Camera::Set(2);
 
 	DrawFade();				// フェード
 

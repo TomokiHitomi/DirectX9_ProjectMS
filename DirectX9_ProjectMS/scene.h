@@ -13,6 +13,7 @@
 #include "main.h"
 #include "object.h"
 #include "character.h"
+#include "camera.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -76,6 +77,7 @@ private:
 	static SCENE			m_eScene;			// 現在のシーン番号
 	static int				m_nMulti;			// ２画面フラグ
 	static CharacterManager *CharMgr;
+	static CameraManager	*CameraMgr;
 public:
 	static CharacterManager *GetCharMgr(void) { return CharMgr; }
 

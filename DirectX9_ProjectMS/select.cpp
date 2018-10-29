@@ -52,8 +52,8 @@ void SelectScene::Draw(void)
 {
 	//for (unsigned int i = 0; i < 2; i++)
 	//{
-		Camera::Set(2);			// ƒJƒƒ‰
-		ObjectManager::DrawAll();
+	CameraManager::Set(CameraManager::SINGLE);
+	ObjectManager::DrawAll();
 	//}
 }
 

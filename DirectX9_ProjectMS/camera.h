@@ -21,73 +21,102 @@
 #define	VIEW_NEAR_Z				(10.0f)											// ビュー平面のNearZ値
 #define	VIEW_FAR_Z				(5000.0f)										// ビュー平面のFarZ値
 
-#define SCREEN_MARGIN			(2)
+#define CAMERA_MULTI_MARGIN		(2)
+#define CAMERA_MULTI_WIDTH		(SCREEN_WIDTH / 2 - CAMERA_MULTI_MARGIN)
+#define CAMERA_MULTI_HEIGHT		(SCREEN_HEIGHT)
+#define CAMERA_MULTI_2_X		(SCREEN_WIDTH / 2 + CAMERA_MULTI_MARGIN)
 
-class Camera
-{
-private:
-	static D3DXVECTOR3	s_vEye[3];				// カメラの視点
-	static D3DXVECTOR3	s_vAt[3];				// カメラの注視点
-	static D3DXVECTOR3	s_vUp[3];				// カメラの上方向ベクトル
+#define CAMERA_EXTENSION_SPEED	(40)
 
-	static D3DXVECTOR3	s_vEyeNext[3];			// カメラの視点
-	static D3DXVECTOR3	s_vAtNext[3];			// カメラの注視点
-	static D3DXVECTOR3	s_vUpNext[3];			// カメラの上方向ベクトル
-
-	static D3DXMATRIX	s_mtxView;			// ビューマトリックス
-	static D3DXMATRIX	s_mtxProjection;	// プロジェクションマトリックス
-	static D3DXMATRIX	s_mtxWorld;			// ワールドマトリックス
-
-	static float		s_fEyeIner;			// カメラの視点
-	static float		s_fAtIner;			// カメラの注視点
-	static float		s_fUpIner;			// カメラの上方向ベクトル
-	static D3DVIEWPORT9	dvPort[3];
-	static float		fAspect[3];
-public:
-	Camera();
-	~Camera();
-	static void Init(void);
-	static void Uninit(void);
-	static void Update(void);
-
-	static void SetAt(D3DXVECTOR3 vAt, int nNum);
-	static void SetEye(D3DXVECTOR3 vEye, int nNum);
-	static void SetUp(D3DXVECTOR3 vUp, int nNum);
-
-	static void SetAtIner(float fIner);
-	static void SetEyeIner(float fIner);
-	static void SetUpIner(float fIner);
-
-	static void AddAtIner(float fIner);
-	static void AddEyeIner(float fIner);
-	static void AddUpIner(float fIner);
-
-	static float GetAtIner(void) { return s_fAtIner; }
-	static float GetEyeIner(void) { return s_fEyeIner; }
-	static float GetUpIner(void) { return s_fUpIner; }
-
-	//static void SetEye(D3DXVECTOR3 vEye);
-	//static void SetUp(D3DXVECTOR3 vUp);
-	static void Set(int nMulti);
-	//D3DXMATRIX GetInvRotateMat(D3DXVECTOR3 pos);
-	static D3DXMATRIX GetMtxView(void);
-	static D3DXMATRIX GetMtxProjection(void);
-};
+class Camera;
 
 class CameraManager
 {
+public:
 	enum CameraType
 	{
 		MULTI1,
 		MULTI2,
-		SINGLE,
+		MULTI_MAX,
+		SINGLE = 2,
 		TYPE_MAX
 	};
-	Camera *m_pCamera;
+	enum CameraPort
+	{
+		CENTER,
+		EXTENSION_L,
+		EXTENSION_R,
+		PORT_MAX
+	};
 
+	static Camera *pCamera[TYPE_MAX];
+	static CameraPort eCameraPort;
+
+	CameraManager();
+	~CameraManager();
+	static void Init(void);
+	static void Update(void);
+	static void Set(CameraType);
+	static void SetExtension(CameraPort eCP);
+	static void Extension(void);
+};
+
+class Camera
+{
+private:
+	D3DXVECTOR3		vEye;				// カメラの視点
+	D3DXVECTOR3		vAt;				// カメラの注視点
+	D3DXVECTOR3		vUp;				// カメラの上方向ベクトル
+
+	D3DXVECTOR3		vEyeNext;			// カメラの視点
+	D3DXVECTOR3		vAtNext;			// カメラの注視点
+	D3DXVECTOR3		vUpNext;			// カメラの上方向ベクトル
+
+	D3DXMATRIX		mtxView;			// ビューマトリックス
+	D3DXMATRIX		mtxProjection;	// プロジェクションマトリックス
+	D3DXMATRIX		mtxWorld;			// ワールドマトリックス
+
+	float			fEyeIner;			// カメラの視点
+	float			fAtIner;			// カメラの注視点
+	float			fUpIner;			// カメラの上方向ベクトル
+
+public:
+	D3DVIEWPORT9	dvPort;
+	float			fAspect;
+	bool			bExtension;
+
+	Camera(CameraManager::CameraType eCameraType);
+	~Camera();
+	void Init(CameraManager::CameraType eCameraType);
+	void Uninit(void);
+	void Update(void);
+
+	void SetAt(D3DXVECTOR3 vAt);
+	void SetEye(D3DXVECTOR3 vEye);
+	void SetUp(D3DXVECTOR3 vUp);
+
+	void SetAtIner(float fIner);
+	void SetEyeIner(float fIner);
+	void SetUpIner(float fIner);
+
+	void AddAtIner(float fIner);
+	void AddEyeIner(float fIner);
+	void AddUpIner(float fIner);
+
+	float GetAtIner(void) { return fAtIner; }
+	float GetEyeIner(void) { return fEyeIner; }
+	float GetUpIner(void) { return fUpIner; }
+
+	//static void SetEye(D3DXVECTOR3 vEye);
+	//static void SetUp(D3DXVECTOR3 vUp);
+	void Set();
+	//D3DXMATRIX GetInvRotateMat(D3DXVECTOR3 pos);
+	D3DXMATRIX GetMtxView(void);
+	D3DXMATRIX GetMtxProjection(void);
 };
 
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
+
 #endif

@@ -50,7 +50,7 @@ void TitleScene::Update(void)
 //=============================================================================
 void TitleScene::Draw(void)
 {
-	Camera::Set(2);
+	CameraManager::Set(CameraManager::SINGLE);
 	ObjectManager::DrawAll();
 
 }
