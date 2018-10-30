@@ -171,7 +171,7 @@ public:
 	// •`‰æˆ—
 	void	Draw(void);
 
-	template <typename Type>
+	template <class Type>
 	void Set(PLAYER player, CharacterManager::TYPE type)
 	{
 		delete m_pPlayer[player];

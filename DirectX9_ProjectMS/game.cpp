@@ -52,7 +52,6 @@ void GameScene::Draw(void)
 	for (unsigned int i = 0; i < CameraManager::MULTI_MAX; i++)
 	{
 		CameraManager::Set(CameraManager::CameraType(i));
-
 		ObjectManager::DrawAll();
 	}
 	CameraManager::Set(CameraManager::SINGLE);
@@ -78,7 +77,6 @@ GameScene::GameScene(void)
 	//// 指定オブジェクト取得テスト
 	//Object *pTest1 = Object::GetObjectPointer(Object::PLAYER);
 	//Object *pTest2 = Object::GetObjectPointer(Object::COPYRIGHT);
-
 }
 
 //=============================================================================

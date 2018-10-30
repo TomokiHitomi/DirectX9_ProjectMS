@@ -52,6 +52,7 @@ public:
 		EFFECT2,
 		EFFECT3,
 		EFFECT4,
+		EFFECT5,
 		EFFECT_MAX
 	};
 	//static const TCHAR* c_filename[EFFECT_MAX];

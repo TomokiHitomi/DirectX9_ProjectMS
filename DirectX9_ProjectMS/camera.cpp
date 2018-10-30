@@ -171,7 +171,6 @@ void CameraManager::Extension(void)
 					}
 					break;
 				case EXTENSION_L:
-					//min(PortWidth += int(CAMERA_EXTENSION_SPEED), int(SCREEN_WIDTH));
 					if (PortWidth < int(SCREEN_WIDTH))
 					{
 						PortWidth += int(CAMERA_EXTENSION_SPEED);

@@ -31,6 +31,7 @@
 const WCHAR* EffectManager::c_filename[] = {
 	// エフェクトファイル
 	L"TrinityField.efk",
+	L"high_sword",
 	L"test2.efk",
 	L"test3.efk",
 	L"test4.efk"
