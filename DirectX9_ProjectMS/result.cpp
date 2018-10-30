@@ -13,6 +13,7 @@
 
 /* リザルトで必要なインクルード */
 #include "skydome.h"
+#include "particle.h"
 
 /* Debug */
 #ifdef _DEBUG
@@ -54,7 +55,8 @@ void ResultScene::Draw(void)
 //=============================================================================
 ResultScene::ResultScene(void)
 {
-	new Skydome;
+	//new Skydome;
+	ObjectManager::CreateObject<ParticleManager>();
 }
 
 //=============================================================================

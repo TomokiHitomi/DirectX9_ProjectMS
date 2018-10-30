@@ -17,6 +17,7 @@
 #include "stage.h"
 #include "player.h"
 #include "effect.h"
+#include "particle.h"
 
 /* デバッグ */
 #ifdef _DEBUG
@@ -64,10 +65,11 @@ GameScene::GameScene(void)
 {
 	//new Copyright;
 	//new AirWaterFream;
-	ObjectManager::CreateObject<Skydome>();
+	//ObjectManager::CreateObject<Skydome>();
 	//ObjectManager::CreateObject<Cube>();
 	ObjectManager::CreateObject<StageManager>();
-	//ObjectManager::CreateObject<PlayerManager>();
+	ObjectManager::CreateObject<PlayerManager>();
+	ObjectManager::CreateObject<ParticleManager>();
 	ObjectManager::CreateObject<EffectManager>();
 	//new Player;
 	//new Skydome;

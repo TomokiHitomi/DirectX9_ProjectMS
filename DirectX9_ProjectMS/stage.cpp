@@ -31,7 +31,7 @@
 StageManager::StageManager(void)
 {
 	// オブジェクトIDとプライオリティの設定処理
-	SetIdAndPriority(ObjectID::STAGE, Priority::Middle, Priority::Low);
+	SetIdAndPriority(ObjectID::STAGE, Priority::Middle, Priority::High);
 
 	m_pStage = NULL;
 

@@ -8,19 +8,20 @@
 #define _PARTICLE_H_
 
 #include "main.h"
+#include "object.h"
 
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
 //#define	TEXTURE_EFFECT	"data/TEXTURE/effect000.jpg"						// 読み込むテクスチャファイル名
 #define	PARTICLE_TEXTURE	"data/TEXTURE/effect.png"						// 読み込むテクスチャファイル名
-#define PARTICLE_SHADER_FILE			"data/TEXTURE/SHADER/sprite.fx"
+#define PARTICLE_SHADER_FILE			"data/SHADER/sprite.fx"
 
 // テクスチャ内分割数
-#define TEXTURE_PATTERN_DIVIDE_X_EFFECT	(1)
-#define TEXTURE_PATTERN_DIVIDE_Y_EFFECT	(1)
+#define PARTICLE_TEXTURE_PATTERN_DIVIDE_X	(1)
+#define PARTICLE_TEXTURE_PATTERN_DIVIDE_Y	(1)
 // テクスチャ分割パターン
-#define TEXTURE_PATTERN_NU_EFFECT		(TEXTURE_PATTERN_DIVIDE_X_EFFECT*TEXTURE_PATTERN_DIVIDE_Y_EFFECT)
+#define  PARTICLE_TEXTURE_PATTERN_NU		(PARTICLE_TEXTURE_PATTERN_DIVIDE_X*PARTICLE_TEXTURE_PATTERN_DIVIDE_Y)
 
 // サイズ
 #define	PARTICLE_SIZE_X		(1.0f)
@@ -33,63 +34,79 @@
 #define PARTICLE_MOVE_SPEED		(0.1f)
 
 // １フレームの生成量
-#define PARTICLE_SET			(50)
+#define PARTICLE_SET			(500)
 
 class Particle
 {
+private:
+	LPDIRECT3DTEXTURE9				pTexture;	// テクスチャ
+	LPDIRECT3DVERTEXBUFFER9			pVtxBuff;	// 頂点バッファ
+	LPDIRECT3DVERTEXBUFFER9			pInstBuff;	// インスタンスバッファ
+	LPDIRECT3DINDEXBUFFER9			pIdxBuff;	// インデックスバッファ
+	LPDIRECT3DVERTEXDECLARATION9	pDecl;		// 頂点宣言
+
+	// シェーダー関連
+	LPD3DXBUFFER					pErrorBuff;
+	LPD3DXEFFECT					pEffect;
+	UINT							numPass;
+
+	int								nCount;
+	int								nColor;
+	float							fMove;
+
+	typedef struct
+	{
+		D3DXVECTOR4 vtx;
+		D3DXVECTOR2 tex;
+	}VERTEX_PLANE;
+
+	typedef struct
+	{
+		D3DXVECTOR3 pos;
+		D3DCOLOR	diffuse;
+		D3DXVECTOR3 vec;
+		float		move;
+	}INSTANCE_PLANE;
+
+	HRESULT MakeVertex(LPDIRECT3DDEVICE9 pDevice);
 public:
-	Particle();
-	~Particle();
-	void Init();
-	void Uninit();
-	void Updata();
-	void Draw();
+	// コンストラクタ
+	Particle(void);
+	//デストラクタ
+	~Particle(void);
+	// 初期化処理
+	HRESULT	Init(void);
+	// 解放処理
+	void	Release(void);
+	// 更新処理
+	void	Update(void);
+	// 描画処理
+	void	Draw(void);
+	// 設置処理
+	void	Set(int value, D3DXVECTOR3 pos, D3DXCOLOR color);
 };
 
-class ParticleManager
+class ParticleManager : public ObjectManager
 {
+private:
+	Particle* pParticle;
+public:
+	// コンストラクタ
+	ParticleManager(void);
+	//デストラクタ
+	~ParticleManager(void);
+	// 初期化処理
+	HRESULT	Init(void);
+	// 解放処理
+	void	Release(void);
+	// 更新処理
+	void	Update(void);
+	// 描画処理
+	void	Draw(void);
 };
 
-typedef struct
-{
-	D3DXVECTOR3				posEffect;				// 地面の位置
-	D3DXVECTOR3				rotEffect;				// 地面の向き(回転)
-	D3DXVECTOR3				sclEffect;				// 地面の大きさ(スケール)
-
-	D3DXVECTOR2				vec2Size;
-
-	D3DXCOLOR				colorEffect;
-
-	int						nUseCount;				// 消滅カウント
-	int						nTex;
-
-	float					fSizeChange;
-	float					fAlphaChange;
-	FLOAT					fSize;
-
-	bool					bUse;					// 使用フラグ
-}EFFECT;
-
-typedef struct
-{
-	D3DXVECTOR4 vtx;
-	D3DXVECTOR2 tex;
-}VERTEX_PLANE;
-
-typedef struct
-{
-	D3DXVECTOR3 pos;
-	D3DCOLOR	diffuse;
-	D3DXVECTOR3 vec;
-	float		move;
-}INSTANCING_PLANE;
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
-HRESULT InitEffect(int nType);
-void UninitEffect(void);
-void UpdateEffect(void);
-void DrawEffect(void);
-void SetEffect(int nTex, D3DXVECTOR2 vec2Size, D3DXCOLOR color, D3DXVECTOR3 vecPos, float fSizeChange, float fAlphaChange);
 
 #endif

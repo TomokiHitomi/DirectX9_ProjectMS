@@ -19,10 +19,6 @@
 //*****************************************************************************
 // ƒ}ƒNƒ’è‹`
 //*****************************************************************************
-#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
-#define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
-#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
-
 #define SKIN_ANIME_SPEED	(60.0f / 4800.0f)
 //#define SKIN_ANIME_SPEED	(60.0f / 1500.0f)
 #define SKIN_ANIME_WEIGHT	(0.05f)

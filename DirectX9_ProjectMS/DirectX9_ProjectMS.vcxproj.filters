@@ -40,6 +40,9 @@
     <Filter Include="ソース ファイル\Include\Effekseer">
       <UniqueIdentifier>{5d96cdc3-71b2-4b09-bad1-7afd0662b84e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Shader">
+      <UniqueIdentifier>{b3a19695-604c-4941-b8b9-9843cb4b7531}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -302,5 +305,10 @@
     <ClCompile Include="particle.cpp">
       <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="data\SHADER\sprite.fx">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

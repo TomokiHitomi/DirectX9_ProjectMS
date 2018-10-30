@@ -40,6 +40,12 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
+#define SAFE_UPDATE(p) { if(p) { (p)->Update(); } }
+#define SAFE_DRAW(p) { if(p) { (p)->Draw(); } }
+#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
+#define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
+#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
+
 #define CLASS_NAME			("AppClass")		// ウインドウのクラス名
 #define WINDOW_NAME			("MS")		// ウインドウのキャプション名
 

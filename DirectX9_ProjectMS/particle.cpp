@@ -4,10 +4,9 @@
 // Author : GP12A295 25 人見友基
 //
 //=============================================================================
-#include "camera.h"
+#include "main.h"
 #include "particle.h"
 #include "input.h"
-#include "main.h"
 #include "calculate.h"
 
 // デバッグ用
@@ -22,285 +21,226 @@
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
-HRESULT MakeVertexEffect(LPDIRECT3DDEVICE9 pDevice);
-void InitStatusEffect(LPDIRECT3DDEVICE9 pDevice, int nEffect);
-void SetInstEffect(int nWk, D3DXVECTOR3 pos, D3DXCOLOR color);
-//void SetVtxEffect(int nWk, float fSizeX, float fSizeY);
-//void SetDiffuseEffect(int nWk, D3DXCOLOR col);
-//void SetTexEffect(int nWk, int nTex);
 
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-LPDIRECT3DTEXTURE9				g_pD3DTextureEffect = NULL;	// テクスチャへのポインタ
-
-LPDIRECT3DVERTEXBUFFER9			g_pD3DVtxBuffEffect = NULL;	// 頂点バッファへのポインタ
-LPDIRECT3DVERTEXBUFFER9			g_pD3DInstBuffEffect = NULL;// インスタンシングバッファへのポインタ
-LPDIRECT3DINDEXBUFFER9			g_pD3DIdxBuffEffect = NULL;
-
-LPDIRECT3DVERTEXDECLARATION9	g_pD3DDeclEffect = NULL;
-
-EFFECT					effectWk[PARTICLE_MAX];
-//VERTEX_PLANE			vtxPlane[NUM_VERTEX];
-
-D3DXMATRIX				g_mtxWorldEffect;
-
-// シェーダー関連
-LPD3DXBUFFER errorEffect = NULL;
-LPD3DXEFFECT effectshader = NULL;
-UINT numPassEffect;
-HRESULT hrEffect;
-
-int g_nEffectColor = 0;
-int g_nEffectCount = 0;
-float g_fEffectMove = 0.0f;
 
 //=============================================================================
-// コンストラクタ（初期化）
+// コンストラクタ
 //=============================================================================
-Particle::Particle()
+ParticleManager::ParticleManager()
 {
+	// オブジェクトIDとプライオリティの設定処理
+	SetIdAndPriority(ObjectID::PARTICLE, Priority::Middle, Priority::Middle);
 
+	// パーティクルの初期化
+	pParticle = NULL;
+
+	// 初期化処理
+	Init();
 }
 
-
 //=============================================================================
-// デストラクタ（終了）
+// デストラクタ
 //=============================================================================
-Particle::~Particle()
+ParticleManager::~ParticleManager()
 {
-
+	// 解放処理
+	Release();
 }
-
 
 //=============================================================================
 // 初期化処理
 //=============================================================================
-HRESULT InitEffect(int nType)
+HRESULT ParticleManager::Init(void)
 {
-	EFFECT *effect = &effectWk[0];
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-
-	const char* path = PARTICLE_SHADER_FILE;
-	// ファイル( const char* path )からシェーダーファイルを読み込み読み込み
-	hrEffect = D3DXCreateEffectFromFile(pDevice, path, 0, 0, 0, 0, &effectshader, &errorEffect);
-	if (FAILED(hrEffect))
-	{
-		// エラー
-		return S_FALSE;
-	}
-	// 使用するテクニックを定義
-	hrEffect = effectshader->SetTechnique("Tec01");
-	if (FAILED(hrEffect)) {
-
-		// エラー
-		return S_FALSE;
-	}
-
-
-	if (nType == 0)
-	{
-		// テクスチャの読み込み
-		D3DXCreateTextureFromFile(pDevice,
-			PARTICLE_TEXTURE,
-			&g_pD3DTextureEffect);
-	}
-
-	for (int i = 0; i < PARTICLE_MAX; i++, effect++)
-	{
-		// 位置・回転・スケールの設定
-		effect->posEffect = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		effect->rotEffect = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		effect->sclEffect = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
-		InitStatusEffect(pDevice, i);
-
-	}
-
-	// 頂点情報の作成（ローカル座標の設定）
-	MakeVertexEffect(pDevice);
+	pParticle = new Particle;
 	return S_OK;
 }
 
 //=============================================================================
-// 再利用処理
+// 解放処理
 //=============================================================================
-void InitStatusEffect(LPDIRECT3DDEVICE9 pDevice, int nEffect)
+void ParticleManager::Release(void)
 {
-	EFFECT *effect = &effectWk[nEffect];
-
-	effect->bUse = false;
-	effect->vec2Size = D3DXVECTOR2(PARTICLE_SIZE_X, PARTICLE_SIZE_Y);
-	effect->colorEffect = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	effect->nTex = 0;
-	effect->fSizeChange = 0.0f;
-	effect->fAlphaChange = 0.0f;
-	effect->fSize = 1.0f;
-}
-
-//=============================================================================
-// 終了処理
-//=============================================================================
-void UninitEffect(void)
-{
-	// シェーダーを解放
-	effectshader->Release();
-
-	if (g_pD3DTextureEffect != NULL)
-	{// テクスチャの開放
-		g_pD3DTextureEffect->Release();
-		g_pD3DTextureEffect = NULL;
-	}
-
-	if (g_pD3DVtxBuffEffect != NULL)
-	{// 頂点バッファの開放
-		g_pD3DVtxBuffEffect->Release();
-		g_pD3DVtxBuffEffect = NULL;
-	}
-
-	if (g_pD3DInstBuffEffect != NULL)
-	{// インスタンシングバッファの開放
-		g_pD3DInstBuffEffect->Release();
-		g_pD3DInstBuffEffect = NULL;
-	}
-
-	if (g_pD3DIdxBuffEffect != NULL)
-	{// インデックスバッファの開放
-		g_pD3DIdxBuffEffect->Release();
-		g_pD3DIdxBuffEffect = NULL;
-	}
-
-	if (g_pD3DDeclEffect != NULL)
-	{// 頂点宣言の開放
-		g_pD3DDeclEffect->Release();
-		g_pD3DDeclEffect = NULL;
-	}
-
-	if (errorEffect != NULL)
-	{// シェーダデータバッファの開放
-		errorEffect->Release();
-		errorEffect = NULL;
-	}
-
-	if (effectshader != NULL)
-	{// シェーダの開放
-		effectshader->Release();
-		effectshader = NULL;
-	}
+	// 解放処理
+	SAFE_DELETE(pParticle);
 }
 
 //=============================================================================
 // 更新処理
 //=============================================================================
-void UpdateEffect(void)
+void ParticleManager::Update(void)
+{
+	SAFE_UPDATE(pParticle);
+}
+
+//=============================================================================
+// 描画処理
+//=============================================================================
+void ParticleManager::Draw(void)
+{
+	SAFE_DRAW(pParticle);
+}
+
+
+
+//=============================================================================
+// コンストラクタ
+//=============================================================================
+Particle::Particle()
+{
+	// 各ポインタの初期化
+	pTexture = NULL;	// テクスチャ
+	pVtxBuff = NULL;	// 頂点バッファ
+	pInstBuff = NULL;	// インスタンシングバッファ
+	pIdxBuff = NULL;	// インデックスバッファ
+	pDecl = NULL;		// 頂点宣言
+
+	// シェーダ関連の初期化
+	pErrorBuff = NULL;	// シェーダ用コンパイルエラー
+	pEffect = NULL;		// シェーダ
+	numPass = 0;
+
+	// カウンタの初期化
+	nCount = 0;
+
+	// カラー指定の初期化
+	nColor = 0;
+
+	// 移動量の初期化
+	fMove = 0.0f;
+
+	// 初期化処理
+	Init();
+}
+
+//=============================================================================
+// デストラクタ
+//=============================================================================
+Particle::~Particle()
+{
+	// 解放処理
+	Release();
+}
+
+//=============================================================================
+// 初期化処理
+//=============================================================================
+HRESULT Particle::Init(void)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	const char* path = PARTICLE_SHADER_FILE;
+	// ファイル( const char* path )からシェーダーファイルを読み込み読み込み
+	if (FAILED(D3DXCreateEffectFromFile(
+		pDevice, path, 0, 0, 0, 0, &pEffect, &pErrorBuff)))
+	{
+		// エラー
+		MessageBox(NULL, "シェーダファイルの読み込みに失敗しました", path, MB_OK);
+		return S_FALSE;
+	}
+
+	// 使用するテクニックを定義
+	if (FAILED(pEffect->SetTechnique("Tec01")))
+	{
+		// エラー
+		MessageBox(NULL, "テクニックの定義に失敗しました", "Tec01", MB_OK);
+		return S_FALSE;
+	}
+
+	// テクスチャの読み込み
+	if (FAILED(D3DXCreateTextureFromFile(pDevice,
+		PARTICLE_TEXTURE,
+		&pTexture)))
+	{
+		// エラー
+		MessageBox(NULL, "テクスチャの読み込みに失敗しました", PARTICLE_TEXTURE, MB_OK);
+		return S_FALSE;
+	}
+
+	// 頂点情報の作成（ローカル座標の設定）
+	MakeVertex(pDevice);
+	return S_OK;
+}
+
+//=============================================================================
+// 解放処理
+//=============================================================================
+void Particle::Release(void)
+{
+	// 解放処理
+	SAFE_RELEASE(pTexture);		// テクスチャ
+	SAFE_RELEASE(pVtxBuff);		// 頂点バッファ
+	SAFE_RELEASE(pInstBuff);	// インスタンシングバッファ
+	SAFE_RELEASE(pIdxBuff);		// インデックスバッファ
+	SAFE_RELEASE(pDecl);		// 頂点宣言
+	SAFE_RELEASE(pErrorBuff);	// シェーダ用コンパイルエラー
+	SAFE_RELEASE(pEffect);		// シェーダ
+}
+
+//=============================================================================
+// 更新処理
+//=============================================================================
+void Particle::Update(void)
 {
 #ifdef _DEBUG
-	PrintDebugProc("【 EFFECT 】\n");
-	int nEffectCount = 0;
-	DWORD  start = GetTickCount();
-	static double s_dClockTime;
+	PrintDebugProc("【 PARTICLE 】\n");
 #endif
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	EFFECT *effect = &effectWk[0];
 
-	g_fEffectMove += PARTICLE_MOVE_SPEED;
+	// 移動量を加算
+	fMove += PARTICLE_MOVE_SPEED;
 
+	// マウスホイールでパーティクルカラーを変更
 	long ModUseZ = GetMobUseZ();
 	if (ModUseZ != 0)
 	{
 		if (ModUseZ > 0)
 		{
-			g_nEffectColor++;
-			if (g_nEffectColor >= COLOR_PALLET_MAX)
+			nColor++;
+			if (nColor >= COLOR_PALLET_MAX)
 			{
-				g_nEffectColor = 0;
+				nColor = 0;
 			}
 		}
 		else
 		{
-			g_nEffectColor--;
-			if (g_nEffectColor < 0)
+			nColor--;
+			if (nColor < 0)
 			{
-				g_nEffectColor = COLOR_PALLET_MAX - 1;
+				nColor = COLOR_PALLET_MAX - 1;
 			}
 		}
-	}	
+	}
 
-
-
-	// エフェクト設置
+	// 左クリックでエフェクト設置
 	if (IsMobUseLeftPressed())
 	{
-		for (unsigned int i = 0; i < PARTICLE_SET; i++)
-		{
-			SetEffect(0,
-				D3DXVECTOR2(10, 10), SetColorPallet(g_nEffectColor),
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				0.0001f, 0.0001f);
-		}
-	}
-
-	for (int i = 0; i < PARTICLE_MAX; i++, effect++)
-	{
-		if (effect->bUse)
-		{
-#ifdef _DEBUG
-			// 使用エフェクト数をカウント
-			nEffectCount++;
-#endif
-			//effect->fSize += 0.5f;
-			//if (effect->fSize > 100.0f)
-			//{
-			//	InitStatusEffect(pDevice, i);
-			//}
-			//effect->vec2Size.x -= effect->fSizeChange;
-			//effect->vec2Size.y -= effect->fSizeChange;
-			//effect->colorEffect.a -= effect->fAlphaChange;
-
-			//SetVtxEffect(i, effect->vec2Size.x, effect->vec2Size.y);
-			//SetDiffuseEffect(i, effect->colorEffect);
-			//SetTexEffect(i, effect->nTex);
-
-			//if (effect->vec2Size.x < 0 || effect->colorEffect.a < 0)
-			//{
-			//	InitStatusEffect(pDevice, i);
-			//}
-		}
+		Set(PARTICLE_SET,
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			SetColorPallet(nColor));
 	}
 
 #ifdef _DEBUG
-	PrintDebugProc("EffectMax:%d\n", nEffectCount);
-	DWORD end = GetTickCount();
-	double dClockTemp = (double)(end - start) / 1000;
-
-	if (dClockTemp > s_dClockTime)
-	{
-		s_dClockTime = dClockTemp;
-	}
-	PrintDebugProc("clockTime[%f]\n", s_dClockTime);
+	PrintDebugProc("ParticleMax:%d\n", nCount);
 	PrintDebugProc("\n");
-
 #endif
 }
 
 //=============================================================================
 // 描画処理
 //=============================================================================
-void DrawEffect(void)
+void Particle::Draw(void)
 {
-#ifdef _DEBUG
-	PrintDebugProc("【 EFFECT DRAW 】\n");
-	DWORD  start = GetTickCount();
-	static double s_dClockTime;
-#endif
-	if (g_nEffectCount > 0)
+	if (nCount > 0)
 	{
-
+		// デバイスの取得
 		LPDIRECT3DDEVICE9 pDevice = GetDevice();
-		D3DXMATRIX mtxScl, mtxRot, mtxTranslate;	// スケール, 回転, 平行移動
 
-		EFFECT *effect = &effectWk[0];
-		D3DXMATRIX mtxView, mtxProjection;
-			
+		// ビュー・プロジェクション行列を取得
+		D3DXMATRIX mtxWorld, mtxView, mtxProjection;
 		pDevice->GetTransform(D3DTS_VIEW, &mtxView);
 		pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjection);
 
@@ -319,57 +259,57 @@ void DrawEffect(void)
 		//pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 		// ワールドマトリクスの初期化
-		D3DXMatrixIdentity(&g_mtxWorldEffect);
+		D3DXMatrixIdentity(&mtxWorld);
 
-		// ビルボード化
-		g_mtxWorldEffect._11 = mtxView._11;
-		g_mtxWorldEffect._12 = mtxView._21;
-		g_mtxWorldEffect._13 = mtxView._31;
-		g_mtxWorldEffect._21 = mtxView._12;
-		g_mtxWorldEffect._22 = mtxView._22;
-		g_mtxWorldEffect._23 = mtxView._32;
-		g_mtxWorldEffect._31 = mtxView._13;
-		g_mtxWorldEffect._32 = mtxView._23;
-		g_mtxWorldEffect._33 = mtxView._33;
+		// ビュー行列の逆行列を格納（ビルボード化）
+		mtxWorld._11 = mtxView._11;
+		mtxWorld._12 = mtxView._21;
+		mtxWorld._13 = mtxView._31;
+		mtxWorld._21 = mtxView._12;
+		mtxWorld._22 = mtxView._22;
+		mtxWorld._23 = mtxView._32;
+		mtxWorld._31 = mtxView._13;
+		mtxWorld._32 = mtxView._23;
+		mtxWorld._33 = mtxView._33;
 
 		// インスタンス宣言
-		pDevice->SetStreamSourceFreq(0, D3DSTREAMSOURCE_INDEXEDDATA | g_nEffectCount);
+		pDevice->SetStreamSourceFreq(0, D3DSTREAMSOURCE_INDEXEDDATA | nCount);
 		pDevice->SetStreamSourceFreq(1, D3DSTREAMSOURCE_INSTANCEDATA | 1);
 
 		// 頂点とインデックスを設定
-		pDevice->SetVertexDeclaration(g_pD3DDeclEffect);
-		pDevice->SetStreamSource(0, g_pD3DVtxBuffEffect, 0, sizeof(VERTEX_PLANE));	// 頂点バッファ
-		pDevice->SetStreamSource(1, g_pD3DInstBuffEffect, 0, sizeof(INSTANCING_PLANE));	// 座標バッファ
-		pDevice->SetIndices(g_pD3DIdxBuffEffect);									// インデックスバッファ
+		pDevice->SetVertexDeclaration(pDecl);
+		pDevice->SetStreamSource(0, pVtxBuff, 0, sizeof(VERTEX_PLANE));		// 頂点バッファ
+		pDevice->SetStreamSource(1, pInstBuff, 0, sizeof(INSTANCE_PLANE));	// インスタンスバッファ
+		pDevice->SetIndices(pIdxBuff);										// インデックスバッファ
 
 		// テクニックを設定
-		effectshader->SetTechnique("Tec01");
+		pEffect->SetTechnique("Tec01");
 
 		// シェーダーの開始、passNumには指定してあるテクニックに定義してあるpassの数が変える
 		UINT passNum = 0;
-		effectshader->Begin(&passNum, 0);
+		pEffect->Begin(&passNum, 0);
 
 		// パスを指定して開始
-		effectshader->BeginPass(0);
+		pEffect->BeginPass(0);
 
 		// テクスチャをセット
-		effectshader->SetTexture("tex", g_pD3DTextureEffect);
+		pEffect->SetTexture("tex", pTexture);
 
 		// 必要な行列情報をセット
-		effectshader->SetMatrix("proj", &mtxProjection);
-		effectshader->SetMatrix("view", &mtxView);
-		effectshader->SetMatrix("world", &g_mtxWorldEffect);
+		pEffect->SetMatrix("proj", &mtxProjection);
+		pEffect->SetMatrix("view", &mtxView);
+		pEffect->SetMatrix("world", &mtxWorld);
 
-		// 時間カウンターをセット
-		effectshader->SetFloat("moveTime", g_fEffectMove);
+		// 移動量をセット
+		pEffect->SetFloat("moveTime", fMove);
 
 		// ポリゴンの描画
 		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2);
 
 		// シェーダーパスの終了
-		effectshader->EndPass();
+		pEffect->EndPass();
 		// シェーダー終了
-		effectshader->End();
+		pEffect->End();
 
 		// インスタンス宣言を標準に戻す
 		pDevice->SetStreamSourceFreq(0, 1);
@@ -380,30 +320,19 @@ void DrawEffect(void)
 		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// αデスティネーションカラーの指定
 		pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
-		////// αテストを無効に
-		////pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-
+		//// αテストを無効に
+		//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 		//// ラインティングを有効にする
 		//pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 	}
-#ifdef _DEBUG
-	DWORD end = GetTickCount();
-	double dClockTemp = (double)(end - start) / 1000;
-	
-	if (dClockTemp > s_dClockTime)
-	{
-		s_dClockTime = dClockTemp;
-	}
-	PrintDebugProc("clockTime[%f]\n", s_dClockTime);
-	PrintDebugProc("\n");
-#endif
 }
+
 
 //=============================================================================
 // 頂点の作成
 //=============================================================================
-HRESULT MakeVertexEffect(LPDIRECT3DDEVICE9 pDevice)
+HRESULT Particle::MakeVertex(LPDIRECT3DDEVICE9 pDevice)
 {
 	/***** 頂点バッファ設定 *****/
 
@@ -413,7 +342,7 @@ HRESULT MakeVertexEffect(LPDIRECT3DDEVICE9 pDevice)
 		0,									// 頂点バッファの使用法　
 		0,									// 使用する頂点フォーマット
 		D3DPOOL_MANAGED,					// リソースのバッファを保持するメモリクラスを指定
-		&g_pD3DVtxBuffEffect,				// 頂点バッファインターフェースへのポインタ
+		&pVtxBuff,							// 頂点バッファインターフェースへのポインタ
 		NULL)))								// NULLに設定
 	{
 		return E_FAIL;
@@ -423,7 +352,7 @@ HRESULT MakeVertexEffect(LPDIRECT3DDEVICE9 pDevice)
 		VERTEX_PLANE *pVtx;
 
 		// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
-		g_pD3DVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
+		pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 		// 頂点座標の設定
 		pVtx[0].vtx = D3DXVECTOR4(-PARTICLE_SIZE_X, PARTICLE_SIZE_Y, 0.0f, 1.0f);
@@ -432,10 +361,10 @@ HRESULT MakeVertexEffect(LPDIRECT3DDEVICE9 pDevice)
 		pVtx[3].vtx = D3DXVECTOR4(PARTICLE_SIZE_X, -PARTICLE_SIZE_Y, 0.0f, 1.0f);
 
 		// テクスチャ座標の設定
-		int x = 0 % TEXTURE_PATTERN_DIVIDE_X_EFFECT;
-		int y = 0 / TEXTURE_PATTERN_DIVIDE_X_EFFECT;
-		float sizeX = 1.0f / TEXTURE_PATTERN_DIVIDE_X_EFFECT;
-		float sizeY = 1.0f / TEXTURE_PATTERN_DIVIDE_Y_EFFECT;
+		int x = 0 % PARTICLE_TEXTURE_PATTERN_DIVIDE_X;
+		int y = 0 / PARTICLE_TEXTURE_PATTERN_DIVIDE_X;
+		float sizeX = 1.0f / PARTICLE_TEXTURE_PATTERN_DIVIDE_X;
+		float sizeY = 1.0f / PARTICLE_TEXTURE_PATTERN_DIVIDE_Y;
 
 		pVtx[0].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
 		pVtx[1].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
@@ -443,43 +372,9 @@ HRESULT MakeVertexEffect(LPDIRECT3DDEVICE9 pDevice)
 		pVtx[3].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
 
 		// 頂点データをアンロックする
-		g_pD3DVtxBuffEffect->Unlock();
+		pVtxBuff->Unlock();
 	}
 
-
-	/***** インスタンシング用の座標バッファ設定 *****/
-
-	// 座標バッファ生成
-	if (FAILED(pDevice->CreateVertexBuffer(
-		sizeof(INSTANCING_PLANE) * PARTICLE_MAX,	// 頂点データ用に確保するバッファサイズ(バイト単位)
-		0,									// 頂点バッファの使用法　
-		0,									// 使用する頂点フォーマット
-		D3DPOOL_MANAGED,					// リソースのバッファを保持するメモリクラスを指定
-		&g_pD3DInstBuffEffect,				// 頂点バッファインターフェースへのポインタ
-		NULL)))								// NULLに設定
-	{
-		return E_FAIL;
-	}
-
-	{// インスタンシングバッファの中身を埋める
-		INSTANCING_PLANE *pInst;
-		
-
-		// 座標データの範囲をロックし、頂点バッファへのポインタを取得
-		g_pD3DInstBuffEffect->Lock(0, 0, (void**)&pInst, 0);
-
-		// 座標の設定
-		for (unsigned int i = 0; i < PARTICLE_MAX; i++, pInst++)
-		{
-			pInst->pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-			pInst->diffuse = SetColorPallet(COLOR_PALLET_WHITE);
-			pInst->vec = RandVector();
-			pInst->move = 0.0f;
-		}
-
-		// 座標データをアンロックする
-		g_pD3DInstBuffEffect->Unlock();
-	}
 
 	/***** インデックスバッファ設定 *****/
 
@@ -491,7 +386,7 @@ HRESULT MakeVertexEffect(LPDIRECT3DDEVICE9 pDevice)
 		0,									// 頂点バッファの使用法　
 		D3DFMT_INDEX16,						// 使用する頂点フォーマット
 		D3DPOOL_MANAGED,					// リソースのバッファを保持するメモリクラスを指定
-		&g_pD3DIdxBuffEffect,				// 頂点バッファインターフェースへのポインタ
+		&pIdxBuff,							// 頂点バッファインターフェースへのポインタ
 		NULL)))								// NULLに設定
 	{
 		return E_FAIL;
@@ -501,7 +396,7 @@ HRESULT MakeVertexEffect(LPDIRECT3DDEVICE9 pDevice)
 		WORD *pIdx;
 
 		// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
-		g_pD3DIdxBuffEffect->Lock(0, 0, (void**)&pIdx, 0);
+		pIdxBuff->Lock(0, 0, (void**)&pIdx, 0);
 
 		// 頂点座標の設定
 		for (unsigned int i = 0; i < 6; i++, pIdx++)
@@ -510,8 +405,44 @@ HRESULT MakeVertexEffect(LPDIRECT3DDEVICE9 pDevice)
 		}
 
 		// 頂点データをアンロックする
-		g_pD3DIdxBuffEffect->Unlock();
+		pIdxBuff->Unlock();
 	}
+
+
+	/***** インスタンシング用の座標バッファ設定 *****/
+
+	// 座標バッファ生成
+	if (FAILED(pDevice->CreateVertexBuffer(
+		sizeof(INSTANCE_PLANE) * PARTICLE_MAX,	// 頂点データ用に確保するバッファサイズ(バイト単位)
+		0,									// 頂点バッファの使用法　
+		0,									// 使用する頂点フォーマット
+		D3DPOOL_MANAGED,					// リソースのバッファを保持するメモリクラスを指定
+		&pInstBuff,				// 頂点バッファインターフェースへのポインタ
+		NULL)))								// NULLに設定
+	{
+		return E_FAIL;
+	}
+
+	{// インスタンシングバッファの中身を埋める
+		INSTANCE_PLANE *pInst;
+
+
+		// 座標データの範囲をロックし、頂点バッファへのポインタを取得
+		pInstBuff->Lock(0, 0, (void**)&pInst, 0);
+
+		// 座標の設定
+		for (unsigned int i = 0; i < PARTICLE_MAX; i++, pInst++)
+		{
+			pInst->pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+			pInst->diffuse = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+			pInst->vec = RandVector();
+			pInst->move = 0.0f;
+		}
+
+		// 座標データをアンロックする
+		pInstBuff->Unlock();
+	}
+
 
 	D3DVERTEXELEMENT9 declElems[] = {
 		{ 0, 0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },		// VTX
@@ -523,158 +454,41 @@ HRESULT MakeVertexEffect(LPDIRECT3DDEVICE9 pDevice)
 		D3DDECL_END()
 	};
 
-	pDevice->CreateVertexDeclaration(declElems, &g_pD3DDeclEffect);
+	pDevice->CreateVertexDeclaration(declElems, &pDecl);
 
 	return S_OK;
 }
 
 //=============================================================================
-// 頂点座標の設定関数
+// 設置処理
 //=============================================================================
-void SetInstEffect(int nWk, D3DXVECTOR3 pos, D3DXCOLOR color)
+void Particle::Set(int value, D3DXVECTOR3 pos, D3DXCOLOR color)
 {
+	if (nCount + value > PARTICLE_MAX)
+	{
+		value = PARTICLE_MAX - nCount;
+	}
+
 	{// 座標バッファの中身を埋める
-		INSTANCING_PLANE *pInst;
+		INSTANCE_PLANE *pInst;
 
 		// 座標データの範囲をロックし、頂点バッファへのポインタを取得
-		g_pD3DInstBuffEffect->Lock(0, 0, (void**)&pInst, 0);
+		pInstBuff->Lock(0, 0, (void**)&pInst, 0);
 
-		pInst += nWk;
+		pInst += nCount;
 
-		// 座標の設定
-		pInst->pos = pos;
-		pInst->diffuse = color;
-		//pInst->diffuse = SetColorPalletRandom();
-		//pInst->vec = RandVector();
-		pInst->move = g_fEffectMove;
-
-		// 座標データをアンロックする
-		g_pD3DInstBuffEffect->Unlock();
-	}
-}
-
-////=============================================================================
-//// 頂点座標の設定関数
-////=============================================================================
-//void SetVtxEffect(int nWk, float fSizeX, float fSizeY)
-//{
-//	{// 頂点バッファの中身を埋める
-//		VERTEX_NOLIGHT *pVtx;
-//
-//		// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
-//		g_pD3DVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
-//
-//		pVtx += (nWk * 4);
-//
-//		// 頂点座標の設定
-//		pVtx[0].vtx = D3DXVECTOR3(-fSizeX, -fSizeY, 0.0f);
-//		pVtx[1].vtx = D3DXVECTOR3(-fSizeX, fSizeY, 0.0f);
-//		pVtx[2].vtx = D3DXVECTOR3(fSizeX, -fSizeY, 0.0f);
-//		pVtx[3].vtx = D3DXVECTOR3(fSizeX, fSizeY, 0.0f);
-//
-//		// 頂点データをアンロックする
-//		g_pD3DVtxBuffEffect->Unlock();
-//	}
-//}
-//
-////=============================================================================
-//// 反射光の設定関数
-////=============================================================================
-//void SetDiffuseEffect(int nWk, D3DXCOLOR col)
-//{
-//	{// 頂点バッファの中身を埋める
-//		VERTEX_NOLIGHT *pVtx;
-//
-//		// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
-//		g_pD3DVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
-//
-//		pVtx += (nWk * 4);
-//
-//		// 頂点座標の設定
-//		pVtx[0].diffuse =
-//			pVtx[1].diffuse =
-//			pVtx[2].diffuse =
-//			pVtx[3].diffuse = col;
-//
-//		// 頂点データをアンロックする
-//		g_pD3DVtxBuffEffect->Unlock();
-//	}
-//}
-//
-////=============================================================================
-//// テクスチャ座標の設定関数
-////=============================================================================
-//void SetTexEffect(int nWk, int nTex)
-//{
-//	{// 頂点バッファの中身を埋める
-//		VERTEX_NOLIGHT *pVtx;
-//
-//		// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
-//		g_pD3DVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
-//
-//		pVtx += (nWk * 4);
-//
-//		// テクスチャ座標の設定
-//		int x = nTex % TEXTURE_PATTERN_DIVIDE_X_EFFECT;
-//		int y = nTex / TEXTURE_PATTERN_DIVIDE_X_EFFECT;
-//		float sizeX = 1.0f / TEXTURE_PATTERN_DIVIDE_X_EFFECT;
-//		float sizeY = 1.0f / TEXTURE_PATTERN_DIVIDE_Y_EFFECT;
-//		pVtx[0].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
-//		pVtx[1].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
-//		pVtx[2].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
-//		pVtx[3].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
-//
-//		// 頂点データをアンロックする
-//		g_pD3DVtxBuffEffect->Unlock();
-//	}
-//}
-
-//=============================================================================
-// テクスチャ座標の設定
-//=============================================================================
-//void SetTextureEffect(int no, int cntPattern)
-//{
-//	EFFECT *effect = &effectWk[no];
-//
-//	// テクスチャ座標の設定
-//	int x = cntPattern % TEXTURE_PATTERN_DIVIDE_X_EFFECT;
-//	int y = cntPattern / TEXTURE_PATTERN_DIVIDE_X_EFFECT;
-//	float sizeX = 1.0f / TEXTURE_PATTERN_DIVIDE_X_EFFECT;
-//	float sizeY = 1.0f / TEXTURE_PATTERN_DIVIDE_Y_EFFECT;
-//	effect->vertexWk[0].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
-//	effect->vertexWk[1].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
-//	effect->vertexWk[2].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
-//	effect->vertexWk[3].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
-//}
-
-//=============================================================================
-// 対象に設置
-//=============================================================================
-void SetEffect(int nTex, D3DXVECTOR2 vec2Size, D3DXCOLOR color, D3DXVECTOR3 vecPos, float fSizeChange, float fAlphaChange)
-{
-	EFFECT *effect = &effectWk[0];
-
-	// 未使用を探す
-	for (int i = 0; i < PARTICLE_MAX; i++, effect++)
-	{
-		if (!effect->bUse)
+		for (unsigned int i = 0; i < value; i++, pInst++)
 		{
-			effect->bUse = true;
-			//effect->posEffect = vecPos;
-			//effect->colorEffect = color;
-			//effect->colorEffect.a = 1.0f;
-			//effect->vec2Size = vec2Size;
-			//effect->fSizeChange = fSizeChange;
-			//effect->fAlphaChange = fAlphaChange;
-			//effect->nTex = nTex;
-			g_nEffectCount++;
-
-			SetInstEffect(i, vecPos, color);
-
-			//SetVtxEffect(i, effect->vec2Size.x, effect->vec2Size.y);
-			//SetDiffuseEffect(i, effect->colorEffect);
-			//SetTexEffect(i, effect->nTex);
-			return;
+			// 座標の設定
+			pInst->pos = pos;
+			//pInst->diffuse = color;
+			pInst->diffuse = SetColorPalletRandom();
+			//pInst->vec = RandVector();
+			pInst->move = fMove;
 		}
+		// 座標データをアンロックする
+		pInstBuff->Unlock();
+
+		nCount += value;
 	}
 }
