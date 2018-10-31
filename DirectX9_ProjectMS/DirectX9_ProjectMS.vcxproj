@@ -223,6 +223,7 @@
     <ClInclude Include="sound.h" />
     <ClInclude Include="stage.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="titlelogo.h" />
     <ClInclude Include="wing.h" />
     <ClInclude Include="XModel.h" />
     <ClInclude Include="XTexture.h" />
@@ -258,6 +259,7 @@
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="stage.cpp" />
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="titlelogo.cpp" />
     <ClCompile Include="wing.cpp" />
     <ClCompile Include="XModel.cpp" />
     <ClCompile Include="XTexture.cpp" />

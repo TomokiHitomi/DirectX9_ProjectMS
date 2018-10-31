@@ -19,7 +19,7 @@
 //*****************************************************************************
 // ƒNƒ‰ƒX’è‹`
 //*****************************************************************************
-class ResultScene :public BaseScene
+class ResultScene : public BaseScene
 {   // :public  BaseScene
 public:
 	ResultScene(void);

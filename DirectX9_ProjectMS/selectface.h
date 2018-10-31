@@ -126,7 +126,7 @@
 
 #define ANIM_PATTERN_NUM_SELECT				(TEXTURE_SELECT00_PATTERN_DIVIDE_X*TEXTURE_SELECT00_PATTERN_DIVIDE_Y)		// アニメーションパターン数 (*34)
 #define TIME_ANIMATION_SELECT				(4)																		// アニメーションの切り替わるカウント (*34)
-#define NUM_SELECT							(12)
+#define NUM_SELECT							(10)
 //=============================================================================
 //
 //SELECT構造体

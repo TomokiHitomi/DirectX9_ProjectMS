@@ -18,7 +18,7 @@
 #include "skydome.h"
 #include "cube.h"
 #include "stage.h"
-
+#include "titlelogo.h"
 /* Debug */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -53,6 +53,7 @@ void TitleScene::Draw(void)
 	CameraManager::Set(CameraManager::SINGLE);
 	ObjectManager::DrawAll();
 
+
 }
 
 //=============================================================================
@@ -61,15 +62,15 @@ void TitleScene::Draw(void)
 TitleScene::TitleScene(void)
 {
 	new Skydome;
+	ObjectManager::CreateObject<Titlelogo>();
 }
-
 //=============================================================================
 // デストラクタ処理（終了）
 //=============================================================================
 TitleScene::~TitleScene(void)
 {
 	ObjectManager::ReleaseAll();
-	//
+
 }
 
 //=============================================================================

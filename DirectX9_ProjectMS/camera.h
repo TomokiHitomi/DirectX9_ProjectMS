@@ -51,12 +51,15 @@ public:
 
 	static Camera *pCamera[TYPE_MAX];
 	static CameraPort eCameraPort;
+	static CameraType eCameraType;
+
 
 	CameraManager();
 	~CameraManager();
 	static void Init(void);
 	static void Update(void);
 	static void Set(CameraType);
+	static CameraType GetType(void) { return eCameraType; }
 	static void SetExtension(CameraPort eCP);
 	static void Extension(void);
 };
@@ -73,8 +76,7 @@ private:
 	D3DXVECTOR3		vUpNext;			// カメラの上方向ベクトル
 
 	D3DXMATRIX		mtxView;			// ビューマトリックス
-	D3DXMATRIX		mtxProjection;	// プロジェクションマトリックス
-	D3DXMATRIX		mtxWorld;			// ワールドマトリックス
+	D3DXMATRIX		mtxProjection;		// プロジェクションマトリックス
 
 	float			fEyeIner;			// カメラの視点
 	float			fAtIner;			// カメラの注視点

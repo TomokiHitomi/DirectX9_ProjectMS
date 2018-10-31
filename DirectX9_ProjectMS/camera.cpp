@@ -27,6 +27,7 @@
 //*****************************************************************************
 Camera						*CameraManager::pCamera[TYPE_MAX];
 CameraManager::CameraPort	CameraManager::eCameraPort;
+CameraManager::CameraType	CameraManager::eCameraType;
 
 //=============================================================================
 // コンストラクタ（初期化）
@@ -34,6 +35,8 @@ CameraManager::CameraPort	CameraManager::eCameraPort;
 CameraManager::CameraManager(void)
 {
 	eCameraPort = CENTER;
+	eCameraType = SINGLE;
+
 	for (unsigned int i = 0; i < TYPE_MAX; i++)
 	{
 		pCamera[i] = NULL;
@@ -111,6 +114,7 @@ void CameraManager::Update(void)
 //=============================================================================
 void CameraManager::Set(CameraType eCT)
 {
+	eCameraType = eCT;
 	if (pCamera[eCT] != NULL)
 	{
 		pCamera[eCT]->Set();
@@ -446,14 +450,14 @@ void Camera::Set()
 	// ビューマトリクスの作成
 	D3DXMatrixLookAtLH(&mtxView,
 		&vEye,	// 視点
-		&vAt,		// 注視点
+		&vAt,	// 注視点
 		&vUp);	// 上方向
 
 	pDevice->SetViewport(&dvPort);
 
 	// ビューマトリクスの設定
 	pDevice->SetTransform(D3DTS_VIEW, &mtxView);
-
+	
 	//pDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(g_color[i].r, g_color[i].b, g_color[i].g), 1.0f, 0);
 	//pDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
 

@@ -201,6 +201,9 @@
     <ClInclude Include="character.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="titlelogo.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
     <ClInclude Include="particle.h">
       <Filter>ソース ファイル\Effect</Filter>
     </ClInclude>
@@ -300,6 +303,9 @@
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <ClCompile Include="character.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="titlelogo.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
     <ClCompile Include="particle.cpp">

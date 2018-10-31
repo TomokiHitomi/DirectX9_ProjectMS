@@ -24,6 +24,7 @@ LPD3DXFONT	g_pD3DXFont = NULL;			// フォントへのポインタ
 char		g_aStrDebug[4096 * 10] = {"\0"};	// デバッグ情報
 long		g_lDrawPos = 0;
 bool		g_bDispDebug = true;
+int			g_nDispColor = 0;
 
 extern SceneManager		g_cScene;					// Sceneマネージャ
 
@@ -77,6 +78,13 @@ void UpdateDebugProc(void)
 	{// デバッグ表示ON/OFF
 		g_bDispDebug = g_bDispDebug ? false : true;
 	}
+	if (GetKeyboardPress(DIK_LSHIFT))
+	{
+		if (GetKeyboardTrigger(DIK_F1))
+		{
+			g_nDispColor = g_nDispColor ? 0 : 1;
+		}
+	}
 	if (g_bDispDebug)
 	{
 		// デバッグフォントのスクロール
@@ -113,8 +121,16 @@ void DrawDebugProc(void)
 		// 現在のシーンを取得
 		SceneManager::SCENE eScene = g_cScene.GetScene();
 
-		// 情報表示（白文字）
-		g_pD3DXFont->DrawText(NULL, g_aStrDebug, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xff, 0x00, 0x00, 0x00));
+		if (g_nDispColor == 0)
+		{
+			// 情報表示（黒文字）
+			g_pD3DXFont->DrawText(NULL, g_aStrDebug, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xff, 0x00, 0x00, 0x00));
+		}
+		else
+		{
+			// 情報表示（白文字）
+			g_pD3DXFont->DrawText(NULL, g_aStrDebug, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xff, 0xff, 0xff, 0xff));
+		}
 
 		// 情報クリア
 		memset(g_aStrDebug, 0, sizeof g_aStrDebug);

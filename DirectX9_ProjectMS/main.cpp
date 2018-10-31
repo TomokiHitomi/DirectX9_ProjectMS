@@ -399,8 +399,10 @@ void Draw(void)
 #ifdef _DEBUG
 		Debugtimer timer;
 #endif
+
 		// •`‰æˆ—
 		SceneManager::Draw();
+
 #ifdef _DEBUG
 		PrintDebugProc("yDrawAtz\n[%f]\n", timer.End());
 #endif

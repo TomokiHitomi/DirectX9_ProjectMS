@@ -50,6 +50,7 @@ public:
 		STENCIL,
 		STAGE,
 		SELECTFACE,
+		TITLELOGO,
 		PARTICLE
 	};
 	// ルートポインタ

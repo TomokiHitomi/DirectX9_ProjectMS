@@ -8,6 +8,7 @@
 #include "particle.h"
 #include "input.h"
 #include "calculate.h"
+#include "camera.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -241,8 +242,14 @@ void Particle::Draw(void)
 
 		// ビュー・プロジェクション行列を取得
 		D3DXMATRIX mtxWorld, mtxView, mtxProjection;
-		pDevice->GetTransform(D3DTS_VIEW, &mtxView);
-		pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjection);
+
+		mtxView = CameraManager::pCamera[CameraManager::GetType()]->GetMtxView();
+		mtxProjection = CameraManager::pCamera[CameraManager::GetType()]->GetMtxProjection();
+		//mtxView = CameraManager::pCamera[CameraManager::MULTI2]->GetMtxView();
+		//mtxProjection = CameraManager::pCamera[CameraManager::MULTI2]->GetMtxProjection();
+
+		//pDevice->GetTransform(D3DTS_VIEW, &mtxView);
+		//pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjection);
 
 		//// αテストを有効に
 		//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
@@ -286,8 +293,7 @@ void Particle::Draw(void)
 		pEffect->SetTechnique("Tec01");
 
 		// シェーダーの開始、passNumには指定してあるテクニックに定義してあるpassの数が変える
-		UINT passNum = 0;
-		pEffect->Begin(&passNum, 0);
+		pEffect->Begin(&numPass, 0);
 
 		// パスを指定して開始
 		pEffect->BeginPass(0);
@@ -306,7 +312,7 @@ void Particle::Draw(void)
 		// ポリゴンの描画
 		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2);
 
-		// シェーダーパスの終了
+		// シェーダーパスの終了2
 		pEffect->EndPass();
 		// シェーダー終了
 		pEffect->End();
