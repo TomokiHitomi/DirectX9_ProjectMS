@@ -198,6 +198,9 @@
     <ClInclude Include="character.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="titlelogo.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -294,6 +297,9 @@
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <ClCompile Include="character.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="titlelogo.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
   </ItemGroup>

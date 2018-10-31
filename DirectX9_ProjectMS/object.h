@@ -49,7 +49,8 @@ public:
 		CUBE,
 		STENCIL,
 		STAGE,
-		SELECTFACE
+		SELECTFACE,
+		TITLELOGO
 	};
 	// ルートポインタ
 	enum ObjectRoot
