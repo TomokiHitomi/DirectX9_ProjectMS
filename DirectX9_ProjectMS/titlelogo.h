@@ -58,6 +58,7 @@ public:
 		VERTEX_2D				vertexWk[NUM_VERTEX];					// 頂点情報格納ワーク
 		D3DXVECTOR2				TextureSize;
 		int						Count;
+		int					Alfa;
 		bool					Use;									// true:使用  false:未使用
 		LPDIRECT3DTEXTURE9		pD3DTexture;							// テクスチャへのポリゴン (*33)
 	};
