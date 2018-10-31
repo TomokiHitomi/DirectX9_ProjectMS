@@ -235,21 +235,15 @@ void Particle::Update(void)
 //=============================================================================
 void Particle::Draw(void)
 {
-	if (nCount > 0)
+	if (nCount >= 0)
 	{
 		// デバイスの取得
 		LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 		// ビュー・プロジェクション行列を取得
 		D3DXMATRIX mtxWorld, mtxView, mtxProjection;
-
-		mtxView = CameraManager::pCamera[CameraManager::GetType()]->GetMtxView();
-		mtxProjection = CameraManager::pCamera[CameraManager::GetType()]->GetMtxProjection();
-		//mtxView = CameraManager::pCamera[CameraManager::MULTI2]->GetMtxView();
-		//mtxProjection = CameraManager::pCamera[CameraManager::MULTI2]->GetMtxProjection();
-
-		//pDevice->GetTransform(D3DTS_VIEW, &mtxView);
-		//pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjection);
+		pDevice->GetTransform(D3DTS_VIEW, &mtxView);
+		pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjection);
 
 		//// αテストを有効に
 		//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
@@ -309,12 +303,15 @@ void Particle::Draw(void)
 		// 移動量をセット
 		pEffect->SetFloat("moveTime", fMove);
 
+		// 結果を確定させる
+		pEffect->CommitChanges();
+
 		// ポリゴンの描画
 		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2);
 
-		// シェーダーパスの終了2
+		// シェーダーパスを終了
 		pEffect->EndPass();
-		// シェーダー終了
+		// シェーダーを終了
 		pEffect->End();
 
 		// インスタンス宣言を標準に戻す

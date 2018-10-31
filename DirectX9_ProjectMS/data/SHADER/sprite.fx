@@ -9,12 +9,11 @@ float4x4	view;		// ビューマトリクス
 float4x4	proj;		// プロジェクションマトリクス
 float		moveTime;
 
-texture tex;		// 使用するテクスチャ
+texture tex;			// 使用するテクスチャ
 sampler smp = sampler_state {
 	texture = <tex>;
 };
 
- 
 //*****************************************************************************
 // 構造体定義
 //*****************************************************************************
@@ -61,7 +60,6 @@ VS_OUT vs_main( VS_IN In )
 		Out.pos.z + In.worldPos.z + (In.vec.z * mover),
 		1.0f
 		);
-
 	Out.pos = mul(Out.pos, view);
 	Out.pos = mul(Out.pos, proj);
 

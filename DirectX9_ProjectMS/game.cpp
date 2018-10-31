@@ -50,10 +50,14 @@ void GameScene::Update(void)
 //=============================================================================
 void GameScene::Draw(void)
 {
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
 	for (unsigned int i = 0; i < CameraManager::MULTI_MAX; i++)
 	{
 		CameraManager::Set(CameraManager::CameraType(i));
 		ObjectManager::DrawAll();
+		//pDevice->Present(NULL, NULL, NULL, NULL);
 	}
 	CameraManager::Set(CameraManager::SINGLE);
 }
