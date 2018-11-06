@@ -51,6 +51,8 @@ public:
 		STAGE,
 		SELECTFACE,
 		TITLELOGO,
+		TITLEMESH,
+		GAGE,
 		PARTICLE
 	};
 	// ルートポインタ

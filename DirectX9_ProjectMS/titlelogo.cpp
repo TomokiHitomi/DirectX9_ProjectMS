@@ -8,7 +8,10 @@
 #include "input.h"
 #include "titlelogo.h"
 #include <math.h>
-
+// デバッグ用
+#ifdef _DEBUG
+#include "debugproc.h"
+#endif
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
@@ -60,6 +63,7 @@ HRESULT Titlelogo::Init()
 			Title[i].Pos = D3DXVECTOR3(TEXTURE_TITLELOGO_POSITION000_X, TEXTURE_TITLELOGO_POSITION000_Y, 0.0f);
 			Title[i].TextureSize = D3DXVECTOR2(TEXTURE_TITLELOGO_SIZE000_X, TEXTURE_TITLELOGO_SIZE000_Y);
 			Title[i].Count = 0;
+			Title[i].Alfa = 255;
 			Title[i].Use = true;
 			Title[i].Texture = Title[i].pD3DTexture;
 		}
@@ -72,7 +76,9 @@ HRESULT Titlelogo::Init()
 			Title[i].Pos = D3DXVECTOR3(TEXTURE_TITLELOGO_POSITION001_X, TEXTURE_TITLELOGO_POSITION001_Y, 0.0f);
 			Title[i].TextureSize = D3DXVECTOR2(TEXTURE_TITLELOGO_SIZE001_X, TEXTURE_TITLELOGO_SIZE001_Y);
 			Title[i].Count = 0;
+			Title[i].Alfa = 254;
 			Title[i].Use = true;
+			Title[i].Flash = true;
 			Title[i].Texture = Title[i].pD3DTexture;
 		}
 		MakeVertexTitlelogo(i);
@@ -102,26 +108,48 @@ void Titlelogo::Uninit(void)
 //=============================================================================
 void Titlelogo::Update(void)
 {
+#ifdef _DEBUG
+	PrintDebugProc("Title[0].Alfa:%d\n", Title[0].Alfa);
+	PrintDebugProc("\n");
+
+	PrintDebugProc("Title[1].Alfa:%d\n", Title[1].Alfa);
+	PrintDebugProc("\n");
+#endif
 	for (int i = 0; i< NUM_TITLELOGO; i++)
 	{
+		if (GetKeyboardPress(DIK_DOWN))
+		{
+			Title[0].Pos.y--;
+		}
+		if (GetKeyboardPress(DIK_UP))
+		{
+			Title[0].Pos.y++;
+		}
+
 		if (i == 1)
 		{
-
-			
-			if (Title[1].Count < FRAME)
+			Title[i].Count++;
+			if (Title[i].Count < FRAME)
 			{
-				Title[1].Count++;
-				Title[1].Alfa -= 255 / FRAME;
+				Title[i].TextureSize.x -= TEXTURE_TITLELOGO_PIXEL001_X / SCREEN_WIDTH;
+				Title[i].TextureSize.y -= TEXTURE_TITLELOGO_PIXEL001_Y / SCREEN_HEIGHT;
+				Title[i].Alfa -= TEXTURE_TITLELOGO_COLOR_DEFAULT_A /FRAME;
 			}
-			if (Title[1].Count >= FRAME && Title[1].Count < FRAME * 2)
+			if (Title[i].Count >= FRAME && Title[i].Count < FRAME*2 && Title[i].Alfa <= TEXTURE_TITLELOGO_COLOR_DEFAULT_A)
 			{
-				Title[1].Count++;
-				Title[1].Alfa += 255 / FRAME;
+				Title[i].TextureSize.x += TEXTURE_TITLELOGO_PIXEL001_X / SCREEN_WIDTH;
+				Title[i].TextureSize.y += TEXTURE_TITLELOGO_PIXEL001_Y / SCREEN_HEIGHT;
+				Title[i].Alfa += TEXTURE_TITLELOGO_COLOR_DEFAULT_A /FRAME;
 			}
-			if (Title[1].Count >= FRAME * 2)
+			if (Title[i].Count >= FRAME * 2)
 			{
-				Title[1].Count = 0;
-				Title[1].Alfa = 255;
+				Title[i].Count = 0;
+				Title[i].Alfa = TEXTURE_TITLELOGO_COLOR_DEFAULT_A;
+			}
+			if (Title[i].Alfa >= TEXTURE_TITLELOGO_COLOR_DEFAULT_A)
+			{
+				Title[i].Count = 0;
+				Title[i].Alfa = TEXTURE_TITLELOGO_COLOR_DEFAULT_A;
 			}
 		}
 		//	頂点カラーの設定

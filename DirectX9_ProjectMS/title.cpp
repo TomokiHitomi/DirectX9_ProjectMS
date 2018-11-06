@@ -19,6 +19,7 @@
 #include "cube.h"
 #include "stage.h"
 #include "titlelogo.h"
+#include "gage.h"
 /* Debug */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -63,6 +64,8 @@ TitleScene::TitleScene(void)
 {
 	new Skydome;
 	ObjectManager::CreateObject<Titlelogo>();
+	ObjectManager::CreateObject<Gage>();
+
 }
 //=============================================================================
 // デストラクタ処理（終了）
