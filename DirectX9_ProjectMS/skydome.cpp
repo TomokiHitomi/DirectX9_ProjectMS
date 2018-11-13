@@ -45,7 +45,7 @@ Skydome::Skydome(void)
 	//m_CSkinMesh->Init(pDevice, "data/MODEL/Yuko.x");
 	m_CXModel = new CXModel;
 	m_CXModel->Init(pDevice, SKYDOME_MODEL, SKYDOME_TEXTURE);
-
+	m_CXModel->SetLight(false);	// ƒ‰ƒCƒg‚ðOFF
 }
 
 //=============================================================================

@@ -14,8 +14,9 @@
 // マクロ定義
 //*****************************************************************************
 //#define	TEXTURE_EFFECT	"data/TEXTURE/effect000.jpg"						// 読み込むテクスチャファイル名
-#define	PARTICLE_TEXTURE	"data/TEXTURE/effect.png"						// 読み込むテクスチャファイル名
-#define PARTICLE_SHADER_FILE			"data/SHADER/sprite.fx"
+#define	PARTICLE_TEXTURE				"data/TEXTURE/effect.png"						// 読み込むテクスチャファイル名
+//#define PARTICLE_SHADER_FILE			"data/SHADER/sprite.fx"
+//#define PARTICLE_SHADER_FILE			"data/SHADER/plane.fx"
 
 // テクスチャ内分割数
 #define PARTICLE_TEXTURE_PATTERN_DIVIDE_X	(1)
@@ -36,6 +37,10 @@
 // １フレームの生成量
 #define PARTICLE_SET			(500)
 
+
+//*****************************************************************************
+// クラス定義
+//*****************************************************************************
 class Particle
 {
 private:
@@ -46,9 +51,7 @@ private:
 	LPDIRECT3DVERTEXDECLARATION9	pDecl;		// 頂点宣言
 
 	// シェーダー関連
-	LPD3DXBUFFER					pErrorBuff;
 	LPD3DXEFFECT					pEffect;
-	UINT							numPass;
 
 	int								nCount;
 	int								nColor;

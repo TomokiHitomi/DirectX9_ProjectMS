@@ -207,6 +207,9 @@
     <ClInclude Include="particle.h">
       <Filter>ソース ファイル\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>ソース ファイル\Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -311,9 +314,21 @@
     <ClCompile Include="particle.cpp">
       <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="shader.cpp">
+      <Filter>ソース ファイル\Shader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="data\SHADER\sprite.fx">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="data\SHADER\xmodel.fx">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="data\SHADER\billboard.fx">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="data\SHADER\skinmesh.fx">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>

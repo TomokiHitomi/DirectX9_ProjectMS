@@ -27,10 +27,14 @@
 class CXModel
 {
 private:
-	LPDIRECT3DTEXTURE9	m_pD3DTexture;		// テクスチャへのポインタ
-	LPD3DXMESH			m_pD3DXMesh;		// メッシュ情報へのポインタ
-	LPD3DXBUFFER		m_pD3DXBuffMat;		// マテリアル情報へのポインタ
-	DWORD				m_nNumMat;			// マテリアル情報の数
+	// シェーダー関連
+	LPD3DXEFFECT		pEffect;
+
+	LPDIRECT3DTEXTURE9	pTexture;		// テクスチャへのポインタ
+	LPD3DXMESH			pMesh;			// メッシュ情報へのポインタ
+	LPD3DXBUFFER		pBuffMat;		// マテリアル情報へのポインタ
+	DWORD				dwNumMat;		// マテリアル情報の数
+	bool				bLight;
 public:
 	// コンストラクタ
 	CXModel();
@@ -45,5 +49,7 @@ public:
 	void Update(void);
 	// 描画処理
 	void Draw(D3DXMATRIX);
+	// ライト設定処理
+	void SetLight(bool bUse) { bLight = bUse; }
 };
 #endif

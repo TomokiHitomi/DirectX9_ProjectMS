@@ -51,13 +51,13 @@ int					SceneManager::m_nTotalBurnChain;
 int					SceneManager::m_nMulti;
 CharacterManager	*SceneManager::CharMgr = NULL;
 CameraManager		*SceneManager::CameraMgr = NULL;
+ShaderManager		*SceneManager::ShaderMgr = NULL;
 
 //=============================================================================
 // シーン管理処理
 //=============================================================================
 void SceneManager::ChangeScene(SCENE scene)
 {
-
 	if (m_pScene != NULL)
 	{
 		delete m_pScene;
@@ -106,6 +106,9 @@ void SceneManager::Init(HINSTANCE hInst, HWND hWnd)
 
 	// カメラマネージャーを実体化
 	CameraMgr = new CameraManager;
+
+	// シェーダマネージャを実体化
+	ShaderMgr = new ShaderManager;
 
 	// キャラクターマネージャーをを使う場合
 	if (CharacterManager::m_bUse)

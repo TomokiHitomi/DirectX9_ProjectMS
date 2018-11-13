@@ -36,5 +36,6 @@ enum
 //*****************************************************************************
 void InitLight(void);
 void SetLight(int nLight, bool bFlag);
+D3DLIGHT9 GetLight(int nLight);
 
 #endif

@@ -9,6 +9,8 @@
 // インクルードファイル
 //*****************************************************************************
 #include "XModel.h"
+#include "shader.h"
+#include "light.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -21,10 +23,13 @@
 CXModel::CXModel(void)
 {
 	// モデル関係の初期化
-	m_pD3DTexture = NULL;
-	m_pD3DXMesh = NULL;
-	m_pD3DXBuffMat = NULL;
-	m_nNumMat = 0;
+	pTexture = NULL;
+	pMesh = NULL;
+	pBuffMat = NULL;
+	dwNumMat = 0;
+	bLight = true;
+
+	pEffect = NULL;
 }
 
 //=============================================================================
@@ -38,10 +43,10 @@ HRESULT CXModel::Init(LPDIRECT3DDEVICE9 pDevice, LPSTR pMeshPass, LPSTR pTexPass
 		D3DXMESH_SYSTEMMEM,		// 使用するメモリのオプション
 		pDevice,				// デバイス
 		NULL,					// 未使用
-		&m_pD3DXBuffMat,		// マテリアルデータ
+		&pBuffMat,				// マテリアルデータ
 		NULL,					// 未使用
-		&m_nNumMat,				// D3DXMATERIAL構造体の数
-		&m_pD3DXMesh)))			// メッシュデータへのポインタ
+		&dwNumMat,				// D3DXMATERIAL構造体の数
+		&pMesh)))				// メッシュデータへのポインタ
 	{
 		MessageBox(NULL, "Xファイルの読み込みに失敗しました", pMeshPass, MB_OK);
 		return E_FAIL;
@@ -51,7 +56,7 @@ HRESULT CXModel::Init(LPDIRECT3DDEVICE9 pDevice, LPSTR pMeshPass, LPSTR pTexPass
 	if (FAILED(D3DXCreateTextureFromFile(
 		pDevice,				// デバイス
 		pTexPass,				// ファイル名
-		&m_pD3DTexture)))		// 読み込むメモリ（複数なら配列に）
+		&pTexture)))			// 読み込むメモリ（複数なら配列に）
 	{
 		MessageBox(NULL, "Xファイルのテクスチャ読み込みに失敗しました", pTexPass, MB_OK);
 		return E_FAIL;
@@ -63,23 +68,9 @@ HRESULT CXModel::Init(LPDIRECT3DDEVICE9 pDevice, LPSTR pMeshPass, LPSTR pTexPass
 //=============================================================================
 void CXModel::Release(void)
 {
-	if (m_pD3DTexture != NULL)
-	{// テクスチャの開放
-		m_pD3DTexture->Release();
-		m_pD3DTexture = NULL;
-	}
-
-	if (m_pD3DXMesh != NULL)
-	{// メッシュの開放
-		m_pD3DXMesh->Release();
-		m_pD3DXMesh = NULL;
-	}
-
-	if (m_pD3DXBuffMat != NULL)
-	{// マテリアルの開放
-		m_pD3DXBuffMat->Release();
-		m_pD3DXBuffMat = NULL;
-	}
+	SAFE_RELEASE(pTexture);
+	SAFE_RELEASE(pMesh);
+	SAFE_RELEASE(pBuffMat);
 }
 
 //=============================================================================
@@ -95,28 +86,84 @@ void CXModel::Update(void)
 void CXModel::Draw(D3DXMATRIX mtxWorld)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	D3DXMATERIAL *pD3DXMat;
-	D3DMATERIAL9 matDef;
+	D3DXMATERIAL *pMat;
+	D3DMATERIAL9 pMatDef;
 
-	// ワールドマトリクスの設定
-	pDevice->SetTransform(D3DTS_WORLD, &mtxWorld);
+	// ビュー・プロジェクション行列を取得
+	D3DXMATRIX mtxView, mtxProjection;
+	pDevice->GetTransform(D3DTS_VIEW, &mtxView);
+	pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjection);
 
-	/******************** ビューポート変換 ********************/
-	// 現在のマテリアルを保存
-	pDevice->GetMaterial(&matDef);
-	// マテリアル情報に対するポインタの取得
-	pD3DXMat = (D3DXMATERIAL*)m_pD3DXBuffMat->GetBufferPointer();
-
-	for (int i = 0; i < (int)m_nNumMat; i++)
+	if (pEffect == NULL)
 	{
-		// マテリアルの設定
-		pDevice->SetMaterial(&pD3DXMat[i].MatD3D);
-		// テクスチャの設定（NULL:テクスチャ無し）
-		pDevice->SetTexture(0, m_pD3DTexture);
-		// 描画
-		m_pD3DXMesh->DrawSubset(i);
+		// シェーダのアドレスを取得
+		pEffect = ShaderManager::GetEffect(ShaderManager::XMODEL);
 	}
 
-	// マテリアルを元に戻す
-	pDevice->SetMaterial(&matDef);
+	// マテリアル情報に対するポインタの取得
+	pMat = (D3DXMATERIAL*)pBuffMat->GetBufferPointer();
+
+
+	// 使用するテクニックを定義
+	if (bLight)
+	{	// ライトON
+		if (FAILED(pEffect->SetTechnique("LIGHT_ON")))
+		{
+			// エラー
+			MessageBox(NULL, "テクニックの定義に失敗しました", "LIGHT_ON", MB_OK);
+			//return S_FALSE;
+		}
+	}
+	else
+	{	// ライトOFF
+		if (FAILED(pEffect->SetTechnique("LIGHT_OFF")))
+		{
+			// エラー
+			MessageBox(NULL, "テクニックの定義に失敗しました", "LIGHT_OFF", MB_OK);
+			//return S_FALSE;
+		}
+	}
+
+	// シェーダーの開始、numPassには指定してあるテクニックに定義してあるpassの数が変える
+	UINT numPass = 0;
+	pEffect->Begin(&numPass, 0);
+
+	// パスを指定して開始
+	pEffect->BeginPass(0);
+
+	// 必要な行列情報をセット
+	pEffect->SetMatrix("proj", &mtxProjection);
+	pEffect->SetMatrix("view", &mtxView);
+	pEffect->SetMatrix("world", &mtxWorld);
+
+	if (bLight)
+	{	// ライトON
+		// ライト情報をセット
+		SetShaderLight(pEffect, GetLight(0));
+	}
+
+	//メッシュの描画
+	D3DXVECTOR4  temp;
+	for (int i = 0; i < (int)dwNumMat; i++)
+	{
+		if (bLight)
+		{	// ライトON
+			// マテリアルをセット
+			SetShaderMat(pEffect, pMat[i].MatD3D);
+		}
+
+		// テクスチャをセット
+		pEffect->SetTexture("tex", pTexture);
+
+		// 結果を確定させる
+		pEffect->CommitChanges();
+
+		// 描画
+		pMesh->DrawSubset(i);
+	}
+
+	// シェーダーパスを終了
+	pEffect->EndPass();
+	// シェーダーを終了
+	pEffect->End();
 }

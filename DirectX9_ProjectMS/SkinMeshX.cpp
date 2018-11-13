@@ -342,16 +342,16 @@ HRESULT MY_HIERARCHY::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA* pMesh
 	//シェーダで描画する場合は別途変換が必要
 	//頂点単位でのブレンドの重みとボーンの組み合わせテーブルを適応した新しいメッシュを返す。
 	if (FAILED(pMeshContainer->pSkinInfo->ConvertToBlendedMesh(
-		pMeshContainer->pOriMesh, //元のメッシュデータアドレス
-		NULL, //オプション(現在は使われていないためNULLでいい)	
-		pMeshContainer->pAdjacency, //元のメッシュの隣接性情報
-		NULL, //出力メッシュの隣接性情報
-		NULL, //各面の新しいインデックス値格納用変数のアドレス
-		NULL, //角頂点の新しいインデックス値格納用変数のアドレス
-		&pMeshContainer->dwWeight, //ボーンの影響の一面当たりの最大数格納用変数のアドレス
-		&pMeshContainer->dwBoneNum, //ボーンの組み合わせテーブルに含まれるボーン数格納用変数のアドレス
-		&pMeshContainer->pBoneBuffer, //ボーンの組み合わせテーブルへのポインタ
-		&pMeshContainer->MeshData.pMesh //出力されるメッシュアドレス格納用変数のアドレス(固定パイプライン用)
+		pMeshContainer->pOriMesh,		//元のメッシュデータアドレス
+		NULL,							//オプション(現在は使われていないためNULLでいい)	
+		pMeshContainer->pAdjacency,		//元のメッシュの隣接性情報
+		NULL,							//出力メッシュの隣接性情報
+		NULL,							//各面の新しいインデックス値格納用変数のアドレス
+		NULL,							//角頂点の新しいインデックス値格納用変数のアドレス
+		&pMeshContainer->dwWeight,		//ボーンの影響の一面当たりの最大数格納用変数のアドレス
+		&pMeshContainer->dwBoneNum,		//ボーンの組み合わせテーブルに含まれるボーン数格納用変数のアドレス
+		&pMeshContainer->pBoneBuffer,	//ボーンの組み合わせテーブルへのポインタ
+		&pMeshContainer->MeshData.pMesh	//出力されるメッシュアドレス格納用変数のアドレス(固定パイプライン用)
 	)))
 	{
 		return E_FAIL;

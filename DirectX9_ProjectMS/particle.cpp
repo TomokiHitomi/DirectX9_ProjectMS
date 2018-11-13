@@ -9,6 +9,7 @@
 #include "input.h"
 #include "calculate.h"
 #include "camera.h"
+#include "shader.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -100,9 +101,7 @@ Particle::Particle()
 	pDecl = NULL;		// 頂点宣言
 
 	// シェーダ関連の初期化
-	pErrorBuff = NULL;	// シェーダ用コンパイルエラー
 	pEffect = NULL;		// シェーダ
-	numPass = 0;
 
 	// カウンタの初期化
 	nCount = 0;
@@ -133,23 +132,18 @@ HRESULT Particle::Init(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	const char* path = PARTICLE_SHADER_FILE;
-	// ファイル( const char* path )からシェーダーファイルを読み込み読み込み
-	if (FAILED(D3DXCreateEffectFromFile(
-		pDevice, path, 0, 0, 0, 0, &pEffect, &pErrorBuff)))
-	{
-		// エラー
-		MessageBox(NULL, "シェーダファイルの読み込みに失敗しました", path, MB_OK);
-		return S_FALSE;
-	}
+	//const char* path = SHADER_FILE_BILLBOARD;
+	//// ファイル( const char* path )からシェーダーファイルを読み込み読み込み
+	//if (FAILED(D3DXCreateEffectFromFile(
+	//	pDevice, path, 0, 0, 0, 0, &pEffect, &pErrorBuff)))
+	//{
+	//	// エラー
+	//	MessageBox(NULL, "シェーダファイルの読み込みに失敗しました", path, MB_OK);
+	//	return S_FALSE;
+	//}
 
-	// 使用するテクニックを定義
-	if (FAILED(pEffect->SetTechnique("Tec01")))
-	{
-		// エラー
-		MessageBox(NULL, "テクニックの定義に失敗しました", "Tec01", MB_OK);
-		return S_FALSE;
-	}
+	// シェーダのアドレスを取得
+	pEffect = ShaderManager::GetEffect(ShaderManager::BILLBOARD);
 
 	// テクスチャの読み込み
 	if (FAILED(D3DXCreateTextureFromFile(pDevice,
@@ -177,8 +171,8 @@ void Particle::Release(void)
 	SAFE_RELEASE(pInstBuff);	// インスタンシングバッファ
 	SAFE_RELEASE(pIdxBuff);		// インデックスバッファ
 	SAFE_RELEASE(pDecl);		// 頂点宣言
-	SAFE_RELEASE(pErrorBuff);	// シェーダ用コンパイルエラー
-	SAFE_RELEASE(pEffect);		// シェーダ
+	//SAFE_RELEASE(pErrorBuff);	// シェーダ用コンパイルエラー
+	//SAFE_RELEASE(pEffect);		// シェーダ
 }
 
 //=============================================================================
@@ -283,10 +277,16 @@ void Particle::Draw(void)
 		pDevice->SetStreamSource(1, pInstBuff, 0, sizeof(INSTANCE_PLANE));	// インスタンスバッファ
 		pDevice->SetIndices(pIdxBuff);										// インデックスバッファ
 
-		// テクニックを設定
-		pEffect->SetTechnique("Tec01");
+		// 使用するテクニックを定義
+		if (FAILED(pEffect->SetTechnique("Tec01")))
+		{
+			// エラー
+			MessageBox(NULL, "テクニックの定義に失敗しました", "Tec01", MB_OK);
+			//return S_FALSE;
+		}
 
-		// シェーダーの開始、passNumには指定してあるテクニックに定義してあるpassの数が変える
+		// シェーダーの開始、numPassには指定してあるテクニックに定義してあるpassの数が変える
+		UINT numPass = 0;
 		pEffect->Begin(&numPass, 0);
 
 		// パスを指定して開始

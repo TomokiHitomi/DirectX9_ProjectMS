@@ -14,6 +14,7 @@
 #include "object.h"
 #include "character.h"
 #include "camera.h"
+#include "shader.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -78,6 +79,7 @@ private:
 	static int				m_nMulti;			// ２画面フラグ
 	static CharacterManager *CharMgr;
 	static CameraManager	*CameraMgr;
+	static ShaderManager	*ShaderMgr;
 public:
 	static CharacterManager *GetCharMgr(void) { return CharMgr; }
 

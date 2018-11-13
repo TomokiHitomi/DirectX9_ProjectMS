@@ -238,3 +238,11 @@ void SetLight(int nLight, bool bFlag)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	pDevice->LightEnable(nLight, bFlag);
 }
+
+//=============================================================================
+// ライト取得処理
+//=============================================================================
+D3DLIGHT9 GetLight(int nLight)
+{	
+	return g_aLight[nLight];
+}
