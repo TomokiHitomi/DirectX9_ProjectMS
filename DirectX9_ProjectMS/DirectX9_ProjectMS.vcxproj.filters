@@ -210,6 +210,12 @@
     <ClInclude Include="shader.h">
       <Filter>ソース ファイル\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="titlemesh.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="gage.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -316,6 +322,12 @@
     </ClCompile>
     <ClCompile Include="shader.cpp">
       <Filter>ソース ファイル\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="titlemesh.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="gage.cpp">
+      <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

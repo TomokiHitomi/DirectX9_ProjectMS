@@ -181,6 +181,7 @@
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="fade.h" />
+    <ClInclude Include="gage.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="include\Effekseer\Effekseer.h" />
     <ClInclude Include="include\Effekseer\EffekseerRendererDX11.h" />
@@ -225,6 +226,7 @@
     <ClInclude Include="stage.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="titlelogo.h" />
+    <ClInclude Include="titlemesh.h" />
     <ClInclude Include="wing.h" />
     <ClInclude Include="XModel.h" />
     <ClInclude Include="XTexture.h" />
@@ -238,6 +240,7 @@
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="fade.cpp" />
+    <ClCompile Include="gage.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
@@ -262,6 +265,7 @@
     <ClCompile Include="stage.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="titlelogo.cpp" />
+    <ClCompile Include="titlemesh.cpp" />
     <ClCompile Include="wing.cpp" />
     <ClCompile Include="XModel.cpp" />
     <ClCompile Include="XTexture.cpp" />
