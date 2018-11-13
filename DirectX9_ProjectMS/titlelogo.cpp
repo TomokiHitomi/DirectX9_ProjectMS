@@ -117,14 +117,6 @@ void Titlelogo::Update(void)
 #endif
 	for (int i = 0; i< NUM_TITLELOGO; i++)
 	{
-		if (GetKeyboardPress(DIK_DOWN))
-		{
-			Title[0].Pos.y--;
-		}
-		if (GetKeyboardPress(DIK_UP))
-		{
-			Title[0].Pos.y++;
-		}
 
 		if (i == 1)
 		{

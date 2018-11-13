@@ -143,6 +143,188 @@ HRESULT Gage::Init()
 			GageObj[i].Damege = true;
 			GageObj[i].Texture = GageObj[i].pD3DTexture;
 		}
+		if (i == 6)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_006, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION006_X, TEXTURE_GAGE_POSITION006_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE006_X, TEXTURE_GAGE_SIZE006_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 7)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_007, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION007_X, TEXTURE_GAGE_POSITION007_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE007_X, TEXTURE_GAGE_SIZE007_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 8)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_008, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION008_X, TEXTURE_GAGE_POSITION008_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE008_X, TEXTURE_GAGE_SIZE008_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 9)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_009, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION009_X, TEXTURE_GAGE_POSITION009_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE009_X, TEXTURE_GAGE_SIZE009_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 10)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_010, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION010_X, TEXTURE_GAGE_POSITION010_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE010_X, TEXTURE_GAGE_SIZE010_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 11)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_011, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION011_X, TEXTURE_GAGE_POSITION011_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE011_X, TEXTURE_GAGE_SIZE011_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 12)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_012, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION012_X, TEXTURE_GAGE_POSITION012_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE012_X, TEXTURE_GAGE_SIZE012_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 13)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_013, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION013_X, TEXTURE_GAGE_POSITION013_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE013_X, TEXTURE_GAGE_SIZE013_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 14)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_014, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION014_X, TEXTURE_GAGE_POSITION014_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE014_X, TEXTURE_GAGE_SIZE014_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 15)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_015, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION015_X, TEXTURE_GAGE_POSITION015_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE015_X, TEXTURE_GAGE_SIZE015_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 16)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_016, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION016_X, TEXTURE_GAGE_POSITION016_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE016_X, TEXTURE_GAGE_SIZE016_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 17)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_017, &GageObj[i].pD3DTexture);
+			}
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION017_X, TEXTURE_GAGE_POSITION017_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE017_X, TEXTURE_GAGE_SIZE017_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		GageObj[i].Scale = D3DXVECTOR2(TEXTURE_GAGE_SCALE_X, TEXTURE_GAGE_SCALE_Y);
+		GageObj[i].Angle = TEXTURE_GAGE_ANGLE_X;
 		MakeVertexGage(i);
 	}
 	return S_OK;
@@ -197,27 +379,127 @@ void Gage::Update(void)
 		//{
 		//	GageObj[3].TextureSize.x--;
 		//}
-		if (GetKeyboardPress(DIK_5))
+		if (GetKeyboardPress(DIK_1))
 		{
 			GageObj[2].Use = true;
 			GageObj[4].TextureSize.x--;
-			GageObj[4].TextureSizeAdd.y-=0.14f;
+
+		}
+		if (GetKeyboardPress(DIK_2))
+		{
+			GageObj[3].Use = true;
+			GageObj[5].TextureSize.x--;
+		}
+		if (GetKeyboardRelease(DIK_1))
+		{
+			GageObj[2].Use = false;
+		}
+		if (GetKeyboardRelease(DIK_2))
+		{
+			GageObj[3].Use = false;
+		}
+		if (GetKeyboardPress(DIK_3))
+		{
+			GageObj[8].TextureSize.x++;
+
+		}
+		if (GetKeyboardPress(DIK_4))
+		{
+			GageObj[9].TextureSize.x++;
+		}
+		if (GetKeyboardPress(DIK_5))
+		{
+			GageObj[8].TextureSize.x--;
+			GageObj[8].TextureSizeAdd.y -= 0.14f;
 
 		}
 		if (GetKeyboardPress(DIK_6))
 		{
-			GageObj[3].Use = true;
-			GageObj[5].TextureSize.x--;
-			GageObj[5].TextureSizeAdd.y -= 0.14f;
+			GageObj[9].TextureSize.x--;
+			GageObj[9].TextureSizeAdd.y -= 0.14f;
+		}
+		if (GetKeyboardPress(DIK_Q))
+		{
+			GageObj[10].Use = true;
+			GageObj[11].Use = false;
+			GageObj[12].Use = false;
+			GageObj[13].Use = false;
+		}
+		if (GetKeyboardPress(DIK_W))
+		{
+			GageObj[10].Use = false;
+			GageObj[11].Use = true;
+			GageObj[12].Use = false;
+			GageObj[13].Use = false;
+		}
+		if (GetKeyboardPress(DIK_E))
+		{
+			GageObj[10].Use = false;
+			GageObj[11].Use = false;
+			GageObj[12].Use = true;
+			GageObj[13].Use = false;
+		}
+		if (GetKeyboardPress(DIK_R))
+		{
+			GageObj[10].Use = false;
+			GageObj[11].Use = false;
+			GageObj[12].Use = false;
+			GageObj[13].Use = true;
+		}
+		if (GetKeyboardPress(DIK_A))
+		{
+			GageObj[14].Use = true;
+			GageObj[15].Use = false;
+			GageObj[16].Use = false;
+			GageObj[17].Use = false;
+		}
+		if (GetKeyboardPress(DIK_S))
+		{
+			GageObj[14].Use = false;
+			GageObj[15].Use = true;
+			GageObj[16].Use = false;
+			GageObj[17].Use = false;
+		}
+		if (GetKeyboardPress(DIK_D))
+		{
+			GageObj[14].Use = false;
+			GageObj[15].Use = false;
+			GageObj[16].Use = true;
+			GageObj[17].Use = false;
+		}
+		if (GetKeyboardPress(DIK_F))
+		{
+			GageObj[14].Use = false;
+			GageObj[15].Use = false;
+			GageObj[16].Use = false;
+			GageObj[17].Use = true;
+		}
+		if (GetKeyboardPress(DIK_UP))
+		{
+			GageObj[i].Pos.y--;
+		}
+		if (GetKeyboardPress(DIK_DOWN))
+		{
+			GageObj[i].Pos.y++;
+		}
+		if (GetKeyboardPress(DIK_RIGHT))
+		{
+			GageObj[i].Angle-=0.01;
+		}
+		if (GetKeyboardPress(DIK_LEFT))
+		{
+			GageObj[i].Angle+=0.01;
+		}
+		if (GetKeyboardPress(DIK_Z))
+		{
+			GageObj[i].Scale.x += 0.01;
+			GageObj[i].Scale.y += 0.01;
 
 		}
-		if (GetKeyboardRelease(DIK_5))
+		if (GetKeyboardPress(DIK_X))
 		{
-			GageObj[2].Use = false;
-		}
-		if (GetKeyboardRelease(DIK_6))
-		{
-			GageObj[3].Use = false;
+			GageObj[i].Scale.x -= 0.01;
+			GageObj[i].Scale.y -= 0.01;
 		}
 
 	//	if (i == 1)
@@ -279,20 +561,21 @@ void Gage::Draw(void)
 //=============================================================================
 void Gage::SetVertexGage(int CreateCount)
 {
-
+	if (CreateCount < NUM_GAGE)
+	{
 		GageObj[CreateCount].vertexWk[0].vtx.x = GageObj[CreateCount].Pos.x;
 		GageObj[CreateCount].vertexWk[0].vtx.y = GageObj[CreateCount].Pos.y;
 		GageObj[CreateCount].vertexWk[0].vtx.z = 0.0f;
-		GageObj[CreateCount].vertexWk[1].vtx.x = GageObj[CreateCount].Pos.x + GageObj[CreateCount].TextureSize.x;
-		GageObj[CreateCount].vertexWk[1].vtx.y = GageObj[CreateCount].Pos.y - GageObj[CreateCount].TextureSizeAdd.y;
+		GageObj[CreateCount].vertexWk[1].vtx.x = GageObj[CreateCount].Pos.x + (cosf(GageObj[CreateCount].Angle)*GageObj[CreateCount].TextureSize.x);
+		GageObj[CreateCount].vertexWk[1].vtx.y = GageObj[CreateCount].Pos.y + (sinf(GageObj[CreateCount].Angle)*GageObj[CreateCount].TextureSize.x);
 		GageObj[CreateCount].vertexWk[1].vtx.z = 0.0f;
 		GageObj[CreateCount].vertexWk[2].vtx.x = GageObj[CreateCount].Pos.x;
 		GageObj[CreateCount].vertexWk[2].vtx.y = GageObj[CreateCount].Pos.y + GageObj[CreateCount].TextureSize.y;
 		GageObj[CreateCount].vertexWk[2].vtx.z = 0.0f;
-		GageObj[CreateCount].vertexWk[3].vtx.x = GageObj[CreateCount].Pos.x + GageObj[CreateCount].TextureSize.x;
-		GageObj[CreateCount].vertexWk[3].vtx.y = GageObj[CreateCount].Pos.y + GageObj[CreateCount].TextureSize.y - GageObj[CreateCount].TextureSizeAdd.y;
+		GageObj[CreateCount].vertexWk[3].vtx.x = GageObj[CreateCount].Pos.x + (cosf(GageObj[CreateCount].Angle)*GageObj[CreateCount].TextureSize.x);
+		GageObj[CreateCount].vertexWk[3].vtx.y = GageObj[CreateCount].Pos.y + (sinf(GageObj[CreateCount].Angle)*GageObj[CreateCount].TextureSize.x)+GageObj[CreateCount].TextureSize.y;
 		GageObj[CreateCount].vertexWk[3].vtx.z = 0.0f;
-	
+	}
 }
 
 //=============================================================================
@@ -342,7 +625,90 @@ void Gage::SetTextureGage(int i)
 		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT005_R, TEXTURE_GAGE_COLOR_DEFAULT005_G, TEXTURE_GAGE_COLOR_DEFAULT005_B, TEXTURE_GAGE_COLOR_DEFAULT005_A);
 		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT005_R, TEXTURE_GAGE_COLOR_DEFAULT005_G, TEXTURE_GAGE_COLOR_DEFAULT005_B, TEXTURE_GAGE_COLOR_DEFAULT005_A);
 	}
-
+	if (i == 6)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT006_R, TEXTURE_GAGE_COLOR_DEFAULT006_G, TEXTURE_GAGE_COLOR_DEFAULT006_B, TEXTURE_GAGE_COLOR_DEFAULT006_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT006_R, TEXTURE_GAGE_COLOR_DEFAULT006_G, TEXTURE_GAGE_COLOR_DEFAULT006_B, TEXTURE_GAGE_COLOR_DEFAULT006_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT006_R, TEXTURE_GAGE_COLOR_DEFAULT006_G, TEXTURE_GAGE_COLOR_DEFAULT006_B, TEXTURE_GAGE_COLOR_DEFAULT006_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT006_R, TEXTURE_GAGE_COLOR_DEFAULT006_G, TEXTURE_GAGE_COLOR_DEFAULT006_B, TEXTURE_GAGE_COLOR_DEFAULT006_A);
+	}
+	if (i == 7)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT007_R, TEXTURE_GAGE_COLOR_DEFAULT007_G, TEXTURE_GAGE_COLOR_DEFAULT007_B, TEXTURE_GAGE_COLOR_DEFAULT007_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT007_R, TEXTURE_GAGE_COLOR_DEFAULT007_G, TEXTURE_GAGE_COLOR_DEFAULT007_B, TEXTURE_GAGE_COLOR_DEFAULT007_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT007_R, TEXTURE_GAGE_COLOR_DEFAULT007_G, TEXTURE_GAGE_COLOR_DEFAULT007_B, TEXTURE_GAGE_COLOR_DEFAULT007_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT007_R, TEXTURE_GAGE_COLOR_DEFAULT007_G, TEXTURE_GAGE_COLOR_DEFAULT007_B, TEXTURE_GAGE_COLOR_DEFAULT007_A);
+	}
+	if (i == 8)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT008_R, TEXTURE_GAGE_COLOR_DEFAULT008_G, TEXTURE_GAGE_COLOR_DEFAULT008_B, TEXTURE_GAGE_COLOR_DEFAULT008_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT008_R, TEXTURE_GAGE_COLOR_DEFAULT008_G, TEXTURE_GAGE_COLOR_DEFAULT008_B, TEXTURE_GAGE_COLOR_DEFAULT008_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT008_R, TEXTURE_GAGE_COLOR_DEFAULT008_G, TEXTURE_GAGE_COLOR_DEFAULT008_B, TEXTURE_GAGE_COLOR_DEFAULT008_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT008_R, TEXTURE_GAGE_COLOR_DEFAULT008_G, TEXTURE_GAGE_COLOR_DEFAULT008_B, TEXTURE_GAGE_COLOR_DEFAULT008_A);
+	}
+	if (i == 9)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT009_R, TEXTURE_GAGE_COLOR_DEFAULT009_G, TEXTURE_GAGE_COLOR_DEFAULT009_B, TEXTURE_GAGE_COLOR_DEFAULT009_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT009_R, TEXTURE_GAGE_COLOR_DEFAULT009_G, TEXTURE_GAGE_COLOR_DEFAULT009_B, TEXTURE_GAGE_COLOR_DEFAULT009_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT009_R, TEXTURE_GAGE_COLOR_DEFAULT009_G, TEXTURE_GAGE_COLOR_DEFAULT009_B, TEXTURE_GAGE_COLOR_DEFAULT009_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT009_R, TEXTURE_GAGE_COLOR_DEFAULT009_G, TEXTURE_GAGE_COLOR_DEFAULT009_B, TEXTURE_GAGE_COLOR_DEFAULT009_A);
+	}
+	if (i == 10)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT010_R, TEXTURE_GAGE_COLOR_DEFAULT010_G, TEXTURE_GAGE_COLOR_DEFAULT010_B, TEXTURE_GAGE_COLOR_DEFAULT010_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT010_R, TEXTURE_GAGE_COLOR_DEFAULT010_G, TEXTURE_GAGE_COLOR_DEFAULT010_B, TEXTURE_GAGE_COLOR_DEFAULT010_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT010_R, TEXTURE_GAGE_COLOR_DEFAULT010_G, TEXTURE_GAGE_COLOR_DEFAULT010_B, TEXTURE_GAGE_COLOR_DEFAULT010_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT010_R, TEXTURE_GAGE_COLOR_DEFAULT010_G, TEXTURE_GAGE_COLOR_DEFAULT010_B, TEXTURE_GAGE_COLOR_DEFAULT010_A);
+	}
+	if (i == 11)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT011_R, TEXTURE_GAGE_COLOR_DEFAULT011_G, TEXTURE_GAGE_COLOR_DEFAULT011_B, TEXTURE_GAGE_COLOR_DEFAULT011_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT011_R, TEXTURE_GAGE_COLOR_DEFAULT011_G, TEXTURE_GAGE_COLOR_DEFAULT011_B, TEXTURE_GAGE_COLOR_DEFAULT011_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT011_R, TEXTURE_GAGE_COLOR_DEFAULT011_G, TEXTURE_GAGE_COLOR_DEFAULT011_B, TEXTURE_GAGE_COLOR_DEFAULT011_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT011_R, TEXTURE_GAGE_COLOR_DEFAULT011_G, TEXTURE_GAGE_COLOR_DEFAULT011_B, TEXTURE_GAGE_COLOR_DEFAULT011_A);
+	}
+	if (i == 12)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT012_R, TEXTURE_GAGE_COLOR_DEFAULT012_G, TEXTURE_GAGE_COLOR_DEFAULT012_B, TEXTURE_GAGE_COLOR_DEFAULT012_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT012_R, TEXTURE_GAGE_COLOR_DEFAULT012_G, TEXTURE_GAGE_COLOR_DEFAULT012_B, TEXTURE_GAGE_COLOR_DEFAULT012_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT012_R, TEXTURE_GAGE_COLOR_DEFAULT012_G, TEXTURE_GAGE_COLOR_DEFAULT012_B, TEXTURE_GAGE_COLOR_DEFAULT012_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT012_R, TEXTURE_GAGE_COLOR_DEFAULT012_G, TEXTURE_GAGE_COLOR_DEFAULT012_B, TEXTURE_GAGE_COLOR_DEFAULT012_A);
+	}
+	if (i == 13)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT013_R, TEXTURE_GAGE_COLOR_DEFAULT013_G, TEXTURE_GAGE_COLOR_DEFAULT013_B, TEXTURE_GAGE_COLOR_DEFAULT013_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT013_R, TEXTURE_GAGE_COLOR_DEFAULT013_G, TEXTURE_GAGE_COLOR_DEFAULT013_B, TEXTURE_GAGE_COLOR_DEFAULT013_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT013_R, TEXTURE_GAGE_COLOR_DEFAULT013_G, TEXTURE_GAGE_COLOR_DEFAULT013_B, TEXTURE_GAGE_COLOR_DEFAULT013_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT013_R, TEXTURE_GAGE_COLOR_DEFAULT013_G, TEXTURE_GAGE_COLOR_DEFAULT013_B, TEXTURE_GAGE_COLOR_DEFAULT013_A);
+	}
+	if (i == 14)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT014_R, TEXTURE_GAGE_COLOR_DEFAULT014_G, TEXTURE_GAGE_COLOR_DEFAULT014_B, TEXTURE_GAGE_COLOR_DEFAULT014_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT014_R, TEXTURE_GAGE_COLOR_DEFAULT014_G, TEXTURE_GAGE_COLOR_DEFAULT014_B, TEXTURE_GAGE_COLOR_DEFAULT014_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT014_R, TEXTURE_GAGE_COLOR_DEFAULT014_G, TEXTURE_GAGE_COLOR_DEFAULT014_B, TEXTURE_GAGE_COLOR_DEFAULT014_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT014_R, TEXTURE_GAGE_COLOR_DEFAULT014_G, TEXTURE_GAGE_COLOR_DEFAULT014_B, TEXTURE_GAGE_COLOR_DEFAULT014_A);
+	}
+	if (i == 15)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT015_R, TEXTURE_GAGE_COLOR_DEFAULT015_G, TEXTURE_GAGE_COLOR_DEFAULT015_B, TEXTURE_GAGE_COLOR_DEFAULT015_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT015_R, TEXTURE_GAGE_COLOR_DEFAULT015_G, TEXTURE_GAGE_COLOR_DEFAULT015_B, TEXTURE_GAGE_COLOR_DEFAULT015_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT015_R, TEXTURE_GAGE_COLOR_DEFAULT015_G, TEXTURE_GAGE_COLOR_DEFAULT015_B, TEXTURE_GAGE_COLOR_DEFAULT015_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT015_R, TEXTURE_GAGE_COLOR_DEFAULT015_G, TEXTURE_GAGE_COLOR_DEFAULT015_B, TEXTURE_GAGE_COLOR_DEFAULT015_A);
+	}
+	if (i == 16)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT016_R, TEXTURE_GAGE_COLOR_DEFAULT016_G, TEXTURE_GAGE_COLOR_DEFAULT016_B, TEXTURE_GAGE_COLOR_DEFAULT016_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT016_R, TEXTURE_GAGE_COLOR_DEFAULT016_G, TEXTURE_GAGE_COLOR_DEFAULT016_B, TEXTURE_GAGE_COLOR_DEFAULT016_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT016_R, TEXTURE_GAGE_COLOR_DEFAULT016_G, TEXTURE_GAGE_COLOR_DEFAULT016_B, TEXTURE_GAGE_COLOR_DEFAULT016_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT016_R, TEXTURE_GAGE_COLOR_DEFAULT016_G, TEXTURE_GAGE_COLOR_DEFAULT016_B, TEXTURE_GAGE_COLOR_DEFAULT016_A);
+	}
+	if (i == 17)
+	{
+		GageObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT017_R, TEXTURE_GAGE_COLOR_DEFAULT017_G, TEXTURE_GAGE_COLOR_DEFAULT017_B, TEXTURE_GAGE_COLOR_DEFAULT017_A);
+		GageObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT017_R, TEXTURE_GAGE_COLOR_DEFAULT017_G, TEXTURE_GAGE_COLOR_DEFAULT017_B, TEXTURE_GAGE_COLOR_DEFAULT017_A);
+		GageObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT017_R, TEXTURE_GAGE_COLOR_DEFAULT017_G, TEXTURE_GAGE_COLOR_DEFAULT017_B, TEXTURE_GAGE_COLOR_DEFAULT017_A);
+		GageObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GAGE_COLOR_DEFAULT017_R, TEXTURE_GAGE_COLOR_DEFAULT017_G, TEXTURE_GAGE_COLOR_DEFAULT017_B, TEXTURE_GAGE_COLOR_DEFAULT017_A);
+	}
 
 }
 //=============================================================================
