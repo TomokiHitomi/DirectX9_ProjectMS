@@ -97,6 +97,7 @@ void SceneManager::ChangeScene(SCENE scene)
 //=============================================================================
 void SceneManager::Init(HINSTANCE hInst, HWND hWnd)
 {
+	LightManager::Init();	// ライト（シェーダ用）
 	InitLight();			// ライト
 	InitInput(hInst, hWnd);	// 入力
 	InitSound(hWnd);		// サウンド

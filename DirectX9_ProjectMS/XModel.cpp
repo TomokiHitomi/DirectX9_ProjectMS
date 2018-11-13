@@ -11,6 +11,7 @@
 #include "XModel.h"
 #include "shader.h"
 #include "light.h"
+#include "camera.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -138,8 +139,22 @@ void CXModel::Draw(D3DXMATRIX mtxWorld)
 
 	if (bLight)
 	{	// ライトON
+		Camera* pCamera = CameraManager::GetCameraNow();
+		D3DXVECTOR4 eyeTmp = D3DXVECTOR4(pCamera->GetEye(), 0.0f);
+		if (FAILED(pEffect->SetVector("eye",&eyeTmp)))
+		{
+			// エラー
+			MessageBox(NULL, "カメラEye情報のセットに失敗しました。", "eye", MB_OK);
+		}
+		// ライト情報を取得
+		Light* pLight = LightManager::GetLightAdr(LightManager::Main);
 		// ライト情報をセット
-		SetShaderLight(pEffect, GetLight(0));
+		if (FAILED(pEffect->SetValue("lt", &pLight->value, sizeof(Light::LIGHTVALUE))))
+		{
+			// エラー
+			MessageBox(NULL, "ライト情報のセットに失敗しました。", "lt", MB_OK);
+		}
+		//SetShaderLight(pEffect, GetLight(0));
 	}
 
 	//メッシュの描画
@@ -149,7 +164,8 @@ void CXModel::Draw(D3DXMATRIX mtxWorld)
 		if (bLight)
 		{	// ライトON
 			// マテリアルをセット
-			SetShaderMat(pEffect, pMat[i].MatD3D);
+			pEffect->SetValue("mat", &pMat[i].MatD3D, sizeof(D3DMATERIAL9));
+			//SetShaderMat(pEffect, pMat[i].MatD3D);
 		}
 
 		// テクスチャをセット

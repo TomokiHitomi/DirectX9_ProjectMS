@@ -31,6 +31,49 @@ enum
 	LIGHT_SUB2
 };
 
+class Light
+{
+public:
+	typedef struct _LIGHTVALUE
+	{
+		D3DCOLORVALUE   Diffuse;	// 拡散光
+		D3DCOLORVALUE   Ambient;	// 環境光
+		D3DCOLORVALUE   Specular;	// 反射光
+		D3DVECTOR       Position;	// 座標
+		D3DVECTOR       Direction;	// 平行光源
+	}LIGHTVALUE;
+	typedef enum _LIGHTTYPE
+	{
+		POINT,
+		SPOT,
+		DIRECTIONAL
+	}LIGHTTYPE;
+
+	LIGHTTYPE type;
+	LIGHTVALUE value;
+
+	// コンストラクタ
+	Light()
+	{
+		type = DIRECTIONAL;
+		ZeroMemory(&value, sizeof(value));
+	}
+};
+
+class LightManager
+{
+public:
+	enum LightArray
+	{
+		Main,
+		Max
+	};
+	static Light cLight[Max];
+
+	static HRESULT Init();
+	static Light *GetLightAdr(LightArray eLight) { return &cLight[eLight]; }
+};
+
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************

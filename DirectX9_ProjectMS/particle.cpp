@@ -229,7 +229,7 @@ void Particle::Update(void)
 //=============================================================================
 void Particle::Draw(void)
 {
-	if (nCount >= 0)
+	if (nCount > 0)
 	{
 		// デバイスの取得
 		LPDIRECT3DDEVICE9 pDevice = GetDevice();

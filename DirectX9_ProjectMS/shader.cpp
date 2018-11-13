@@ -125,7 +125,7 @@ HRESULT Shader::Init(const char* path)
 		pDevice, path, 0, 0, 0, 0, &pEffect, &pErrorBuff)))
 	{
 		// エラー
-		MessageBox(NULL, "シェーダファイルの読み込みに失敗しました", path, MB_OK);
+		MessageBox(NULL, (LPCTSTR)pErrorBuff->GetBufferPointer(), path, MB_OK);
 		return S_FALSE;
 	}
 	return S_OK;
@@ -175,6 +175,12 @@ D3DXVECTOR4 ShaderColorToVec(D3DCOLORVALUE color)
 //=============================================================================
 void SetShaderMat(LPD3DXEFFECT pEffect, D3DMATERIAL9 pMat)
 {
+	if (FAILED(pEffect->SetValue("mat", &pMat, sizeof(D3DMATERIAL9))))
+	{
+		MessageBox(NULL, "てすと", "mat", MB_OK);
+		//return E_FAIL;
+	}
+
 	D3DXVECTOR4  temp;
 
 	// ディフューズ光用のマテリアルをセット

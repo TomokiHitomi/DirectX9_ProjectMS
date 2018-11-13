@@ -60,6 +60,8 @@ public:
 	static void Update(void);
 	static void Set(CameraType);
 	static CameraType GetType(void) { return eCameraType; }
+	static Camera *GetCamera(CameraType eCT) { return pCamera[eCT]; }
+	static Camera *GetCameraNow(void) { return pCamera[eCameraType]; }
 	static void SetExtension(CameraPort eCP);
 	static void Extension(void);
 };
@@ -104,6 +106,10 @@ public:
 	void AddAtIner(float fIner);
 	void AddEyeIner(float fIner);
 	void AddUpIner(float fIner);
+
+	D3DXVECTOR3 GetAt(void) { return vAt; }
+	D3DXVECTOR3 GetEye(void) { return vEye; }
+	D3DXVECTOR3 GetUp(void) { return vUp; }
 
 	float GetAtIner(void) { return fAtIner; }
 	float GetEyeIner(void) { return fEyeIner; }
