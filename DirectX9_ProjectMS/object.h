@@ -53,6 +53,7 @@ public:
 		TITLELOGO,
 		TITLEMESH,
 		GAGE,
+		RESULTSELECT,
 		PARTICLE
 	};
 	// ルートポインタ

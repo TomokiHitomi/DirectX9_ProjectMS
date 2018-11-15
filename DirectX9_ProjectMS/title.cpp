@@ -20,6 +20,7 @@
 #include "stage.h"
 #include "titlelogo.h"
 #include "gage.h"
+#include "resultselect.h"
 /* Debug */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -65,6 +66,7 @@ TitleScene::TitleScene(void)
 	new Skydome;
 	ObjectManager::CreateObject<Titlelogo>();
 	ObjectManager::CreateObject<Gage>();
+	ObjectManager::CreateObject<Resultselect>();
 
 }
 //=============================================================================
