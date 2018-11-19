@@ -21,17 +21,17 @@
 // マクロ定義
 //*****************************************************************************
 //#define PLAYER_MODEL				("flower.X")
-#define PLAYER_MODEL				("data/MODEL/Yuko.x")
-#define PLAYER_MODEL_FIREMAN		("data/MODEL/hackadollMMD.x")
-#define PLAYER_MODEL_DOCTOR			("data/MODEL/Yuko.x")
+//#define PLAYER_MODEL				("data/MODEL/Yuko.x")
+//#define PLAYER_MODEL_FIREMAN		("data/MODEL/hackadollMMD.x")
+//#define PLAYER_MODEL_DOCTOR			("data/MODEL/Yuko.x")
 
 #define PLAYER_POS					(D3DXVECTOR3(0.0f,0.0f,-20.0f))
 
-#define PLAYER_MODEL_BONE_WING		("No_9_joint_Torso2")
-#define PLAYER_MODEL_BONE_RM		("No_45_joint_RightMiddle2")
+//#define PLAYER_MODEL_BONE_WING		("No_9_joint_Torso2")
+//#define PLAYER_MODEL_BONE_RM		("No_45_joint_RightMiddle2")
 
 // モデルスケール
-#define PLAYER_SCL					(0.1f)
+#define PLAYER_SCL					(0.3f)
 
 #define PLAYER_MOVE_SPEED			(1.0f)
 

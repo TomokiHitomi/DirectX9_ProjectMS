@@ -256,7 +256,7 @@ HRESULT Box::MakeVertex(LPDIRECT3DDEVICE9 pDevice)
 						+ BOX_HEIGHT,
 						i * (PLANE_Y_MAX * PLANE_SIZE_Y * 2 + BOX_MARGIN) / (BOX_Z_MAX - 1)
 						- (PLANE_Y_MAX * PLANE_SIZE_Y * 2 + BOX_MARGIN) / 2);
-					ParticleManager::Set(100, posTmp);
+					ParticleManager::Set(BOX_PARTICLE_MAX, posTmp);
 					if (k == BOX_Y_MAX - 1 || (i == 0 || i == BOX_Z_MAX - 1) || (j == 0 || j == BOX_X_MAX - 1))
 					{
 						pInst->pos = posTmp;

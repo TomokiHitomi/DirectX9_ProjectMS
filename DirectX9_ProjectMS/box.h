@@ -50,6 +50,8 @@
 #define BOX_COLOR_SPEED	(PLANE_COLOR_SPEED)
 #define BOX_COLOR_MAX	(PLANE_COLOR_MAX)
 
+#define BOX_PARTICLE_MAX	(20)
+
 
 //*****************************************************************************
 // ç\ë¢ëÃíËã`
