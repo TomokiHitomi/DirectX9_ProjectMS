@@ -216,6 +216,9 @@
     <ClInclude Include="gage.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="resultselect.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
     <ClInclude Include="stage.h">
       <Filter>ソース ファイル\Stage</Filter>
     </ClInclude>
@@ -336,6 +339,9 @@
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
     <ClCompile Include="gage.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="resultselect.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
     <ClCompile Include="stage.cpp">

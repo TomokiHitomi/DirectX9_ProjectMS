@@ -20,6 +20,9 @@
 #include "stage.h"
 #include "titlelogo.h"
 #include "gage.h"
+#include "resultselect.h"
+#include "particle.h"
+
 /* Debug */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -62,10 +65,11 @@ void TitleScene::Draw(void)
 //=============================================================================
 TitleScene::TitleScene(void)
 {
-	new Skydome;
+	ObjectManager::CreateObject<ParticleManager>();
+	ObjectManager::CreateObject<StageManager>();
 	ObjectManager::CreateObject<Titlelogo>();
 	ObjectManager::CreateObject<Gage>();
-
+	ObjectManager::CreateObject<Resultselect>();
 }
 //=============================================================================
 // デストラクタ処理（終了）

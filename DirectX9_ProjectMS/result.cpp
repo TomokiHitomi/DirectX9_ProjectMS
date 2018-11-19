@@ -55,8 +55,8 @@ void ResultScene::Draw(void)
 //=============================================================================
 ResultScene::ResultScene(void)
 {
-	//new Skydome;
 	ObjectManager::CreateObject<ParticleManager>();
+	ObjectManager::CreateObject<StageManager>();
 }
 
 //=============================================================================

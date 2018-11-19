@@ -18,6 +18,7 @@
 #include "player.h"
 #include "effect.h"
 #include "selectface.h"
+#include "particle.h"
 
 /* デバッグ */
 #ifdef _DEBUG
@@ -62,8 +63,8 @@ void SelectScene::Draw(void)
 //=============================================================================
 SelectScene::SelectScene(void)
 {
+	ObjectManager::CreateObject<ParticleManager>();
 	ObjectManager::CreateObject<StageManager>();
-	ObjectManager::CreateObject<Skydome>();
 	ObjectManager::CreateObject<Selectface>();
 }
 

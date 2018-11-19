@@ -474,22 +474,6 @@ void Gage::Update(void)
 			GageObj[16].Use = false;
 			GageObj[17].Use = true;
 		}
-		if (GetKeyboardPress(DIK_UP))
-		{
-			GageObj[i].Pos.y--;
-		}
-		if (GetKeyboardPress(DIK_DOWN))
-		{
-			GageObj[i].Pos.y++;
-		}
-		if (GetKeyboardPress(DIK_RIGHT))
-		{
-			GageObj[i].Angle-=0.01;
-		}
-		if (GetKeyboardPress(DIK_LEFT))
-		{
-			GageObj[i].Angle+=0.01;
-		}
 		if (GetKeyboardPress(DIK_Z))
 		{
 			GageObj[i].Scale.x += 0.01;
@@ -502,32 +486,7 @@ void Gage::Update(void)
 			GageObj[i].Scale.y -= 0.01;
 		}
 
-	//	if (i == 1)
-	//	{
-	//		GageObj[i].Count++;
-	//		if (GageObj[i].Count < FRAME)
-	//		{
-	//			GageObj[i].TextureSize.x -= TEXTURE_GAGE_PIXEL001_X / SCREEN_WIDTH;
-	//			GageObj[i].TextureSize.y -= TEXTURE_GAGE_PIXEL001_Y / SCREEN_HEIGHT;
-	//			GageObj[i].Alfa -= TEXTURE_GAGE_COLOR_DEFAULT_A /FRAME;
-	//		}
-	//		if (GageObj[i].Count >= FRAME && GageObj[i].Count < FRAME*2 && GageObj[i].Alfa <= TEXTURE_GAGE_COLOR_DEFAULT_A)
-	//		{
-	//			GageObj[i].TextureSize.x += TEXTURE_GAGE_PIXEL001_X / SCREEN_WIDTH;
-	//			GageObj[i].TextureSize.y += TEXTURE_GAGE_PIXEL001_Y / SCREEN_HEIGHT;
-	//			GageObj[i].Alfa += TEXTURE_GAGE_COLOR_DEFAULT_A /FRAME;
-	//		}
-	//		if (GageObj[i].Count >= FRAME * 2)
-	//		{
-	//			GageObj[i].Count = 0;
-	//			GageObj[i].Alfa = TEXTURE_GAGE_COLOR_DEFAULT_A;
-	//		}
-	//		if (GageObj[i].Alfa >= TEXTURE_GAGE_COLOR_DEFAULT_A)
-	//		{
-	//			GageObj[i].Count = 0;
-	//			GageObj[i].Alfa = TEXTURE_GAGE_COLOR_DEFAULT_A;
-	//		}
-	//	}
+
 		//	頂点カラーの設定
 		SetVertexGage(i);
 		// テクスチャ座標を設定
