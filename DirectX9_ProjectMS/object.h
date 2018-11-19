@@ -38,6 +38,7 @@ public:
 		Low,
 		Lowest
 	};
+
 	// オブジェクトID
 	enum ObjectID
 	{
@@ -56,6 +57,14 @@ public:
 		RESULTSELECT,
 		PARTICLE
 	};
+
+	// オブジェクトタイプ
+	enum ObjectType
+	{
+		NORMAL,
+		UI
+	};
+
 	// ルートポインタ
 	enum ObjectRoot
 	{
@@ -63,6 +72,7 @@ public:
 		DrawRoot,
 		ObjectRootMax
 	};
+
 private:
 	static int				nObjectCount;					// 全オブジェクト数のカウンタ
 	static ObjectManager	*s_pRoot[ObjectRootMax];		// リストの更新ルートポインタ
@@ -70,6 +80,8 @@ private:
 	ObjectManager			*m_pNext[ObjectRootMax];		// リストの次ポインタ
 	Priority				m_ePriority[ObjectRootMax];		// 優先順位（サブ）
 	ObjectID				eObjectId;						// オブジェクト識別用ID
+	ObjectType				eObjectType;					// オブジェクトタイプ
+
 public:
 	// コンストラクタ（初期化処理）
 	ObjectManager();
@@ -97,6 +109,12 @@ public:
 	// 全オブジェクトの解放処理
 	static void ReleaseAll(void);
 
+	// 通常オブジェクトの描画処理
+	static void DrawNormalAll(void);
+	// UIオブジェクトの描画処理
+	static void DrawUiAll(void);
+
+
 	// ルートポインタの取得処理
 	static ObjectManager *GetObjectRoot(ObjectRoot eObjRoot) { return s_pRoot[eObjRoot]; }
 	// ルートポインタのアドレス取得処理
@@ -110,6 +128,11 @@ public:
 	void SetObjectId(ObjectID eObjId) { eObjectId = eObjId; }
 	// オブジェクトID取得処理
 	ObjectID GetObjectId(void) { return (eObjectId); }
+
+	// オブジェクトタイプ設定処理
+	void SetObjectType(ObjectType eObjType) { eObjectType = eObjType; }
+	// オブジェクトタイプ取得処理
+	ObjectType GetObjectType(void) { return (eObjectType); }
 
 	// プライオリティ設定処理
 	void SetPriority(ObjectRoot eObjRoot, Priority ePriority) { m_ePriority[eObjRoot] = ePriority; }

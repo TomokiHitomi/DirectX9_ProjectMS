@@ -51,11 +51,23 @@ void SelectScene::Update(void)
 //=============================================================================
 void SelectScene::Draw(void)
 {
-	//for (unsigned int i = 0; i < 2; i++)
-	//{
+	////for (unsigned int i = 0; i < 2; i++)
+	////{
+	//CameraManager::Set(CameraManager::SINGLE);
+	//ObjectManager::DrawAll();
+	////}
+
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	for (unsigned int i = 0; i < CameraManager::MULTI_MAX; i++)
+	{
+		CameraManager::Set(CameraManager::CameraType(i));
+		ObjectManager::DrawNormalAll();
+		//pDevice->Present(NULL, NULL, NULL, NULL);
+	}
 	CameraManager::Set(CameraManager::SINGLE);
-	ObjectManager::DrawAll();
-	//}
+	ObjectManager::DrawUiAll();
 }
 
 //=============================================================================

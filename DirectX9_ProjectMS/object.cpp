@@ -78,6 +78,9 @@ ObjectManager::ObjectManager(void)
 		m_pNext[i] = NULL;			// 後ポインタの初期化
 		m_ePriority[i] = Middle;	// 優先順位を Middle で初期化
 	}
+
+	// オブジェクトタイプを UI で初期化
+	eObjectType = UI;
 }
 
 
@@ -273,6 +276,40 @@ void ObjectManager::DrawAll(void)
 #ifdef _DEBUG
 	PrintDebugProc("\n");
 #endif
+}
+
+//=============================================================================
+// 通常オブジェクトの描画処理
+//=============================================================================
+void ObjectManager::DrawNormalAll(void)
+{
+	ObjectManager *pList = ObjectManager::GetObjectRoot(DrawRoot);
+
+	while (pList != NULL)
+	{
+		if (pList->GetObjectType() == NORMAL)
+		{
+			pList->Draw();
+		}
+		pList = pList->GetObjectNext(DrawRoot);
+	}
+}
+
+//=============================================================================
+// UIオブジェクトの描画処理
+//=============================================================================
+void ObjectManager::DrawUiAll(void)
+{
+	ObjectManager *pList = ObjectManager::GetObjectRoot(DrawRoot);
+
+	while (pList != NULL)
+	{
+		if (pList->GetObjectType() == UI)
+		{
+			pList->Draw();
+		}
+		pList = pList->GetObjectNext(DrawRoot);
+	}
 }
 
 //=============================================================================

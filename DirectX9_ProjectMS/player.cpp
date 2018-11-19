@@ -44,6 +44,9 @@ PlayerManager::PlayerManager(void)
 	// オブジェクトIDとプライオリティの設定処理
 	SetIdAndPriority(ObjectID::PLAYER, Priority::Middle, Priority::Middle);
 
+	// オブジェクトタイプの設定
+	SetObjectType(ObjectManager::ObjectType::NORMAL);
+
 	for (unsigned int i = 0; i < PLAYER_MAX; i++)
 	{
 		m_pPlayer[i] = NULL;

@@ -37,6 +37,9 @@ ParticleManager::ParticleManager()
 	// オブジェクトIDとプライオリティの設定処理
 	SetIdAndPriority(ObjectID::PARTICLE, Priority::Middle, Priority::Middle);
 
+	// オブジェクトタイプの設定
+	SetObjectType(ObjectManager::ObjectType::NORMAL);
+
 	// パーティクルの初期化
 	pParticle = NULL;
 

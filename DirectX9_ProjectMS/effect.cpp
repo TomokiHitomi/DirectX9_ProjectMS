@@ -45,6 +45,9 @@ EffectManager::EffectManager(void)
 	// オブジェクトIDとプライオリティの設定処理
 	SetIdAndPriority(ObjectID::EFFECT, Priority::Low, Priority::Low);
 
+	// オブジェクトタイプの設定
+	SetObjectType(ObjectManager::ObjectType::NORMAL);
+
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	m_manager = NULL;
 	m_renderer = NULL;

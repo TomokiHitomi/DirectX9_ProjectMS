@@ -33,6 +33,9 @@ StageManager::StageManager(void)
 	// オブジェクトIDとプライオリティの設定処理
 	SetIdAndPriority(ObjectID::STAGE, Priority::Middle, Priority::High);
 
+	// オブジェクトタイプの設定
+	SetObjectType(ObjectManager::ObjectType::NORMAL);
+
 	m_pStage = NULL;
 
 	SetStage<StageVirtual>();
