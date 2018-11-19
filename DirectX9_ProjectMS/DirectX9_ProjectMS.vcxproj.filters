@@ -231,6 +231,9 @@
     <ClInclude Include="box.h">
       <Filter>ソース ファイル\Stage</Filter>
     </ClInclude>
+    <ClInclude Include="gray.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -355,6 +358,9 @@
     </ClCompile>
     <ClCompile Include="box.cpp">
       <Filter>ソース ファイル\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="gray.cpp">
+      <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

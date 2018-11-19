@@ -54,6 +54,7 @@ public:
 		TITLEMESH,
 		GAGE,
 		RESULTSELECT,
+		GRAY,
 		PARTICLE
 	};
 	// ルートポインタ
