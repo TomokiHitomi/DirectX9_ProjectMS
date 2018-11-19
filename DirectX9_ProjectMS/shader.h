@@ -15,6 +15,8 @@
 #define SHADER_FILE_BILLBOARD	"data/SHADER/billboard.fx"
 #define SHADER_FILE_XMODEL		"data/SHADER/xmodel.fx"
 #define SHADER_FILE_SKINMESH	"data/SHADER/skinmesh.fx"
+#define SHADER_FILE_PLANE		"data/SHADER/plane.fx"
+#define SHADER_FILE_BOX			"data/SHADER/box.fx"
 
 //*****************************************************************************
 // クラス定義
@@ -45,6 +47,8 @@ public:
 		BILLBOARD,
 		XMODEL,
 		SKINMESH,
+		PLANE,
+		BOX,
 		FILE_MAX
 	};
 private:
@@ -57,6 +61,24 @@ public:
 	// エフェクト取得メソッド
 	static LPD3DXEFFECT GetEffect(FILE eFile) { return pShader[eFile]->GetEffect(); }
 };
+//
+//class ShaderProp
+//{
+//public:
+//	// シェーダー関連
+//	LPD3DXBUFFER					pErrorBuff;
+//	LPD3DXEFFECT					pEffect;
+//	UINT							numPass;
+//
+//	Shader(const char* path);
+//	~Shader();
+//
+//	HRESULT Init(const char* path);
+//	void Release(void);
+//
+//	// エフェクト取得メソッド
+//	LPD3DXEFFECT GetEffect(void) { return pEffect; }
+//};
 
 //*****************************************************************************
 // プロトタイプ宣言

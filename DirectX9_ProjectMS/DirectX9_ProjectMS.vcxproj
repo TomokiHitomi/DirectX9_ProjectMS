@@ -173,6 +173,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="box.h" />
     <ClInclude Include="calculate.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="character.h" />
@@ -224,6 +225,8 @@
     <ClInclude Include="skydome.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="stage.h" />
+    <ClInclude Include="plane.h" />
+    <ClInclude Include="stagevirtual.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="titlelogo.h" />
     <ClInclude Include="titlemesh.h" />
@@ -232,6 +235,7 @@
     <ClInclude Include="XTexture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="box.cpp" />
     <ClCompile Include="calculate.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="character.cpp" />
@@ -263,6 +267,8 @@
     <ClCompile Include="skydome.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="stage.cpp" />
+    <ClCompile Include="plane.cpp" />
+    <ClCompile Include="stagevirtual.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="titlelogo.cpp" />
     <ClCompile Include="titlemesh.cpp" />
@@ -274,6 +280,12 @@
     <FxCompile Include="data\SHADER\billboard.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="data\SHADER\box.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="data\SHADER\plane.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="data\SHADER\skinmesh.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

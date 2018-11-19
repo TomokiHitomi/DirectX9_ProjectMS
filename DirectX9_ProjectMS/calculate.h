@@ -95,5 +95,6 @@ void SetShuffle(int *nShuffle, int nSize);
 D3DXVECTOR3 Calculate_Vec_2pos(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2);
 float Calculate_Atan2XZ(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2);
 bool D3DXMatrixNormalize(D3DXMATRIX *pOut, D3DXMATRIX *pIn);
-
+D3DXCOLOR SetColorPalletRandomGreen(void);
+D3DXCOLOR SetColorPalletGreen(int nColor);
 #endif

@@ -6,7 +6,7 @@
 //=============================================================================
 #include "main.h"
 #include "stage.h"
-#include "calculate.h"
+#include "stagevirtual.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -35,7 +35,7 @@ StageManager::StageManager(void)
 
 	m_pStage = NULL;
 
-	SetStage<StageChinese>();
+	SetStage<StageVirtual>();
 }
 
 //=============================================================================
@@ -53,7 +53,7 @@ void StageManager::Update(void)
 {
 	if (m_pStage != NULL)
 	{
-		m_pStage->pObj->Update();
+		m_pStage->Update();
 	}
 }
 
@@ -64,6 +64,6 @@ void StageManager::Draw(void)
 {
 	if (m_pStage != NULL)
 	{
-		m_pStage->pObj->Draw();
+		m_pStage->Draw();
 	}
 }

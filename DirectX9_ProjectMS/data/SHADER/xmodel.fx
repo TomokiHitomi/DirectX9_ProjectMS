@@ -139,32 +139,45 @@ VS_OUT vs_light_off(VS_IN In)
 //=============================================================================
 float4 ps_light_on(VS_OUT In) : COLOR0
 {
-	// 法線ベクトル
-	float3 n = normalize(In.nor.xyz);
+	// 頂点法線
+	float3 N = normalize(In.nor.xyz);
+
 	// 視点から頂点のベクトル
-	float3 v = normalize(eye.xyz - In.pos.xyz);
+	float3 V = normalize(eye.xyz - In.pos.xyz);
+
 	// ライト座標から頂点のベクトル（現状は平行光源のみなのでDirを代入
-	float3 l = lt.dir.xyz; /*normalize(lt.pos.xyz - In.pos.xyz);*/
-	// ライト座標から頂点までの距離を求める
-	//float  d = length(l);
-	// ライト座標から頂点のベクトルを正規化
-	l = normalize(l);
+	float3 L = -normalize(lt.dir.xyz); /*normalize(lt.pos.xyz - In.pos.xyz);*/
+
+	// ハーフベクトル	H = norm(norm(Cp - Vp) + Ldir)
+	//float3 H = normalize(v + l);
+
+	//float  P = mat.pwr;
+
+	//// ライト座標から頂点までの距離を求める
+	////float  d = length(l);
+	//// ライト座標から頂点のベクトルを正規化
+	//l = normalize(l);
 	// 反射光のベクトルを計算
-	float3 r = 2.0 * n * dot(n, l) - l;
-	// 距離減退を計算（現状は使わない）
-	float  a = 1.0f;
+	//float3 r = 2.0 * n * dot(n, l) - l;
+	//float3 r = l + 2.0 * dot(-l, n) * n;
+	//// 距離減退を計算（現状は使わない）
+	//float  a = 1.0f;
 	//a = saturate(1.0f / (pntLight.attenuate.x + pntLight.attenuate.y * d + pntLight.attenuate.z * d * d)); //減衰
 
-	float powTmp = pow(saturate(dot(r, v)), mat.pwr);
+	//float powTmp = pow(saturate(dot(r, v)), mat.pwr);
 	//float powTmp = 1.0f;
 
 	// 環境光を計算
 	float3 iA =										mat.amb.xyz * lt.amb.xyz;
 	// 拡散光を計算
-	float3 iD = saturate(dot(l, n)) *				mat.dif.xyz * lt.dif.xyz * a;
+	float3 iD = saturate(dot(L, N)) *				mat.dif.xyz * lt.dif.xyz;
 	// 反射光を計算
-	float3 iS = powTmp * (mat.spc.xyz * lt.spc.xyz) * a;
+	//float3 iS = powTmp * (mat.spc.xyz * lt.spc.xyz) * a;
 	//float3 iS = pow(saturate(dot(r, v)), mat.pwr) * (mat.spc.xyz * lt.spc.xyz) * a;
+
+
+	// スペキュラ ライティング	  = Cs * sum[Ls*(N.H)P*Atten*Spot]
+	//float3 iS = mat.spc.xyz * (lt.spc.xyz * pow(dot(N, H), P));
 
 
 	float4 iColor = float4(iA + iD /*+ iS*/, 1.0f);
@@ -172,10 +185,10 @@ float4 ps_light_on(VS_OUT In) : COLOR0
 	float4 texcolor = tex2D(smp, In.uv);
 	//texcolor = iColor;
 	//texcolor.x = iColor.x;
-	texcolor.xyz = texcolor.xyz + iColor.xyz;
+	texcolor.xyz = texcolor.xyz * iColor.xyz;
 	//color.xyz = color.xyz * (iA + iD + iS);
 
-	return float4(saturate(texcolor.xyz), 1.0f);
+	return saturate(texcolor);
 	//return float4(saturate(iA + iD + iS), 1.0);
 	//return tex2D(smp, In.uv) * In.col;
 }

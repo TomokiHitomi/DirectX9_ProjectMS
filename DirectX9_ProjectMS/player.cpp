@@ -133,8 +133,8 @@ void PlayerManager::SetTag(void)
 		{
 			if (m_pPlayer[i]->m_bUse)
 			{
-				//m_pPlayer[i]->SetTag(m_pPlayer[m_pPlayer[i]->m_nTagNum]->GetPos());
-				m_pPlayer[i]->SetTag(ZERO_D3DXVECTOR3);
+				m_pPlayer[i]->SetTag((m_pPlayer[i]->GetPos() + m_pPlayer[m_pPlayer[i]->m_nTagNum]->GetPos()) / 2);
+				//m_pPlayer[i]->SetTag(ZERO_D3DXVECTOR3);
 			}
 		}
 	}
@@ -292,8 +292,8 @@ void Player::Draw(void)
 		LPDIRECT3DDEVICE9 pDevice = GetDevice();
 		D3DXMATRIX mtxWing, mtxTemp;		// アニメーション更新処理
 
-		// ラインティングを無効にする
-		pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+		//// ラインティングを無効にする
+		//pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 		// ワールド変換
 		//WorldConvertAxis(&m_mtxWorld, m_vPos, m_vZ, m_vY, m_vScl);
@@ -323,8 +323,8 @@ void Player::Draw(void)
 		//// 裏面をカリングに戻す
 		//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
-		// αテストを無効に
-		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+		//// αテストを無効に
+		//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 //#ifdef _DEBUG
 		//PrintDebugProc("Bone  [%d]\n", m_CSkinMesh->m_dwBoneCount);

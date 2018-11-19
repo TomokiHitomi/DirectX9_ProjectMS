@@ -65,10 +65,10 @@ EffectManager::EffectManager(void)
 
 
 	// 描画用インスタンスの生成
-	m_renderer = ::EffekseerRendererDX9::Renderer::Create(pDevice, 4096);
+	m_renderer = ::EffekseerRendererDX9::Renderer::Create(pDevice, 2048);
 
 	// エフェクト管理用インスタンスの生成
-	m_manager = ::Effekseer::Manager::Create(4096);
+	m_manager = ::Effekseer::Manager::Create(2048);
 
 	// 描画用インスタンスから描画機能を設定
 	m_manager->SetSpriteRenderer(m_renderer->CreateSpriteRenderer());

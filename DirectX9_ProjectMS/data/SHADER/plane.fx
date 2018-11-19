@@ -1,15 +1,13 @@
 //=============================================================================
 //
-// スプライトシェーダ [sprite.fx]
+// プレーンシェーダ [plane.fx]
 // Author : GP12A295 25 人見友基
 //
 //=============================================================================
 float4x4	world;		// ワールドマトリクス
 float4x4	view;		// ビューマトリクス
 float4x4	proj;		// プロジェクションマトリクス
-float		length;
 float		color;
-float		rot;
 
 texture tex;			// 使用するテクスチャ
 sampler smp = sampler_state {
@@ -28,8 +26,6 @@ struct VS_IN		// 頂点シェーダの引数
 	float4	col : COLOR0;
 	float2	uv : TEXCOORD0;
 	float3	worldPos : TEXCOORD1;
-	float3	vec : TEXCOORD2;
-	float	angle : TEXCOORD3;
 };
 
 struct VS_OUT		// 頂点シェーダの戻り値かつピクセルシェーダーの引数
@@ -42,27 +38,24 @@ struct VS_OUT		// 頂点シェーダの戻り値かつピクセルシェーダーの引数
 //=============================================================================
 // 頂点シェーダ
 //=============================================================================
-VS_OUT vs_main(VS_IN In)
+VS_OUT vs_main( VS_IN In )
 {
 	//VS_OUT Out = (VS_OUT)0;
 	VS_OUT Out;
-
-	float mover = 0.0f;
-	mover = sin(In.angle + rot) * length;
 
 	Out.pos = float4(
 		In.pos.x,
 		In.pos.y,
 		In.pos.z,
 		1.0f
-		);
+	);
 
 	Out.pos = mul(Out.pos, world);
 
 	Out.pos = float4(
-		Out.pos.x + In.worldPos.x + (In.vec.x * mover),
-		Out.pos.y + In.worldPos.y + (In.vec.y * mover),
-		Out.pos.z + In.worldPos.z + (In.vec.z * mover),
+		Out.pos.x + In.worldPos.x,
+		Out.pos.y + In.worldPos.y,
+		Out.pos.z + In.worldPos.z,
 		1.0f
 		);
 	Out.pos = mul(Out.pos, view);
@@ -70,7 +63,7 @@ VS_OUT vs_main(VS_IN In)
 
 	//mat = mul(mul(world, view), proj);
 	//Out.pos = mul( float4(In.pos, 1.0f), mat );
-	Out.uv = In.uv;
+	Out.uv  = In.uv;
 	Out.col = In.col;
 	Out.col.y = Out.col.y + color;
 	Out.col.z = Out.col.z + color / 2.0;
@@ -82,8 +75,8 @@ VS_OUT vs_main(VS_IN In)
 //=============================================================================
 float4 ps_nomal(VS_OUT In) : COLOR0
 {
-	return tex2D(smp, In.uv) * In.col;
-//return tex2D(smp, In.uv);
+	return tex2D( smp, In.uv ) * In.col;
+	//return tex2D(smp, In.uv);
 }
 technique Tec01		// テクスチャ描画
 {

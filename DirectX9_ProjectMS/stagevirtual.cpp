@@ -1,11 +1,11 @@
 //=============================================================================
 //
-// キャラクター処理 [character.cpp]
+// バーチャルステージ処理 [stagevirtual.cpp]
 // Author : GP12A295 25 人見友基
 //
 //=============================================================================
 #include "main.h"
-#include "character.h"
+#include "stagevirtual.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -23,59 +23,42 @@
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-bool CharacterManager::m_bUse = true;
 
 //=============================================================================
 // コンストラクタ（初期化処理）
 //=============================================================================
-CharacterManager::CharacterManager(void)
+StageVirtual::StageVirtual(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	pPlane = NULL;
+	pPlane = new Plane;
 
-	for (unsigned int i = 0; i < TYPE_MAX; i++)
-	{
-		m_CSkinMesh[i] = NULL;
-		if (CharacterManager::m_bUse)
-		{
-			m_CSkinMesh[i] = new CSkinMesh;
-		}
-	}
-
-	if (CharacterManager::m_bUse)
-	{
-		m_CSkinMesh[FIREMAN]->Init(pDevice, CHARACTER_FIREMAN);
-		m_CSkinMesh[DOCTOR]->Init(pDevice, CHARACTER_DOCTOR);
-
-		//m_CSkinMesh[PASTRY]->Init(pDevice, CHARACTER_PASTRY);
-		//m_CSkinMesh[IDOL]->Init(pDevice, CHARACTER_IDOL);
-	}
+	pBox = NULL;
+	pBox = new Box;
 }
 
 //=============================================================================
 // デストラクタ（終了処理）
 //=============================================================================
-CharacterManager::~CharacterManager(void)
+StageVirtual::~StageVirtual(void)
 {
-	for (unsigned int i = 0; i < TYPE_MAX; i++)
-	{
-		if(!m_CSkinMesh[i])
-		delete m_CSkinMesh[i];
-		m_CSkinMesh[i] = NULL;
-	}
+	SAFE_DELETE(pPlane);
+	SAFE_DELETE(pBox);
 }
 
 //=============================================================================
-// キャラクターデータの取得処理
+// 更新処理
 //=============================================================================
-CSkinMesh *CharacterManager::GetCharData(CharacterManager::TYPE etype)
+void StageVirtual::Update(void)
 {
-	if (CharacterManager::m_bUse)
-	{
-		return m_CSkinMesh[etype];
-	}
-	else
-	{
-		return NULL;
-	}
+	pPlane->Update();
+	pBox->Update();
+}
 
+//=============================================================================
+// 描画処理
+//=============================================================================
+void StageVirtual::Draw(void)
+{
+	pPlane->Draw();
+	pBox->Draw();
 }

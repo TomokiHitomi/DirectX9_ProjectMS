@@ -35,15 +35,10 @@
 class Stage
 {
 public:
-	Object *pObj;
-	//Stage();
-	~Stage()
-	{
-		if (pObj != NULL)
-		{
-			delete pObj;
-		}
-	}
+	Stage() { ; }
+	virtual ~Stage() { ; }
+	virtual void Update(void) { ; }
+	virtual void Draw(void) { ; }
 };
 
 
@@ -80,29 +75,31 @@ public:
 	}
 };
 
-class StageChinese : public Stage
-{
-	enum
-	{
-		MAIN,
-		MAX
-	};
-public:
-	StageChinese()
-	{
-		LPDIRECT3DDEVICE9 pDevice = GetDevice();
-		pObj = new Object(MAX);
-		// 各プロパティの初期化
-		pObj->prop[MAIN].vScl = D3DXVECTOR3(MODEL_STAGE_SCL, MODEL_STAGE_SCL, MODEL_STAGE_SCL);
-		pObj->prop[MAIN].CXModel->Init(pDevice, STAGE_MODEL, STAGE_TEXTURE);
-	}
-	//~StageChinese()
-	//{
 
-	//}
-	// 更新処理
-	void	Update(void) { ; }
-};
+//class StageChinese : public Stage
+//{
+//	enum
+//	{
+//		MAIN,
+//		MAX
+//	};
+//public:
+//	StageChinese()
+//	{
+//		LPDIRECT3DDEVICE9 pDevice = GetDevice();
+//		pObj = new Object(MAX);
+//		// 各プロパティの初期化
+//		pObj->prop[MAIN].vScl = D3DXVECTOR3(MODEL_STAGE_SCL, MODEL_STAGE_SCL, MODEL_STAGE_SCL);
+//		pObj->prop[MAIN].CXModel->Init(pDevice, STAGE_MODEL, STAGE_TEXTURE);
+//		pObj->prop[MAIN].CXModel->SetLight(false); // ライトOFF
+//	}
+//	//~StageChinese()
+//	//{
+//
+//	//}
+//	// 更新処理
+//	void	Update(void) { ; }
+//};
 
 
 //*****************************************************************************

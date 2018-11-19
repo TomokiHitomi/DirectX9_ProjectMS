@@ -9,6 +9,7 @@
 
 #include "main.h"
 #include "object.h"
+#include "plane.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -25,18 +26,21 @@
 #define  PARTICLE_TEXTURE_PATTERN_NU		(PARTICLE_TEXTURE_PATTERN_DIVIDE_X*PARTICLE_TEXTURE_PATTERN_DIVIDE_Y)
 
 // サイズ
-#define	PARTICLE_SIZE_X		(1.0f)
-#define	PARTICLE_SIZE_Y		(1.0f)
+#define	PARTICLE_SIZE_X		(0.1f)
+#define	PARTICLE_SIZE_Y		(0.1f)
 
 // 最大数
 #define PARTICLE_MAX		(300000)
 
 // 移動スピード
-#define PARTICLE_MOVE_SPEED		(0.1f)
+#define PARTICLE_MOVE_SPEED		(0.01f)
+#define PARTICLE_MOVE_MAX		(10.0f)
 
 // １フレームの生成量
 #define PARTICLE_SET			(500)
 
+#define PARTICLE_COLOR_SPEED	(PLANE_COLOR_SPEED)
+#define PARTICLE_COLOR_MAX	(PLANE_COLOR_MAX)
 
 //*****************************************************************************
 // クラス定義
@@ -56,6 +60,7 @@ private:
 	int								nCount;
 	int								nColor;
 	float							fMove;
+	float							fSin;
 
 	typedef struct
 	{
@@ -68,8 +73,11 @@ private:
 		D3DXVECTOR3 pos;
 		D3DCOLOR	diffuse;
 		D3DXVECTOR3 vec;
-		float		move;
+		float		angle;
 	}INSTANCE_PLANE;
+
+	float							fColor;
+	bool							bColor;
 
 	HRESULT MakeVertex(LPDIRECT3DDEVICE9 pDevice);
 public:
@@ -86,13 +94,13 @@ public:
 	// 描画処理
 	void	Draw(void);
 	// 設置処理
-	void	Set(int value, D3DXVECTOR3 pos, D3DXCOLOR color);
+	void	Set(int value, D3DXVECTOR3 pos);
 };
 
 class ParticleManager : public ObjectManager
 {
 private:
-	Particle* pParticle;
+	static Particle* pParticle;
 public:
 	// コンストラクタ
 	ParticleManager(void);
@@ -106,6 +114,11 @@ public:
 	void	Update(void);
 	// 描画処理
 	void	Draw(void);
+
+	static void Set(int value, D3DXVECTOR3 pos)
+	{
+		pParticle->Set(value, pos);
+	}
 };
 
 //*****************************************************************************

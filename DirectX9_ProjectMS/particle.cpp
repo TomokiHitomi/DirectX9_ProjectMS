@@ -27,6 +27,7 @@
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
+Particle* ParticleManager::pParticle;
 
 //=============================================================================
 // コンストラクタ
@@ -110,7 +111,13 @@ Particle::Particle()
 	nColor = 0;
 
 	// 移動量の初期化
-	fMove = 0.0f;
+	fMove = PARTICLE_MOVE_MAX;
+
+
+	fSin = 0.0f;
+
+	fColor = PARTICLE_COLOR_MAX;
+	bColor = false;
 
 	// 初期化処理
 	Init();
@@ -185,8 +192,10 @@ void Particle::Update(void)
 #endif
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
+	fSin += PARTICLE_MOVE_SPEED;
+
 	// 移動量を加算
-	fMove += PARTICLE_MOVE_SPEED;
+	//fMove = sinf(fSin) * 10.0f;
 
 	// マウスホイールでパーティクルカラーを変更
 	long ModUseZ = GetMobUseZ();
@@ -214,8 +223,24 @@ void Particle::Update(void)
 	if (IsMobUseLeftPressed())
 	{
 		Set(PARTICLE_SET,
-			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-			SetColorPallet(nColor));
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	}
+
+	if (bColor)
+	{
+		fColor += PARTICLE_COLOR_SPEED;
+		if (fColor > PARTICLE_COLOR_MAX)
+		{
+			bColor = false;
+		}
+	}
+	else
+	{
+		fColor -= PARTICLE_COLOR_SPEED;
+		if (fColor < -PARTICLE_COLOR_MAX)
+		{
+			bColor = true;
+		}
 	}
 
 #ifdef _DEBUG
@@ -300,9 +325,22 @@ void Particle::Draw(void)
 		pEffect->SetMatrix("view", &mtxView);
 		pEffect->SetMatrix("world", &mtxWorld);
 
-		// 移動量をセット
-		pEffect->SetFloat("moveTime", fMove);
 
+		// 移動量をセット
+		pEffect->SetFloat("length", fMove);
+		// カラーをセット
+		pEffect->SetFloat("color", fColor);
+		// sinカーブ用変数をセット
+		//pEffect->SetFloat("rot", fSin);
+
+		if (FAILED(pEffect->SetFloat("rot", fSin)))
+		{
+			// エラー
+			MessageBox(NULL, "シェーダへのデータ送信が失敗", "rot", MB_OK);
+		}
+
+
+		
 		// 結果を確定させる
 		pEffect->CommitChanges();
 
@@ -439,7 +477,7 @@ HRESULT Particle::MakeVertex(LPDIRECT3DDEVICE9 pDevice)
 			pInst->pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			pInst->diffuse = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 			pInst->vec = RandVector();
-			pInst->move = 0.0f;
+			pInst->angle = 0.0f;
 		}
 
 		// 座標データをアンロックする
@@ -465,7 +503,7 @@ HRESULT Particle::MakeVertex(LPDIRECT3DDEVICE9 pDevice)
 //=============================================================================
 // 設置処理
 //=============================================================================
-void Particle::Set(int value, D3DXVECTOR3 pos, D3DXCOLOR color)
+void Particle::Set(int value, D3DXVECTOR3 pos)
 {
 	if (nCount + value > PARTICLE_MAX)
 	{
@@ -483,11 +521,11 @@ void Particle::Set(int value, D3DXVECTOR3 pos, D3DXCOLOR color)
 		for (unsigned int i = 0; i < value; i++, pInst++)
 		{
 			// 座標の設定
-			pInst->pos = pos;
+			pInst->pos = pos + RandVector() * (rand() % 50);
 			//pInst->diffuse = color;
-			pInst->diffuse = SetColorPalletRandom();
+			pInst->diffuse = SetColorPalletRandomGreen();
 			//pInst->vec = RandVector();
-			pInst->move = fMove;
+			pInst->angle = float(rand() % 614) * 0.01f;
 		}
 		// 座標データをアンロックする
 		pInstBuff->Unlock();

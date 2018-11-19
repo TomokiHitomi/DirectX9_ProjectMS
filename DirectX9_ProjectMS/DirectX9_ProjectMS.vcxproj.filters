@@ -43,6 +43,9 @@
     <Filter Include="ソース ファイル\Shader">
       <UniqueIdentifier>{b3a19695-604c-4941-b8b9-9843cb4b7531}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Stage">
+      <UniqueIdentifier>{fa9066e0-d667-4766-80d3-c5199b99d6be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -132,9 +135,6 @@
     <ClInclude Include="cube.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
-    <ClInclude Include="stage.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
     <ClInclude Include="include\imgui\imgui_internal.h">
       <Filter>ソース ファイル\Include\imgui</Filter>
     </ClInclude>
@@ -216,6 +216,18 @@
     <ClInclude Include="gage.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="stage.h">
+      <Filter>ソース ファイル\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="stagevirtual.h">
+      <Filter>ソース ファイル\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="plane.h">
+      <Filter>ソース ファイル\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="box.h">
+      <Filter>ソース ファイル\Stage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -281,9 +293,6 @@
     <ClCompile Include="cube.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
-    <ClCompile Include="stage.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
     <ClCompile Include="include\imgui\imgui_draw.cpp">
       <Filter>ソース ファイル\Include\imgui</Filter>
     </ClCompile>
@@ -329,6 +338,18 @@
     <ClCompile Include="gage.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
+    <ClCompile Include="stage.cpp">
+      <Filter>ソース ファイル\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="stagevirtual.cpp">
+      <Filter>ソース ファイル\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="plane.cpp">
+      <Filter>ソース ファイル\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="box.cpp">
+      <Filter>ソース ファイル\Stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="data\SHADER\sprite.fx">
@@ -341,6 +362,12 @@
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
     <FxCompile Include="data\SHADER\skinmesh.fx">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="data\SHADER\plane.fx">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="data\SHADER\box.fx">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>

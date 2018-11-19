@@ -97,26 +97,27 @@ void SceneManager::ChangeScene(SCENE scene)
 //=============================================================================
 void SceneManager::Init(HINSTANCE hInst, HWND hWnd)
 {
-	LightManager::Init();	// ライト（シェーダ用）
-	InitLight();			// ライト
-	InitInput(hInst, hWnd);	// 入力
-	InitSound(hWnd);		// サウンド
-	InitFade();				// フェード
-
-	ChangeScene(m_eScene);	// 初期シーン設定
-
 	// カメラマネージャーを実体化
 	CameraMgr = new CameraManager;
 
 	// シェーダマネージャを実体化
 	ShaderMgr = new ShaderManager;
 
-	// キャラクターマネージャーをを使う場合
-	if (CharacterManager::m_bUse)
-	{
-		// キャラクターマネージャーを実体化
-		CharMgr = new CharacterManager;
-	}
+	// キャラクターマネージャーを実体化
+	CharMgr = new CharacterManager;
+
+	LightManager::Init();	// ライト（シェーダ用）
+	InitLight();			// ライト
+	InitInput(hInst, hWnd);	// 入力
+	InitSound(hWnd);		// サウンド
+	InitFade();				// フェード
+
+	// 初期のシーンをTITLEに設定
+	//m_eScene = TITLE;
+	m_eScene = GAME;
+
+	ChangeScene(m_eScene);	// 初期シーン設定
+
 #ifdef _DEBUG
 	InitDebugProc();		// デバッグ
 #endif
@@ -188,7 +189,8 @@ void SceneManager::Draw(void)
 SceneManager::SceneManager(void)
 {
 	// 初期のシーンをTITLEに設定
-	m_eScene = TITLE;
+	//m_eScene = TITLE;
+	//m_eScene = GAME;
 
 	// 各変数を初期化
 }

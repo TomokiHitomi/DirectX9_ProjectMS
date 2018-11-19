@@ -353,6 +353,59 @@ D3DXCOLOR SetColorPalletRandom(void)
 }
 
 //=============================================================================
+// カラーパレット呼び出し処理
+//=============================================================================
+D3DXCOLOR SetColorPalletGreen(int nColor)
+{
+	D3DXCOLOR temp;
+	switch (nColor)
+	{
+	case 0:
+		temp = D3DXCOLOR(0.0f, 0.971f, 0.443f, 1.0f);
+		break;
+	case 1:
+		temp = D3DXCOLOR(0.0f, 0.435f, 0.321f, 1.0f);
+		break;
+	case 2:
+		temp = D3DXCOLOR(0.0f, 0.956f, 0.431f, 1.0f);
+		break;
+	case 3:
+		temp = D3DXCOLOR(0.0f, 0.886f, 0.362f, 1.0f);
+		break;
+	case 4:
+		temp = D3DXCOLOR(0.0f, 0.364f, 0.258f, 1.0f);
+		break;
+	case 5:
+		temp = D3DXCOLOR(0.0f, 0.275f, 0.202f, 1.0f);
+		break;
+	case 6:
+		temp = D3DXCOLOR(0.0f, 0.800f, 0.364f, 1.0f);
+		break;
+	case 7:
+		temp = D3DXCOLOR(0.0f, 0.415f, 0.247f, 1.0f);
+		break;
+	case 8:
+		temp = D3DXCOLOR(0.0f, 0.415f, 0.294f, 1.0f);
+		break;
+	case 9:
+		temp = D3DXCOLOR(0.0f, 0.850f, 0.278f, 1.0f);
+		break;
+	}
+
+	return temp;
+}
+
+
+//=============================================================================
+// カラーパレット呼び出し処理
+//=============================================================================
+D3DXCOLOR SetColorPalletRandomGreen(void)
+{
+	return SetColorPalletGreen(rand() % 10);
+}
+
+
+//=============================================================================
 // int配列のシャッフル関数
 //=============================================================================
 void SetShuffle(int *nShuffle, int nSize)
