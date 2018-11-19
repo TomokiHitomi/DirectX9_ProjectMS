@@ -97,11 +97,12 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -223,6 +224,7 @@
     <ClInclude Include="select.h" />
     <ClInclude Include="selectface.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="SkinAssimp.h" />
     <ClInclude Include="SkinMeshX.h" />
     <ClInclude Include="skydome.h" />
     <ClInclude Include="sound.h" />
@@ -267,6 +269,7 @@
     <ClCompile Include="select.cpp" />
     <ClCompile Include="selectface.h.cpp" />
     <ClCompile Include="shader.cpp" />
+    <ClCompile Include="SkinAssimp.cpp" />
     <ClCompile Include="SkinMeshX.cpp" />
     <ClCompile Include="skydome.cpp" />
     <ClCompile Include="sound.cpp" />

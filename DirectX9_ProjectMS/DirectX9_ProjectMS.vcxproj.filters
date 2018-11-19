@@ -234,6 +234,9 @@
     <ClInclude Include="gray.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="SkinAssimp.h">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -361,6 +364,9 @@
     </ClCompile>
     <ClCompile Include="gray.cpp">
       <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinAssimp.cpp">
+      <Filter>ソース ファイル\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
