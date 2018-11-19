@@ -14,7 +14,8 @@
 /* リザルトで必要なインクルード */
 #include "skydome.h"
 #include "particle.h"
-
+#include "gray.h"
+#include "resultselect.h"
 /* Debug */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -57,6 +58,8 @@ ResultScene::ResultScene(void)
 {
 	ObjectManager::CreateObject<ParticleManager>();
 	ObjectManager::CreateObject<StageManager>();
+	ObjectManager::CreateObject<Gray>();
+	ObjectManager::CreateObject<Resultselect>();
 }
 
 //=============================================================================

@@ -18,10 +18,10 @@
 #define TEXTURE_TITLELOGO_000					"data/TEXTURE/logo001.png"											// ロゴ
 #define TEXTURE_TITLELOGO_001					"data/TEXTURE/start001.png"											// ロゴ
 
-#define TEXTURE_TITLELOGO_PIXEL000_X			(1167)																// ピクセルサイズ
-#define TEXTURE_TITLELOGO_PIXEL000_Y			(1152)																// ピクセルサイズ
-#define TEXTURE_TITLELOGO_PIXEL001_X			(500)																// ピクセルサイズ
-#define TEXTURE_TITLELOGO_PIXEL001_Y			(146)																// ピクセルサイズ
+#define TEXTURE_TITLELOGO_PIXEL000_X			(1167/2*SCREEN_SCALE)																// ピクセルサイズ
+#define TEXTURE_TITLELOGO_PIXEL000_Y			(1152/2*SCREEN_SCALE)																// ピクセルサイズ
+#define TEXTURE_TITLELOGO_PIXEL001_X			(500/2*SCREEN_SCALE)																// ピクセルサイズ
+#define TEXTURE_TITLELOGO_PIXEL001_Y			(146/2*SCREEN_SCALE)																// ピクセルサイズ
 
 #define TEXTURE_TITLELOGO_SIZE000_LATE_X		(1.0)																// 拡大倍率
 #define TEXTURE_TITLELOGO_SIZE000_LATE_Y		(0.6)																// 拡大倍率

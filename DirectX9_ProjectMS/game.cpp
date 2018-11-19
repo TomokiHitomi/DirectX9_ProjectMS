@@ -18,7 +18,7 @@
 #include "player.h"
 #include "effect.h"
 #include "particle.h"
-
+#include "gage.h"
 /* デバッグ */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -75,6 +75,7 @@ GameScene::GameScene(void)
 	ObjectManager::CreateObject<StageManager>();
 	ObjectManager::CreateObject<PlayerManager>();
 	ObjectManager::CreateObject<EffectManager>();
+	ObjectManager::CreateObject<Gage>();
 	//new Player;
 	//new Skydome;
 	//new Cube;

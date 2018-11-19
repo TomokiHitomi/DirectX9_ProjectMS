@@ -19,8 +19,6 @@
 #include "cube.h"
 #include "stage.h"
 #include "titlelogo.h"
-#include "gage.h"
-#include "resultselect.h"
 #include "particle.h"
 
 /* Debug */
@@ -68,8 +66,8 @@ TitleScene::TitleScene(void)
 	ObjectManager::CreateObject<ParticleManager>();
 	ObjectManager::CreateObject<StageManager>();
 	ObjectManager::CreateObject<Titlelogo>();
-	ObjectManager::CreateObject<Gage>();
-	ObjectManager::CreateObject<Resultselect>();
+
+	
 }
 //=============================================================================
 // デストラクタ処理（終了）
