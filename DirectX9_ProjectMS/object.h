@@ -57,6 +57,7 @@ public:
 		RESULTSELECT,
 		GRAY,
 		PARTICLE,
+		RIGHTLEFT,
 		WEAPON
 	};
 

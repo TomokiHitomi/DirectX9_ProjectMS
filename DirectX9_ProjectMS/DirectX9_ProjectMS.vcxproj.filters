@@ -237,6 +237,9 @@
     <ClInclude Include="gray.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="rightleft.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
     <ClInclude Include="weapon.h">
       <Filter>ソース ファイル\Object\Weapon</Filter>
     </ClInclude>
@@ -369,6 +372,9 @@
       <Filter>ソース ファイル\Stage</Filter>
     </ClCompile>
     <ClCompile Include="gray.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="rightleft.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
     <ClCompile Include="weapon.cpp">

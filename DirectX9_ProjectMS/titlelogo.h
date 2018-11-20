@@ -53,6 +53,7 @@ public:
 
 	struct TitlelogoParts
 	{
+		LPDIRECT3DTEXTURE9		pD3DTexture;							// テクスチャへのポリゴン (*33)
 		LPDIRECT3DTEXTURE9		Texture;
 		D3DXVECTOR3				Pos;									// プレイヤーの移動量
 		VERTEX_2D				vertexWk[NUM_VERTEX];					// 頂点情報格納ワーク
@@ -61,7 +62,6 @@ public:
 		int						Alfa;
 		bool					Flash;
 		bool					Use;									// true:使用  false:未使用
-		LPDIRECT3DTEXTURE9		pD3DTexture;							// テクスチャへのポリゴン (*33)
 	};
 	TitlelogoParts Title[NUM_TITLELOGO];
 	void SetVertexTitlelogo(int CreateCount);
