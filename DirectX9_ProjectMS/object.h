@@ -56,6 +56,7 @@ public:
 		GAGE,
 		RESULTSELECT,
 		GRAY,
+		RIGHTLEFT,
 		PARTICLE
 	};
 

@@ -219,6 +219,7 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="resultselect.h" />
+    <ClInclude Include="rightleft.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="select.h" />
     <ClInclude Include="selectface.h" />
@@ -263,6 +264,7 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="resultselect.cpp" />
+    <ClCompile Include="rightleft.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="select.cpp" />
     <ClCompile Include="selectface.h.cpp" />

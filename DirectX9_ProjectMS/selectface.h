@@ -19,10 +19,10 @@
 #define TEXTURE_GAME_SELECT01				"data/FACE/white000.png"												// 背景大丸
 #define TEXTURE_GAME_SELECT02				"data/FACE/white000.png"												// 背景大丸
 #define TEXTURE_GAME_SELECT03				"data/FACE/white000.png"												// 背景大丸
-#define TEXTURE_GAME_SELECT04				"data/FACE/illust000.png"												// イラスト
-#define TEXTURE_GAME_SELECT05				"data/FACE/illust001.png"												// イラスト
-#define TEXTURE_GAME_SELECT06				"data/FACE/illust002.png"												// イラスト
-#define TEXTURE_GAME_SELECT07				"data/FACE/illust003.png"												// イラスト
+#define TEXTURE_GAME_SELECT04				"data/FACE/illust030.png"												// イラスト
+#define TEXTURE_GAME_SELECT05				"data/FACE/illust031.png"												// イラスト
+#define TEXTURE_GAME_SELECT06				"data/FACE/illust032.png"												// イラスト
+#define TEXTURE_GAME_SELECT07				"data/FACE/illust033.png"												// イラスト
 #define TEXTURE_GAME_SELECT08				"data/FACE/player000.png"												// 変化丸
 #define TEXTURE_GAME_SELECT09				"data/FACE/player001.png"												// 変化丸
 
@@ -38,26 +38,26 @@
 #define TEXTURE_SELECT_SIZE_VERTEX_X	(0.55)
 #define TEXTURE_SELECT_SIZE_VERTEX_BASE_X	(0.5)
 
-#define TEXTURE_SELECT00_SIZE_X				(TEXTURE_SELECT_SIZE_BIG_X)												// テクスチャサイズ (*33)
-#define TEXTURE_SELECT00_SIZE_Y				(TEXTURE_SELECT_SIZE_BIG_Y)												// 同上 (*33)
-#define TEXTURE_SELECT01_SIZE_X				(TEXTURE_SELECT_SIZE_BIG_X)												// テクスチャサイズ (*33)
-#define TEXTURE_SELECT01_SIZE_Y				(TEXTURE_SELECT_SIZE_BIG_Y)												// 同上 (*33)
-#define TEXTURE_SELECT02_SIZE_X				(TEXTURE_SELECT_SIZE_BIG_X)												// テクスチャサイズ (*33)
-#define TEXTURE_SELECT02_SIZE_Y				(TEXTURE_SELECT_SIZE_BIG_Y)												// 同上 (*33)
-#define TEXTURE_SELECT03_SIZE_X				(TEXTURE_SELECT_SIZE_BIG_X)												// テクスチャサイズ (*33)
-#define TEXTURE_SELECT03_SIZE_Y				(TEXTURE_SELECT_SIZE_BIG_Y)												// 同上 (*33)
-#define TEXTURE_SELECT04_SIZE_X				(TEXTURE_SELECT_SIZE_MIDDLE_X)											// テクスチャサイズ (*33)
-#define TEXTURE_SELECT04_SIZE_Y				(TEXTURE_SELECT_SIZE_MIDDLE_Y)											// 同上 (*33)
-#define TEXTURE_SELECT05_SIZE_X				(TEXTURE_SELECT_SIZE_MIDDLE_X)											// テクスチャサイズ (*33)
-#define TEXTURE_SELECT05_SIZE_Y				(TEXTURE_SELECT_SIZE_MIDDLE_Y)											// 同上 (*33)
-#define TEXTURE_SELECT06_SIZE_X				(TEXTURE_SELECT_SIZE_MIDDLE_X)											// テクスチャサイズ (*33)
-#define TEXTURE_SELECT06_SIZE_Y				(TEXTURE_SELECT_SIZE_MIDDLE_Y)											// 同上 (*33)
-#define TEXTURE_SELECT07_SIZE_X				(TEXTURE_SELECT_SIZE_MIDDLE_X)											// テクスチャサイズ (*33)
-#define TEXTURE_SELECT07_SIZE_Y				(TEXTURE_SELECT_SIZE_MIDDLE_Y)											// 同上 (*33)
-#define TEXTURE_SELECT08_SIZE_X				(TEXTURE_SELECT_SIZE_SMALL_X)											// テクスチャサイズ (*33)
-#define TEXTURE_SELECT08_SIZE_Y				(TEXTURE_SELECT_SIZE_SMALL_Y)											// 同上 (*33)
-#define TEXTURE_SELECT09_SIZE_X				(TEXTURE_SELECT_SIZE_SMALL_X)											// テクスチャサイズ (*33)
-#define TEXTURE_SELECT09_SIZE_Y				(TEXTURE_SELECT_SIZE_SMALL_Y)											// 同上 (*33)
+#define TEXTURE_SELECT00_SIZE_X				(TEXTURE_SELECT_SIZE_BIG_X/2*SCREEN_SCALE)												// テクスチャサイズ (*33)
+#define TEXTURE_SELECT00_SIZE_Y				(TEXTURE_SELECT_SIZE_BIG_Y/2*SCREEN_SCALE)												// 同上 (*33)
+#define TEXTURE_SELECT01_SIZE_X				(TEXTURE_SELECT_SIZE_BIG_X/2*SCREEN_SCALE)												// テクスチャサイズ (*33)
+#define TEXTURE_SELECT01_SIZE_Y				(TEXTURE_SELECT_SIZE_BIG_Y/2*SCREEN_SCALE)												// 同上 (*33)
+#define TEXTURE_SELECT02_SIZE_X				(TEXTURE_SELECT_SIZE_BIG_X/2*SCREEN_SCALE)												// テクスチャサイズ (*33)
+#define TEXTURE_SELECT02_SIZE_Y				(TEXTURE_SELECT_SIZE_BIG_Y/2*SCREEN_SCALE)												// 同上 (*33)
+#define TEXTURE_SELECT03_SIZE_X				(TEXTURE_SELECT_SIZE_BIG_X/2*SCREEN_SCALE)												// テクスチャサイズ (*33)
+#define TEXTURE_SELECT03_SIZE_Y				(TEXTURE_SELECT_SIZE_BIG_Y/2*SCREEN_SCALE)												// 同上 (*33)
+#define TEXTURE_SELECT04_SIZE_X				(TEXTURE_SELECT_SIZE_MIDDLE_X/2*SCREEN_SCALE)											// テクスチャサイズ (*33)
+#define TEXTURE_SELECT04_SIZE_Y				(TEXTURE_SELECT_SIZE_MIDDLE_Y/2*SCREEN_SCALE)											// 同上 (*33)
+#define TEXTURE_SELECT05_SIZE_X				(TEXTURE_SELECT_SIZE_MIDDLE_X/2*SCREEN_SCALE)											// テクスチャサイズ (*33)
+#define TEXTURE_SELECT05_SIZE_Y				(TEXTURE_SELECT_SIZE_MIDDLE_Y/2*SCREEN_SCALE)											// 同上 (*33)
+#define TEXTURE_SELECT06_SIZE_X				(TEXTURE_SELECT_SIZE_MIDDLE_X/2*SCREEN_SCALE)											// テクスチャサイズ (*33)
+#define TEXTURE_SELECT06_SIZE_Y				(TEXTURE_SELECT_SIZE_MIDDLE_Y/2*SCREEN_SCALE)											// 同上 (*33)
+#define TEXTURE_SELECT07_SIZE_X				(TEXTURE_SELECT_SIZE_MIDDLE_X/2*SCREEN_SCALE)											// テクスチャサイズ (*33)
+#define TEXTURE_SELECT07_SIZE_Y				(TEXTURE_SELECT_SIZE_MIDDLE_Y/2*SCREEN_SCALE)											// 同上 (*33)
+#define TEXTURE_SELECT08_SIZE_X				(TEXTURE_SELECT_SIZE_SMALL_X/2*SCREEN_SCALE)											// テクスチャサイズ (*33)
+#define TEXTURE_SELECT08_SIZE_Y				(TEXTURE_SELECT_SIZE_SMALL_Y/2*SCREEN_SCALE)											// 同上 (*33)
+#define TEXTURE_SELECT09_SIZE_X				(TEXTURE_SELECT_SIZE_SMALL_X/2*SCREEN_SCALE)											// テクスチャサイズ (*33)
+#define TEXTURE_SELECT09_SIZE_Y				(TEXTURE_SELECT_SIZE_SMALL_Y/2*SCREEN_SCALE)											// 同上 (*33)
 
 #define TEXTURE_SELECT08_SIZE_MOVE_X		((float)SCREEN_WIDTH/SCREEN_WIDTH/10)									// テクスチャサイズ (*33)
 #define TEXTURE_SELECT08_SIZE_MOVE_Y		((float)SCREEN_HEIGHT/SCREEN_HEIGHT/10)									// 同上 (*33)
@@ -70,7 +70,7 @@
 
 #define TEXTURE_SELECT00_POSITION_OFFSET	(SCREEN_WIDTH/2+SCREEN_WIDTH/12.5)
 #define TEXTURE_SELECT00_POSITION_DISTANCE	(SCREEN_WIDTH/6)
-#define TEXTURE_SELECT_POSITION_OFFSET_Y	(SCREEN_HEIGHT/(SCREEN_HEIGHT/100)*11)
+#define TEXTURE_SELECT_POSITION_OFFSET_Y	(SCREEN_HEIGHT/(SCREEN_HEIGHT/100)*11/2*SCREEN_SCALE)
 
 #define TEXTURE_SELECT00_POSITION_X			(TEXTURE_SELECT00_POSITION_OFFSET-TEXTURE_SELECT00_POSITION_DISTANCE*2)														// テクスチャ座標
 #define TEXTURE_SELECT00_POSITION_Y			(TEXTURE_SELECT_POSITION_OFFSET_Y)													// 同上 (*33)
@@ -98,7 +98,7 @@
 
 
 #define TEXTURE_SELECT_MOVE_OFFSET_X		(TEXTURE_SELECT00_POSITION_OFFSET-(SCREEN_WIDTH/SCREEN_WIDTH)*65)					// 同上 (*33)
-#define TEXTURE_SELECT_MOVE_OFFSET_Y		(SCREEN_HEIGHT/(SCREEN_HEIGHT/100)*10)												// 同上 (*33)
+#define TEXTURE_SELECT_MOVE_OFFSET_Y		(SCREEN_HEIGHT/(SCREEN_HEIGHT/100)*10/2*SCREEN_SCALE)												// 同上 (*33)
 
 #define TEXTURE_SELECT_MOVE_DISTANCE_X		(SCREEN_HEIGHT/SCREEN_HEIGHT*150)
 #define TEXTURE_SELECT00_MOVE_X				(TEXTURE_SELECT_MOVE_OFFSET_X-TEXTURE_SELECT00_POSITION_DISTANCE*2)				// テクスチャ座標
@@ -137,6 +137,7 @@ class Selectface : public ObjectManager
 public:
 	struct SelectParts
 	{
+		LPDIRECT3DTEXTURE9		pTexture;							// テクスチャへのポリゴン (*33)
 		LPDIRECT3DTEXTURE9		Texture;
 		D3DXVECTOR3				posSelect;																					// プレイヤーの移動量
 		VERTEX_2D				vertexSelectWk[NUM_VERTEX];																	// 頂点情報格納ワーク

@@ -114,7 +114,7 @@ void SceneManager::Init(HINSTANCE hInst, HWND hWnd)
 
 	// 初期のシーンをTITLEに設定
 	//m_eScene = TITLE;
-	m_eScene = GAME;
+	m_eScene = SELECT;
 
 	ChangeScene(m_eScene);	// 初期シーン設定
 
