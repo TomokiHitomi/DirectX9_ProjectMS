@@ -21,8 +21,8 @@
 #include <crtdbg.h>
 #include <cstdlib>
 #include <stdlib.h>
-#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
-#define malloc(X) _malloc_dbg(X,_NORMAL_BLOCK,__FILE__,__LINE__)
+//#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
+//#define malloc(X) _malloc_dbg(X,_NORMAL_BLOCK,__FILE__,__LINE__)
 #endif
 
 #define DIRECTINPUT_VERSION (0x0800)	// åxçêëŒèàóp

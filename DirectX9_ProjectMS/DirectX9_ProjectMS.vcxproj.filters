@@ -237,6 +237,9 @@
     <ClInclude Include="gray.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="SkinAssimp.h">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClInclude>
     <ClInclude Include="rightleft.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
@@ -374,6 +377,9 @@
     <ClCompile Include="gray.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
+    <ClCompile Include="SkinAssimp.cpp">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClCompile>
     <ClCompile Include="rightleft.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
@@ -401,6 +407,9 @@
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
     <FxCompile Include="data\SHADER\box.fx">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="data\SHADER\skinassimp.fx">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>

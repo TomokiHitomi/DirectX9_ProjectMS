@@ -55,7 +55,8 @@ HRESULT ShaderManager::Load(void)
 {
 	pShader[BILLBOARD] = new Shader(SHADER_FILE_BILLBOARD);
 	pShader[XMODEL] = new Shader(SHADER_FILE_XMODEL);
-	pShader[SKINMESH] = new Shader(SHADER_FILE_SKINMESH);
+	pShader[XMODEL] = new Shader(SHADER_FILE_SKINASSIMP);
+	pShader[SKINASSIMP] = new Shader(SHADER_FILE_SKINMESH);
 	pShader[PLANE] = new Shader(SHADER_FILE_PLANE);
 	pShader[BOX] = new Shader(SHADER_FILE_BOX);
 	return S_OK;

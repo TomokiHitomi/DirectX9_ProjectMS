@@ -21,6 +21,8 @@
 #include "gage.h"
 #include "weaponMgr.h"
 
+#include "SkinAssimp.h"
+
 /* デバッグ */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -38,6 +40,7 @@
 // グローバル変数
 //*****************************************************************************
 extern SceneManager		g_cScene;				// Sceneマネージャ
+//CSkinAssimp test;
 
 //=============================================================================
 // 更新処理
@@ -59,6 +62,11 @@ void GameScene::Draw(void)
 	{
 		CameraManager::Set(CameraManager::CameraType(i));
 		ObjectManager::DrawAll();
+		//D3DXMATRIX mtxTemp, mtxScl;
+		//D3DXMatrixIdentity(&mtxTemp);
+		//D3DXMatrixScaling(&mtxScl, 5.0f, 5.0f, 5.0f);
+		//D3DXMatrixMultiply(&mtxTemp, &mtxTemp, &mtxScl);
+		//test.Draw(mtxTemp);
 		//pDevice->Present(NULL, NULL, NULL, NULL);
 	}
 	CameraManager::Set(CameraManager::SINGLE);
@@ -69,6 +77,9 @@ void GameScene::Draw(void)
 //=============================================================================
 GameScene::GameScene(void)
 {
+
+	//test.Init();
+
 	//new Copyright;
 	//new AirWaterFream;
 	//ObjectManager::CreateObject<Skydome>();
@@ -78,7 +89,7 @@ GameScene::GameScene(void)
 	ObjectManager::CreateObject<WeaponManager>();
 	ObjectManager::CreateObject<PlayerManager>();
 	ObjectManager::CreateObject<EffectManager>();
-	ObjectManager::CreateObject<Gage>();
+	//ObjectManager::CreateObject<Gage>();
 	//new Player;
 	//new Skydome;
 	//new Cube;
