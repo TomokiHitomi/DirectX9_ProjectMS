@@ -232,6 +232,8 @@
     <ClInclude Include="title.h" />
     <ClInclude Include="titlelogo.h" />
     <ClInclude Include="titlemesh.h" />
+    <ClInclude Include="weapon.h" />
+    <ClInclude Include="weaponMgr.h" />
     <ClInclude Include="wing.h" />
     <ClInclude Include="XModel.h" />
     <ClInclude Include="XTexture.h" />
@@ -276,6 +278,8 @@
     <ClCompile Include="title.cpp" />
     <ClCompile Include="titlelogo.cpp" />
     <ClCompile Include="titlemesh.cpp" />
+    <ClCompile Include="weapon.cpp" />
+    <ClCompile Include="weaponMgr.cpp" />
     <ClCompile Include="wing.cpp" />
     <ClCompile Include="XModel.cpp" />
     <ClCompile Include="XTexture.cpp" />

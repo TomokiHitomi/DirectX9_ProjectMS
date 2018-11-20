@@ -56,7 +56,8 @@ public:
 		GAGE,
 		RESULTSELECT,
 		GRAY,
-		PARTICLE
+		PARTICLE,
+		WEAPON
 	};
 
 	// オブジェクトタイプ

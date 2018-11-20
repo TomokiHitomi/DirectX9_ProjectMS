@@ -16,6 +16,7 @@
 #include "XTexture.h"
 #include "character.h"
 #include "scene.h"
+#include "weapon.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -46,7 +47,10 @@
 #define PLAYER_MOVE_INERTIA			(0.3f)
 
 // アタック
+#define PLAYER_ATTACK_CD			(30)		// クールダウン
 
+// ガード
+#define PLAYER_GUARD_CD				(30)
 
 // ジャンプ
 #define PLAYER_GRAVITY				(0.3f)
@@ -65,7 +69,8 @@
 class Player
 {
 public:
-	CSkinMesh		*m_CSkinMesh;	// スキンメッシュ格納用
+	CSkinMesh*		m_CSkinMesh;	// スキンメッシュ格納用
+	Weapon*			pWeapon[2];
 
 	// コンストラクタ（初期化処理）
 	Player(void);
@@ -183,6 +188,9 @@ public:
 		{
 			m_pPlayer[player]->m_CSkinMesh->ChangeAnim(Player::PLAYER_ANIME_HOSTAGE, 0.05f);
 		}	
+		// ウェポンをセット
+		m_pPlayer[player]->pWeapon[0] = WeaponManager::SetWeapon(m_pPlayer[player]->m_nNum, WeaponManager::LEFT);
+		m_pPlayer[player]->pWeapon[1] = WeaponManager::SetWeapon(m_pPlayer[player]->m_nNum, WeaponManager::RIGHT);
 	}
 	//void ReleaseStage(void)
 	//{

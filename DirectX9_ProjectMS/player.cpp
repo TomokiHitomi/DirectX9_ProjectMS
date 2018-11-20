@@ -13,6 +13,7 @@
 #include "sound.h"
 #include "joycon.h"
 #include "character.h"
+#include "weaponMgr.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -163,6 +164,9 @@ Player::Player(void)
 	m_vRotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_fMoveInertia = 0.3f;
 
+	// クールダウン値
+	m_nCoolDown = 0;
+
 	// ジャンプ用
 	fVelocity = PLAYER_VELOCITY;
 	fGravity = PLAYER_GRAVITY;
@@ -179,6 +183,11 @@ Player::Player(void)
 	m_bUse = true;
 
 	m_CSkinMesh = NULL;
+
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		pWeapon[i] = NULL;
+	}
 }
 
 //=============================================================================
@@ -205,24 +214,28 @@ void Player::Update(void)
 
 	if (m_bUse)
 	{
-		// 移動処理
-		Move();
+		m_nCoolDown--;
+		if (m_nCoolDown < 0)
+		{
+			// 移動処理
+			Move();
 
-//#ifdef _DEBUG
-//		PrintDebugProc("Pos [%f,%f,%f]\n", m_vPos.x, m_vPos.y, m_vPos.z);
-//		PrintDebugProc("Rot [%f,%f,%f]\n", m_vRot.x, m_vRot.y, m_vRot.z);
-//		PrintDebugProc("RotI[%f,%f,%f]\n", m_vRotInertia.x, m_vRotInertia.y, m_vRotInertia.z);
-//		PrintDebugProc("Move[%f,%f,%f]\n", m_vMove.x, m_vMove.y, m_vMove.z);
-//		PrintDebugProc("Spd [%f]\n", m_fMoveSpeed);
-//		PrintDebugProc("mtxX[%f,%f,%f]\n",
-//			m_mtxWorld._11, m_mtxWorld._12, m_mtxWorld._13);
-//		PrintDebugProc("mtxY[%f,%f,%f]\n",
-//			m_mtxWorld._21, m_mtxWorld._22, m_mtxWorld._23);
-//		PrintDebugProc("mtxZ[%f,%f,%f]\n",
-//			m_mtxWorld._31, m_mtxWorld._32, m_mtxWorld._33);
-//		PrintDebugProc("mtxA[%f,%f,%f]\n",
-//			m_mtxWorld._41, m_mtxWorld._42, m_mtxWorld._43);
-//#endif
+			//#ifdef _DEBUG
+			//		PrintDebugProc("Pos [%f,%f,%f]\n", m_vPos.x, m_vPos.y, m_vPos.z);
+			//		PrintDebugProc("Rot [%f,%f,%f]\n", m_vRot.x, m_vRot.y, m_vRot.z);
+			//		PrintDebugProc("RotI[%f,%f,%f]\n", m_vRotInertia.x, m_vRotInertia.y, m_vRotInertia.z);
+			//		PrintDebugProc("Move[%f,%f,%f]\n", m_vMove.x, m_vMove.y, m_vMove.z);
+			//		PrintDebugProc("Spd [%f]\n", m_fMoveSpeed);
+			//		PrintDebugProc("mtxX[%f,%f,%f]\n",
+			//			m_mtxWorld._11, m_mtxWorld._12, m_mtxWorld._13);
+			//		PrintDebugProc("mtxY[%f,%f,%f]\n",
+			//			m_mtxWorld._21, m_mtxWorld._22, m_mtxWorld._23);
+			//		PrintDebugProc("mtxZ[%f,%f,%f]\n",
+			//			m_mtxWorld._31, m_mtxWorld._32, m_mtxWorld._33);
+			//		PrintDebugProc("mtxA[%f,%f,%f]\n",
+			//			m_mtxWorld._41, m_mtxWorld._42, m_mtxWorld._43);
+			//#endif
+		}
 		if (m_CSkinMesh != NULL)
 		{
 			// モデルを更新
@@ -355,10 +368,21 @@ void Player::Move(void)
 		jcL = GetJoyconAccel(0 + m_nNum * 2);
 		jcR = GetJoyconAccel(1 + m_nNum * 2);
 
+		// アタック処理
 		if (jcL.y > PLAYER_MARGIN_ATTACK)
 		{
 //#ifdef _DEBUG
 //			PrintDebugProc("【Attack1】\n");
+			if (pWeapon[0])
+			{
+				D3DXVECTOR3 moveTmp = D3DXVECTOR3(m_mtxWorld._31, m_mtxWorld._32, m_mtxWorld._33);
+				D3DXVec3Normalize(&moveTmp, &moveTmp);
+
+				if (pWeapon[0]->Set(m_vPos, -moveTmp))
+				{
+					m_nCoolDown = PLAYER_ATTACK_CD;
+				}
+			}
 //#endif
 		}
 		if (jcR.y > PLAYER_MARGIN_ATTACK)
@@ -366,42 +390,62 @@ void Player::Move(void)
 //#ifdef _DEBUG
 //			PrintDebugProc("【Attack2】\n");
 //#endif
+			D3DXVECTOR3 moveTmp = D3DXVECTOR3(m_mtxWorld._31, m_mtxWorld._32, m_mtxWorld._33);
+			D3DXVec3Normalize(&moveTmp, &moveTmp);
+
+			if (pWeapon[1])
+			{
+				if (pWeapon[1]->Set(m_vPos, -moveTmp))
+				{
+					m_nCoolDown = PLAYER_ATTACK_CD;
+				}
+			}
 		}
 
-
+		// ガード処理
 		if (jcL.z < -PLAYER_MARGIN_GUARD && jcR.z > PLAYER_MARGIN_GUARD)
 		{
 //#ifdef _DEBUG
 //			PrintDebugProc("【Guard】\n");
 //#endif
+			m_nCoolDown = PLAYER_GUARD_CD;
 		}
+
+		// 移動
 		else
 		{
+			// 前
 			if (jcL.y > PLAYER_MARGIN_MOVE && jcR.y > PLAYER_MARGIN_MOVE)
 			{
 				m_fMoveAccel = CompHigh(jcL.y, jcR.y);
 				MoveFunc(m_vRot.y + D3DX_PI);
 			}
+			// 後
 			else if (jcL.y < -PLAYER_MARGIN_MOVE && jcR.y < -PLAYER_MARGIN_MOVE)
 			{
 				m_fMoveAccel = CompHigh(jcL.y, jcR.y);
 				MoveFunc(m_vRot.y);
 			}
-
+			// 左
 			if (jcL.z > PLAYER_MARGIN_MOVE && jcR.z > PLAYER_MARGIN_MOVE)
 			{
 				m_fMoveAccel = CompHigh(jcL.z, jcR.z);
 				MoveFunc(m_vRot.y + D3DX_PI * 0.50f);
 			}
+			// 右
 			else if (jcL.z < -PLAYER_MARGIN_MOVE && jcR.z < -PLAYER_MARGIN_MOVE)
 			{
 				m_fMoveAccel = CompHigh(jcL.z, jcR.z);
 				MoveFunc(m_vRot.y - D3DX_PI * 0.50f);
 			}
+
+			// ジャンプ
 			if (JcTriggered(1 + m_nNum * 2, JC_R_BUTTON_R))
 			{
 				bJump = true;
 			}
+
+			// ダッシュ
 			if (JcTriggered(0 + m_nNum * 2, JC_L_BUTTON_L))
 			{
 				bDash = true;
@@ -457,7 +501,7 @@ void Player::Move(void)
 	}
 
 	m_vPos += m_vMove;
-}
+} 
 
 //=============================================================================
 // ジャンプ処理関数

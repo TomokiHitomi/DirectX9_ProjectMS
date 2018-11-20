@@ -329,11 +329,11 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	//ImGui_ImplDX9_Init(g_pD3DDevice);
 
-	// シーンの初期化処理
-	SceneManager::Init(hInstance, hWnd);
-
 	// Joycon認識開始
 	start();
+
+	// シーンの初期化処理
+	SceneManager::Init(hInstance, hWnd);
 
 	return S_OK;
 }

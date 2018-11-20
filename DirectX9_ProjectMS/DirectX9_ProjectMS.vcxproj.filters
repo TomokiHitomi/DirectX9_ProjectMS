@@ -46,6 +46,9 @@
     <Filter Include="ソース ファイル\Stage">
       <UniqueIdentifier>{fa9066e0-d667-4766-80d3-c5199b99d6be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Object\Weapon">
+      <UniqueIdentifier>{b0f81631-a733-449e-85ff-093a943ede98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -234,6 +237,12 @@
     <ClInclude Include="gray.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="weapon.h">
+      <Filter>ソース ファイル\Object\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="weaponMgr.h">
+      <Filter>ソース ファイル\Object\Weapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -361,6 +370,12 @@
     </ClCompile>
     <ClCompile Include="gray.cpp">
       <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon.cpp">
+      <Filter>ソース ファイル\Object\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="weaponMgr.cpp">
+      <Filter>ソース ファイル\Object\Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
