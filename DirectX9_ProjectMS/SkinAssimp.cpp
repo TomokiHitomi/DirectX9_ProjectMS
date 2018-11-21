@@ -2,6 +2,11 @@
 #include "shader.h"
 
 #include <iostream>
+#include "camera.h"
+#include "box.h"
+
+// test
+#include <string>
 
 #include <assimp\Importer.hpp>
 #include <assimp\postprocess.h>
@@ -32,15 +37,44 @@ CSkinAssimp::~CSkinAssimp(void)
 
 HRESULT CSkinAssimp::Init(void)
 {
+	// 頂点データ
+	D3DXVECTOR4 CubePosition[] = {
+							D3DXVECTOR4(-BOX_SIZE, BOX_SIZE, -BOX_SIZE, 0.0f),
+							D3DXVECTOR4(BOX_SIZE,  BOX_SIZE, -BOX_SIZE, 0.0f),
+							D3DXVECTOR4(-BOX_SIZE,  -BOX_SIZE, -BOX_SIZE, 0.0f),
+							D3DXVECTOR4(BOX_SIZE, -BOX_SIZE, -BOX_SIZE, 0.0f),
+
+							D3DXVECTOR4(BOX_SIZE, BOX_SIZE,  BOX_SIZE, 0.0f),
+							D3DXVECTOR4(-BOX_SIZE,  BOX_SIZE,  BOX_SIZE, 0.0f),
+							D3DXVECTOR4(BOX_SIZE, -BOX_SIZE,  BOX_SIZE, 0.0f),
+							D3DXVECTOR4(-BOX_SIZE, -BOX_SIZE,  BOX_SIZE, 0.0f),
+	};
+	// インデックスデータ
+	//	前(z=-1)  左(x=-1)  後(z=+1)  右(x=+1)  上(y=+1)  下(y=-1)
+	WORD CubeVertList[] = { 0,1,2,3,  5,0,7,2,  4,5,6,7,  1,4,3,6,  5,4,0,1,  6,7,3,2 };
+
+	// UVデータ
+	D3DXVECTOR2 CubeUV[] = { D3DXVECTOR2(0.0f, 0.0f),
+								D3DXVECTOR2(1.0f, 0.0f),
+								D3DXVECTOR2(0.0f, 1.0f),
+								D3DXVECTOR2(1.0f, 1.0f),
+	};
+
+
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// シェーダのアドレスを取得
 	pEffect = ShaderManager::GetEffect(ShaderManager::SKINASSIMP);
 
 	Assimp::Importer importer;
-	std::string file_path = "Lat_Pastry.fbx";
+	//std::string file_path = "Lat_Pastry.fbx";
+	//std::string file_path = "test.fbx";
+	std::string file_path = "cube2.fbx";
 
-	const aiScene* scene = importer.ReadFile(file_path, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
+
+	const aiScene* scene = importer.ReadFile(
+		file_path,
+		aiProcessPreset_TargetRealtime_Quality | aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
 
 	if (scene == nullptr)
 	{
@@ -71,6 +105,87 @@ HRESULT CSkinAssimp::Init(void)
 		pFaceCount[i] = 0;
 	}
 
+	//// 頂点バッファ生成
+	//if (FAILED(pDevice->CreateVertexBuffer(
+	//	sizeof(VERTEX_ASSIMP) * NUM_VERTEX * 6,	// 頂点データ用に確保するバッファサイズ(バイト単位)
+	//	0,										// 頂点バッファの使用法　
+	//	0,										// 使用する頂点フォーマット
+	//	D3DPOOL_MANAGED,						// リソースのバッファを保持するメモリクラスを指定
+	//	&pVtxBuff[0],								// 頂点バッファインターフェースへのポインタ
+	//	NULL)))									// NULLに設定
+	//{
+	//	return E_FAIL;
+	//}
+
+	//pVtxCount[0] = NUM_VERTEX * 6;
+
+	//{//頂点バッファの中身を埋める
+	//	VERTEX_ASSIMP *pVtx;
+
+	//	// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
+	//	pVtxBuff[0]->Lock(0, 0, (void**)&pVtx, 0);
+
+	//	WORD k = 0;
+	//	for (DWORD i = 0; i < 6; i++)
+	//	{
+	//		for (DWORD j = 0; j < NUM_VERTEX; j++)
+	//		{
+	//			D3DXVECTOR3 temp4 = CubePosition[CubeVertList[k++]];
+	//			D3DXVECTOR3 temp3 = D3DXVECTOR3(temp4.x, temp4.y, temp4.z);
+	//			// 頂点座標の設定
+	//			pVtx->pos = temp3;
+	//			//pVtx->normal = D3DXVECTOR3
+	//			// テクスチャ座標の設定
+	//			pVtx->uv = CubeUV[j];
+	//			pVtx++;
+	//		}
+	//	}
+
+	//	// 頂点データをアンロックする
+	//	pVtxBuff[0]->Unlock();
+	//}
+
+
+	///***** インデックスバッファ設定 *****/
+
+
+	//// 座標バッファ生成
+	//if (FAILED(pDevice->CreateIndexBuffer(
+	//	sizeof(WORD) * 36,						// 頂点データ用に確保するバッファサイズ(バイト単位)
+	//	0,									// 頂点バッファの使用法　
+	//	D3DFMT_INDEX16,						// 使用する頂点フォーマット
+	//	D3DPOOL_MANAGED,					// リソースのバッファを保持するメモリクラスを指定
+	//	&pIdxBuff[0],							// 頂点バッファインターフェースへのポインタ
+	//	NULL)))								// NULLに設定
+	//{
+	//	return E_FAIL;
+	//}
+
+	//pFaceCount[0] = 36;
+
+
+	//{// 座標バッファの中身を埋める
+	//	WORD *pIdx;
+
+	//	// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
+	//	pIdxBuff[0]->Lock(0, 0, (void**)&pIdx, 0);
+
+	//	// 頂点座標の設定
+	//	for (WORD m = 0; m < 6; m++)
+	//	{
+	//		*pIdx++ = 0 + 4 * m;
+	//		*pIdx++ = 1 + 4 * m;
+	//		*pIdx++ = 2 + 4 * m;
+	//		*pIdx++ = 2 + 4 * m;
+	//		*pIdx++ = 1 + 4 * m;
+	//		*pIdx++ = 3 + 4 * m;
+	//	}
+
+	//	// 頂点データをアンロックする
+	//	pIdxBuff[0]->Unlock();
+	//}
+
+
 	// カウンターを初期化
 	nMeshCount = 0;
 
@@ -88,7 +203,6 @@ HRESULT CSkinAssimp::Init(void)
 	};
 
 	pDevice->CreateVertexDeclaration(declElems, &pDecl);
-
 }
 
 void CSkinAssimp::Update(void)
@@ -111,36 +225,41 @@ void CSkinAssimp::Draw(D3DXMATRIX mtxWorld)
 	//pMat = (D3DXMATERIAL*)pBuffMat->GetBufferPointer();
 
 
-	// 両面描画する
-	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	//// 両面描画する
+	//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
+	for (unsigned int i = 0; i < nMeshCount; i++)
+	{
+
+		//// インスタンス宣言
+		//pDevice->SetStreamSourceFreq(0, D3DSTREAMSOURCE_INDEXEDDATA | 1);
+
+		// 頂点宣言
+		pDevice->SetVertexDeclaration(pDecl);
+
+		// 頂点とインデックスを設定
+		pDevice->SetStreamSource(0, pVtxBuff[i], 0, sizeof(VERTEX_ASSIMP));		// 頂点バッファ
+		pDevice->SetIndices(pIdxBuff[i]);										// インデックスバッファ
 
 	// 使用するテクニックを定義
-	if (0)
-	{	// ライトON
-		if (FAILED(pEffect->SetTechnique("LIGHT_ON")))
-		{
-			// エラー
-			MessageBox(NULL, "テクニックの定義に失敗しました", "LIGHT_ON", MB_OK);
-			//return S_FALSE;
+		if (0)
+		{	// ライトON
+			if (FAILED(pEffect->SetTechnique("LIGHT_ON")))
+			{
+				// エラー
+				MessageBox(NULL, "テクニックの定義に失敗しました", "LIGHT_ON", MB_OK);
+				//return S_FALSE;
+			}
 		}
-	}
-	else
-	{	// ライトOFF
-		if (FAILED(pEffect->SetTechnique("LIGHT_OFF")))
-		{
-			// エラー
-			MessageBox(NULL, "テクニックの定義に失敗しました", "LIGHT_OFF", MB_OK);
-			//return S_FALSE;
+		else
+		{	// ライトOFF
+			if (FAILED(pEffect->SetTechnique("LIGHT_OFF")))
+			{
+				// エラー
+				MessageBox(NULL, "テクニックの定義に失敗しました", "LIGHT_OFF", MB_OK);
+				//return S_FALSE;
+			}
 		}
-	}
-
-	//for (unsigned int i = 0; i < nMeshCount; i++)
-	//{
-		// 頂点とインデックスを設定
-		pDevice->SetVertexDeclaration(pDecl);
-		pDevice->SetStreamSource(0, pVtxBuff[1], 0, sizeof(VERTEX_ASSIMP));		// 頂点バッファ
-		pDevice->SetIndices(pIdxBuff[1]);										// インデックスバッファ
 
 		// シェーダーの開始、numPassには指定してあるテクニックに定義してあるpassの数が変える
 		UINT numPass = 0;
@@ -184,24 +303,33 @@ void CSkinAssimp::Draw(D3DXMATRIX mtxWorld)
 			//	//SetShaderMat(pEffect, pMat[i].MatD3D);
 			//}
 
-			// テクスチャをセット
-		pEffect->SetTexture("tex", pTexture[1]);
+		// テクスチャをセット
+		pEffect->SetTexture("tex", pTexture[i]);
 
 		// 結果を確定させる
 		pEffect->CommitChanges();
 
+		//pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, pFaceCount[i]);
+
 		// ポリゴンの描画
-		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, pVtxCount[1], 0, pFaceCount[1]);
+		if (FAILED(pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, pVtxCount[i], 0, pFaceCount[i])))
+		{
+			// エラー
+			MessageBox(NULL, "描画に失敗", "Draw", MB_OK);
+		}
 		//}
 
 		// シェーダーパスを終了
 		pEffect->EndPass();
 		// シェーダーを終了
 		pEffect->End();
-	//}
+	}
 
-	// 裏面をカリングに戻す
-	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	//// インスタンス宣言を標準に戻す
+	//pDevice->SetStreamSourceFreq(0, 1);
+
+	//// 裏面をカリングに戻す
+	//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 
 
@@ -289,6 +417,10 @@ void CSkinAssimp::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 				pVtx->uv.x = (float)mesh->mTextureCoords[0][n].x;
 				pVtx->uv.y = (float)mesh->mTextureCoords[0][n].y;
 			}
+
+			char str[100];
+			sprintf(str, "vtx %.2f, %.2f, %.2f\n", pVtx->pos.x, pVtx->pos.y, pVtx->pos.z);
+			OutputDebugString((LPCSTR)str);
 		}
 
 		// 頂点データをアンロックする
@@ -327,8 +459,17 @@ void CSkinAssimp::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		{
 			aiFace face = mesh->mFaces[n];
 
-			for (unsigned int i = 0; i < face.mNumIndices; ++i)
+			for (unsigned int i = 0; i < face.mNumIndices; i+=3)
+			{
 				*pIdx++ = face.mIndices[i];
+				*pIdx++ = face.mIndices[i + 1];
+				*pIdx++ = face.mIndices[i + 2];
+
+				char str[100];
+				sprintf(str, "idx %d, %d, %d\n", face.mIndices[i], face.mIndices[i + 1], face.mIndices[i + 2]);
+				//sprintf(str, "%d ", face.mIndices[i]);
+				OutputDebugString((LPCSTR)str);
+			}
 		}
 
 		// 頂点データをアンロックする
@@ -342,14 +483,21 @@ void CSkinAssimp::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		aiString str;
 		mat->GetTexture(aiTextureType_DIFFUSE, 0, &str);
 
+
+		//OutputDebugString((LPCSTR)str.C_Str());
+
 		// テクスチャの読み込み
 		if (FAILED(D3DXCreateTextureFromFile(
 			pDevice,							// デバイス
-			//str.C_Str(),						// ファイル名
-			"data/TEXTURE/white_1x1.png",		// ファイル名
+			str.C_Str(),						// ファイル名
+			//"data/TEXTURE/white_1x1.png",		// ファイル名
 			&pTexture[nMeshCount])))			// 読み込むメモリ（複数なら配列に）
 		{
-			MessageBox(NULL, "テクスチャ読み込みに失敗", str.C_Str(), MB_OK);
+			char cstr[100];
+			sprintf(cstr, "Tex[%s]\n", (LPCSTR)str.C_Str());
+			OutputDebugString((LPCSTR)cstr);
+
+			//MessageBox(NULL, "テクスチャ読み込みに失敗", str.C_Str(), MB_OK);
 			//return E_FAIL;
 		}
 	}

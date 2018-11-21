@@ -410,7 +410,7 @@ void Draw(void)
 		// •`‰æ‚ÌI—¹
 		if (FAILED(g_pD3DDevice->EndScene()))
 		{
-			MessageBox(NULL, "EndScene‚É¸”s‚µ‚Ü‚µ‚½B", "EndScene", MB_OK);
+			//MessageBox(NULL, "EndScene‚É¸”s‚µ‚Ü‚µ‚½B", "EndScene", MB_OK);
 		}
 	}
 

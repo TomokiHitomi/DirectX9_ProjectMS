@@ -198,12 +198,14 @@ float4 ps_light_on(VS_OUT In) : COLOR0
 	////return float4(saturate(iA + iD + iS), 1.0);
 	//return tex2D(smp, In.uv) * In.col;
 	return tex2D(smp, In.uv);
+	//return In.col;
 
 }
 
 float4 ps_light_off(VS_OUT In) : COLOR0
 {
-	return tex2D(smp, In.uv);
+	return In.col;
+	//return tex2D(smp, In.uv);
 }
 
 //=============================================================================

@@ -42,6 +42,7 @@ const WCHAR* EffectManager::c_filename[] = {
 //=============================================================================
 EffectManager::EffectManager(void)
 {
+
 	// オブジェクトIDとプライオリティの設定処理
 	SetIdAndPriority(ObjectID::EFFECT, Priority::Low, Priority::Low);
 
