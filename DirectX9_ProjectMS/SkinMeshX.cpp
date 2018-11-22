@@ -12,11 +12,35 @@
 // インクルードファイル
 //*****************************************************************************
 #include "SkinMeshX.h"
+#include "camera.h"
+#include "light.h"
 
 // デバッグ用
 #ifdef _DEBUG
 #include "debugproc.h"
 #endif
+
+
+HRESULT GenerateSkinnedMesh(IDirect3DDevice9* pd3dDevice, D3DXMESHCONTAINER_DERIVED* pMeshContainer);
+
+enum METHOD
+{
+	D3DNONINDEXED,
+	D3DINDEXED,
+	SOFTWARE,
+	D3DINDEXEDVS,
+	D3DINDEXEDHLSLVS,
+	NONE
+};
+
+METHOD		g_SkinningMethod = D3DINDEXEDHLSLVS; // Current skinning method
+
+UINT                        g_NumBoneMatricesMax = 0;
+D3DXMATRIXA16*              g_pBoneMatrices = NULL;
+DWORD                       g_dwBehaviorFlags;      // Behavior flags of the 3D device
+
+
+bool		g_bUseSoftwareVP;	// Flag to indicate whether software vp is
 
 CHAR* HeapCopy(CHAR* sName)
 {
@@ -27,23 +51,48 @@ CHAR* HeapCopy(CHAR* sName)
 	return sNewName;
 }
 
+//--------------------------------------------------------------------------------------
+// Name: AllocateName()
+// Desc: Allocates memory for a string to hold the name of a frame or mesh
+//--------------------------------------------------------------------------------------
+HRESULT AllocateName(LPCSTR Name, LPSTR* pNewName)
+{
+	UINT cbLength;
+
+	if (Name != NULL)
+	{
+		cbLength = (UINT)strlen(Name) + 1;
+		*pNewName = new CHAR[cbLength];
+		if (*pNewName == NULL)
+			return E_OUTOFMEMORY;
+		memcpy(*pNewName, Name, cbLength * sizeof(CHAR));
+	}
+	else
+	{
+		*pNewName = NULL;
+	}
+
+	return S_OK;
+}
+
+
 //=============================================================================
 // フレーム格納関数
 //=============================================================================
 HRESULT MY_HIERARCHY::CreateFrame(LPCTSTR Name, LPD3DXFRAME *ppNewFrame)
 {
 	HRESULT hr = S_OK;
-	MYFRAME *pFrame;
+	D3DXFRAME_DERIVED *pFrame;
 	//新しいフレームアドレス格納用変数を初期化
 	*ppNewFrame = NULL;
 	//フレームの領域確保
-	pFrame = new MYFRAME;
+	pFrame = new D3DXFRAME_DERIVED;
 	//領域確保の失敗時の処理
 	if (pFrame == NULL)
 	{
 		return E_OUTOFMEMORY;
 	}
-	ZeroMemory(pFrame, sizeof(MYFRAME));
+	ZeroMemory(pFrame, sizeof(D3DXFRAME_DERIVED));
 
 
 	//フレーム名格納用領域確保
@@ -72,8 +121,8 @@ HRESULT MY_HIERARCHY::CreateFrame(LPCTSTR Name, LPD3DXFRAME *ppNewFrame)
 	D3DXMatrixIdentity(&pFrame->TransformationMatrix);
 	D3DXMatrixIdentity(&pFrame->CombinedTransformationMatrix);
 	//追加：オフセット関係初期化
-	pFrame->OffsetID = 0xFFFFFFFF;
-	D3DXMatrixIdentity(&(pFrame->OffsetMat));
+	//pFrame->OffsetID = 0xFFFFFFFF;
+	D3DXMatrixIdentity(&(pFrame->CombinedTransformationMatrix));
 	//新規フレームのメッシュコンテナ初期化
 	pFrame->pMeshContainer = NULL;
 	//新規フレームの兄弟フレームアドレス格納用変数初期化
@@ -90,278 +139,202 @@ HRESULT MY_HIERARCHY::CreateFrame(LPCTSTR Name, LPD3DXFRAME *ppNewFrame)
 //=============================================================================
 //HRESULT MY_HIERARCHY::CreateMeshContainer
 //メッシュコンテナーを作成する
-HRESULT MY_HIERARCHY::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA* pMeshData,
-	CONST D3DXMATERIAL* pMaterials, CONST D3DXEFFECTINSTANCE* pEffectInstances,
-	DWORD NumMaterials, CONST DWORD *pAdjacency, LPD3DXSKININFO pSkinInfo,
+HRESULT MY_HIERARCHY::CreateMeshContainer(
+	LPCSTR Name,
+	CONST D3DXMESHDATA* pMeshData,
+	CONST D3DXMATERIAL* pMaterials,
+	CONST D3DXEFFECTINSTANCE* pEffectInstances,
+	DWORD NumMaterials,
+	CONST DWORD *pAdjacency,
+	LPD3DXSKININFO pSkinInfo,
 	LPD3DXMESHCONTAINER *ppMeshContainer)
 {
 	HRESULT hr;
-	//ローカル生成用
-	MYMESHCONTAINER *pMeshContainer = NULL;
-
-	//メッシュの面の数を格納
-	int iFacesAmount;
-	//forループで使用
-	int iMaterial;
-	//一時的なDirectXデバイス取得用
+	D3DXMESHCONTAINER_DERIVED *pMeshContainer = NULL;
+	UINT NumFaces;
+	UINT iMaterial;
+	UINT iBone, cBones;
 	LPDIRECT3DDEVICE9 pDevice = NULL;
-	//一時的なメッシュデータ格納用
+
 	LPD3DXMESH pMesh = NULL;
-	//メッシュコンテナ格納用変数初期化
+
 	*ppMeshContainer = NULL;
-	//ボーンの数格納用変数初期化
-	DWORD dwBoneNum = 0;
-	//pMeshに"外部引数の"メッシュアドレスを格納
+
+	// this sample does not handle patch meshes, so fail when one is found
+	if (pMeshData->Type != D3DXMESHTYPE_MESH)
+	{
+		hr = E_FAIL;
+		goto e_Exit;
+	}
+
+	// get the pMesh interface pointer out of the mesh data structure
 	pMesh = pMeshData->pMesh;
 
-	//メッシュコンテナ領域の動的確保
-	pMeshContainer = new MYMESHCONTAINER;
+	// this sample does not FVF compatible meshes, so fail when one is found
+	if (pMesh->GetFVF() == 0)
+	{
+		hr = E_FAIL;
+		goto e_Exit;
+	}
 
-	//領域確保失敗時
+	// allocate the overloaded structure to return as a D3DXMESHCONTAINER
+	pMeshContainer = new D3DXMESHCONTAINER_DERIVED;
 	if (pMeshContainer == NULL)
 	{
-		return E_OUTOFMEMORY;
+		hr = E_OUTOFMEMORY;
+		goto e_Exit;
 	}
-	//メッシュコンテナを初期化
-	ZeroMemory(pMeshContainer, sizeof(MYMESHCONTAINER));
-	//メッシュコンテナの名前格納用領域を動的確保
-	pMeshContainer->Name = new TCHAR[lstrlen(Name) + 1];
-	//失敗時の処理
-	if (!pMeshContainer->Name)
-	{
-		return E_FAIL;
-	}
-	//確保した領域にメッシュコンテナ名を格納
-	strcpy_s(pMeshContainer->Name, lstrlen(Name) + 1, Name);
-	//DirectXデバイス取得
+	memset(pMeshContainer, 0, sizeof(D3DXMESHCONTAINER_DERIVED));
+
+	// make sure and copy the name.  All memory as input belongs to caller, interfaces can be addref'd though
+	hr = AllocateName(Name, &pMeshContainer->Name);
+	if (FAILED(hr))
+		goto e_Exit;
+
 	pMesh->GetDevice(&pDevice);
-	//メッシュの面の数を取得
-	iFacesAmount = pMesh->GetNumFaces();
+	NumFaces = pMesh->GetNumFaces();
 
-	//// メッシュに法線がないので法線を追加
-	//pMeshContainer->MeshData.Type = D3DXMESHTYPE_MESH;
-	//// 柔軟な頂点フォーマット (FVF) コードを使ってメッシュのコピーを作成する
-	//hr = pMesh->CloneMeshFVF(
-	//	pMesh->GetOptions(),
-	//	pMesh->GetFVF() | D3DFVF_NORMAL,
-	//	pDevice,
-	//	&pMeshContainer->MeshData.pMesh); // ←ここにコピー
-	//if (FAILED(hr))
-	//{
-	//	return E_FAIL;
-	//}
-	//pMesh = pMeshContainer->MeshData.pMesh;
-	//// メッシュに含まれる各頂点の法線を計算して、設定する
-	//D3DXComputeNormals(pMesh, NULL);
+	// if no normals are in the mesh, add them
+	if (!(pMesh->GetFVF() & D3DFVF_NORMAL))
+	{
+		pMeshContainer->MeshData.Type = D3DXMESHTYPE_MESH;
 
+		// clone the mesh to make room for the normals
+		hr = pMesh->CloneMeshFVF(pMesh->GetOptions(),
+			pMesh->GetFVF() | D3DFVF_NORMAL,
+			pDevice, &pMeshContainer->MeshData.pMesh);
+		if (FAILED(hr))
+			goto e_Exit;
 
-	//// 法線の確認
-	//if (!(pMesh->GetFVF() & D3DFVF_NORMAL))
-	//{
-	//	// メッシュに法線がないので法線を追加
-	//	pMeshContainer->MeshData.Type = D3DXMESHTYPE_MESH;
-	//	// 柔軟な頂点フォーマット (FVF) コードを使ってメッシュのコピーを作成する
-	//	hr = pMesh->CloneMeshFVF(
-	//		pMesh->GetOptions(),
-	//		pMesh->GetFVF() | D3DFVF_NORMAL,
-	//		pDevice,
-	//		&pMeshContainer->MeshData.pMesh); // ←ここにコピー
-	//	if (FAILED(hr))
-	//	{
-	//		return E_FAIL;
-	//	}
-	//	pMesh = pMeshContainer->MeshData.pMesh;
-	//	// メッシュに含まれる各頂点の法線を計算して、設定する
-	//	D3DXComputeNormals(pMesh, NULL);
-	//}
-	//else
-	//{
-	//	pMeshContainer->MeshData.pMesh = pMesh;
-	//	pMeshContainer->MeshData.Type = D3DXMESHTYPE_MESH;
-	//	// 参照カウンタをインクリメント
-	//	pMesh->AddRef();
-	//}
+		// get the new pMesh pointer back out of the mesh container to use
+		// NOTE: we do not release pMesh because we do not have a reference to it yet
+		pMesh = pMeshContainer->MeshData.pMesh;
 
-	//- メッシュのマテリアル設定 -//
-	//メッシュのマテリアル数を格納(最大で1つ)
+		// now generate the normals for the pmesh
+		D3DXComputeNormals(pMesh, NULL);
+	}
+	else  // if no normals, just add a reference to the mesh for the mesh container
+	{
+		pMeshContainer->MeshData.pMesh = pMesh;
+		pMeshContainer->MeshData.Type = D3DXMESHTYPE_MESH;
+
+		pMesh->AddRef();
+	}
+
+	// allocate memory to contain the material information.  This sample uses
+	//   the D3D9 materials and texture names instead of the EffectInstance style materials
 	pMeshContainer->NumMaterials = max(1, NumMaterials);
-	//メッシュコンテナの、マテリアルデータ格納領域を動的確保
 	pMeshContainer->pMaterials = new D3DXMATERIAL[pMeshContainer->NumMaterials];
-	//メッシュコンテナの、テクスチャデータ格納領域を動的確保
 	pMeshContainer->ppTextures = new LPDIRECT3DTEXTURE9[pMeshContainer->NumMaterials];
-	//メッシュコンテナの、面ごとに持つ3つの隣接性情報が格納されたDWORD型のアドレス格納用(ポインタ)変数
-	pMeshContainer->pAdjacency = new DWORD[iFacesAmount * 3];
-	//領域確保の失敗時の処理
+	pMeshContainer->pAdjacency = new DWORD[NumFaces * 3];
 	if ((pMeshContainer->pAdjacency == NULL) || (pMeshContainer->pMaterials == NULL))
 	{
-		return E_FAIL;
+		hr = E_OUTOFMEMORY;
+		goto e_Exit;
 	}
-	//外部引数の隣接性情報をメッシュコンテナに格納
-	memcpy(pMeshContainer->pAdjacency, pAdjacency, sizeof(DWORD) * iFacesAmount * 3);
-	//テクスチャデータ格納用領域を初期化(memsetを使用して0で中身を埋める)
+
+	memcpy(pMeshContainer->pAdjacency, pAdjacency, sizeof(DWORD) * NumFaces * 3);
 	memset(pMeshContainer->ppTextures, 0, sizeof(LPDIRECT3DTEXTURE9) * pMeshContainer->NumMaterials);
-	//引数のマテリアル数が0じゃない場合
+
+	// if materials provided, copy them
 	if (NumMaterials > 0)
 	{
-		//外部引数のマテリアルデータアドレスをメッシュコンテナに格納
 		memcpy(pMeshContainer->pMaterials, pMaterials, sizeof(D3DXMATERIAL) * NumMaterials);
-		//マテリアル数分ループさせる
-		for (iMaterial = 0; (DWORD)iMaterial < NumMaterials; iMaterial++)
+
+		for (iMaterial = 0; iMaterial < NumMaterials; iMaterial++)
 		{
-			//テクスチャのファイル名がNULLでなければ(テクスチャデータがあれば)
 			if (pMeshContainer->pMaterials[iMaterial].pTextureFilename != NULL)
 			{
-				////////マテリアルカラーを0.5に設定
-				//pMeshContainer->pMaterials[iMaterial].MatD3D.Diffuse.r = 1.0f;
-				//pMeshContainer->pMaterials[iMaterial].MatD3D.Diffuse.g = 1.0f;
-				//pMeshContainer->pMaterials[iMaterial].MatD3D.Diffuse.b = 1.0f;
-				//pMeshContainer->pMaterials[iMaterial].MatD3D.Diffuse.a = 1.0f;
-
-				////pMeshContainer->pMaterials[iMaterial].MatD3D.Emissive.r = 0.1f;
-				////pMeshContainer->pMaterials[iMaterial].MatD3D.Emissive.g = 0.1f;
-				////pMeshContainer->pMaterials[iMaterial].MatD3D.Emissive.b = 0.1f;
-				////pMeshContainer->pMaterials[iMaterial].MatD3D.Emissive.a = 1.0f;
-
-				//////スペキュラも0.5に設定(上で設定したマテリアルカラーの0.5の設定をコピー)
-				//pMeshContainer->pMaterials[iMaterial].MatD3D.Specular = pMeshContainer->pMaterials[iMaterial].MatD3D.Diffuse;
-				//////pMeshContainer->pMaterials[iMaterial].MatD3D.Emissive = pMeshContainer->pMaterials[iMaterial].MatD3D.Diffuse;
-				//pMeshContainer->pMaterials[iMaterial].MatD3D.Ambient = pMeshContainer->pMaterials[iMaterial].MatD3D.Diffuse;
-				//pMeshContainer->pMaterials[iMaterial].MatD3D.Power = 50.0f;
-
 				//テクスチャのファイルパス保存用変数
 				TCHAR strTexturePath[MAX_PATH];
 				//テクスチャのファイルパスを保存(再読み込み時に必要)
 				strcpy_s(strTexturePath, lstrlen(pMeshContainer->pMaterials[iMaterial].pTextureFilename) + 1, pMeshContainer->pMaterials[iMaterial].pTextureFilename);
 				//テクスチャ情報の読み込み
-				if (FAILED(hr = D3DXCreateTextureFromFile(pDevice, strTexturePath,
+				if (FAILED(hr = D3DXCreateTextureFromFile(
+					pDevice,
+					strTexturePath,
 					&pMeshContainer->ppTextures[iMaterial])))
-				//if (FAILED(hr = D3DXCreateTextureFromFileEx(
-				//	pDevice,			// pDevice デバイス
-				//	strTexturePath,		// pSrcFile テクスチャパス
-				//	0,					// Width 幅。イメージから自動的に取得するなら0。
-				//	0,					// Height 高さ。イメージから自動的に取得するなら0。
-				//	0,					// MipLevels ミップマップレベル。使わない場合は0
-				//	0,					// Usage テクスチャの使い方。D3DUSAGE_RENDERTARGETや、D3DUSAGE_DYNAMICなどを指定
-				//	D3DFMT_A8R8G8B8,	// Format
-				//	D3DPOOL_MANAGED,	// Pool D3DPOOL列挙型メンバ。
-				//	D3DX_FILTER_NONE,	// Filter フィルタリング方法を制御するD3DX_FILTERの組み合わせ
-				//	D3DX_DEFAULT,		// MipFilter
-				//	0,					// ColorKey
-				//	NULL,				// pSrcInfo ソースイメージファイル内のデータの記述を格納するD3DXIMAGE_INFO 
-				//	NULL,				// pPalette 256色パレットを表すPALETTEENTRY構造体へのポインタ
-				//	&pMeshContainer->ppTextures[iMaterial]))) // テクスチャ格納先のポインタ
 				{
-					//失敗時の処理
-					//テクスチャファイル名格納用
-					CHAR TexMeshPass[255];
-					//追記
-					//もしなければ、Graphフォルダを調べる
-					//注）ファイル名の結合時に、必ず両方にファイル名がある事を確認してから
-					//  strcpy_sとstrcat_sを使うようにする(この場合は、上にある 
-					//    テクスチャのファイルがあり、さらにそのファイル名の長さが0でなければ の所のif文)。
-					//  TexMeshPassに、Xファイルがある場所と同じディレクトリと、テクスチャのファイル名を
-					//  結合したものを格納
-					// strcpy_s( TexMeshPass, sizeof( TexMeshPass ) , "./../Source/Graph/" );
-					strcpy_s(TexMeshPass, sizeof(TexMeshPass), "./Graph/");
-					strcat_s(TexMeshPass, sizeof(TexMeshPass) - strlen(TexMeshPass) - strlen(strTexturePath) - 1, strTexturePath);
-					//テクスチャ情報の読み込み
-					if (FAILED(D3DXCreateTextureFromFile(pDevice, TexMeshPass,
-						&pMeshContainer->ppTextures[iMaterial])))
-					{
-						//MessageBox(NULL, "アニメーションXファイルのテクスチャ読み込みに失敗しました", TexMeshPass, MB_OK);
-						pMeshContainer->ppTextures[iMaterial] = NULL;
-					}
+					////失敗時の処理
+					////テクスチャファイル名格納用
+					//CHAR TexMeshPass[255];
+					////追記
+					////もしなければ、Graphフォルダを調べる
+					////注）ファイル名の結合時に、必ず両方にファイル名がある事を確認してから
+					////  strcpy_sとstrcat_sを使うようにする(この場合は、上にある 
+					////    テクスチャのファイルがあり、さらにそのファイル名の長さが0でなければ の所のif文)。
+					////  TexMeshPassに、Xファイルがある場所と同じディレクトリと、テクスチャのファイル名を
+					////  結合したものを格納
+					//// strcpy_s( TexMeshPass, sizeof( TexMeshPass ) , "./../Source/Graph/" );
+					//strcpy_s(TexMeshPass, sizeof(TexMeshPass), "./Graph/");
+					//strcat_s(TexMeshPass, sizeof(TexMeshPass) - strlen(TexMeshPass) - strlen(strTexturePath) - 1, strTexturePath);
+					////テクスチャ情報の読み込み
+					//if (FAILED(D3DXCreateTextureFromFile(pDevice, TexMeshPass,
+					//	&pMeshContainer->ppTextures[iMaterial])))
+					//{
+					//	//MessageBox(NULL, "アニメーションXファイルのテクスチャ読み込みに失敗しました", TexMeshPass, MB_OK);
+					//	pMeshContainer->ppTextures[iMaterial] = NULL;
+					//}
 					//テクスチャのファイルパスをNULLにする
 					pMeshContainer->pMaterials[iMaterial].pTextureFilename = NULL;
-				}
-				int test = 0;
-				switch (hr)
-				{
-				case D3D_OK:
-					test = 0;
-					break;
-				case D3DERR_NOTAVAILABLE:
-					test = 0;
-					break;
-				case D3DERR_OUTOFVIDEOMEMORY:
-					test = 0;
-					break;
-				case D3DERR_INVALIDCALL:
-					test = 0;
-					break;
-				case D3DXERR_INVALIDDATA:
-					test = 0;
-					break;
-				case E_OUTOFMEMORY:
-					test = 0;
-					break;
 				}
 			}
 		}
 	}
-	else
+	else // if no materials provided, use a default one
 	{
-		//- マテリアルなしの場合 -//
-		//テクスチャファイル名をNULLに
 		pMeshContainer->pMaterials[0].pTextureFilename = NULL;
-		//マテリアルデータ初期化(memsetを使用して中身を0で埋める)
 		memset(&pMeshContainer->pMaterials[0].MatD3D, 0, sizeof(D3DMATERIAL9));
-		//マテリアルカラーを0.5に設定
 		pMeshContainer->pMaterials[0].MatD3D.Diffuse.r = 0.5f;
 		pMeshContainer->pMaterials[0].MatD3D.Diffuse.g = 0.5f;
 		pMeshContainer->pMaterials[0].MatD3D.Diffuse.b = 0.5f;
-		//スペキュラも0.5に設定(上で設定したマテリアルカラーの0.5の設定をコピー)
 		pMeshContainer->pMaterials[0].MatD3D.Specular = pMeshContainer->pMaterials[0].MatD3D.Diffuse;
-		//pMeshContainer->pMaterials[0].MatD3D.Emissive = pMeshContainer->pMaterials[0].MatD3D.Diffuse;
-		//pMeshContainer->pMaterials[0].MatD3D.Ambient = pMeshContainer->pMaterials[0].MatD3D.Diffuse;
 	}
-	//メッシュ情報を格納(今回は通常メッシュと完全に分けているためすべてスキンメッシュ情報となる)
-	pMeshContainer->pSkinInfo = pSkinInfo;
-	//参照カウンタ
-	pSkinInfo->AddRef();
-	//ボーンの数を取得
-	dwBoneNum = pSkinInfo->GetNumBones();
-	//フレーム(ボーン)単位でのワールド行列格納用領域の動的確保
-	pMeshContainer->pBoneOffsetMatrices = new D3DXMATRIX[dwBoneNum];
-	//ボーンの数だけループさせる
-	for (DWORD i = 0; i < dwBoneNum; i++)
-	{
-		//角フレーム(ボーン)のオフセット行列を取得して格納
-		memcpy(&pMeshContainer->pBoneOffsetMatrices[i],
-			pMeshContainer->pSkinInfo->GetBoneOffsetMatrix(i), sizeof(D3DMATRIX));
-	}
-	//- 変換作業 -//
-	//メッシュコンテナにオリジナルのpMesh情報を格納
-	D3DVERTEXELEMENT9 Decl[MAX_FVF_DECL_SIZE];
-	pMesh->GetDeclaration(&Decl[0]);
-	pMesh->CloneMesh(pMesh->GetOptions(), &Decl[0], pDevice, &pMeshContainer->pOriMesh);
-	//メッシュのタイプを定義
-	pMeshContainer->MeshData.Type = D3DXMESHTYPE_MESH;
 
-	//- 固定パイプライン描画用に変換 -//
-	//シェーダで描画する場合は別途変換が必要
-	//頂点単位でのブレンドの重みとボーンの組み合わせテーブルを適応した新しいメッシュを返す。
-	if (FAILED(pMeshContainer->pSkinInfo->ConvertToBlendedMesh(
-		pMeshContainer->pOriMesh,		//元のメッシュデータアドレス
-		NULL,							//オプション(現在は使われていないためNULLでいい)	
-		pMeshContainer->pAdjacency,		//元のメッシュの隣接性情報
-		NULL,							//出力メッシュの隣接性情報
-		NULL,							//各面の新しいインデックス値格納用変数のアドレス
-		NULL,							//角頂点の新しいインデックス値格納用変数のアドレス
-		&pMeshContainer->dwWeight,		//ボーンの影響の一面当たりの最大数格納用変数のアドレス
-		&pMeshContainer->dwBoneNum,		//ボーンの組み合わせテーブルに含まれるボーン数格納用変数のアドレス
-		&pMeshContainer->pBoneBuffer,	//ボーンの組み合わせテーブルへのポインタ
-		&pMeshContainer->MeshData.pMesh	//出力されるメッシュアドレス格納用変数のアドレス(固定パイプライン用)
-	)))
+	// if there is skinning information, save off the required data and then setup for HW skinning
+	if (pSkinInfo != NULL)
 	{
-		return E_FAIL;
+		// first save off the SkinInfo and original mesh data
+		pMeshContainer->pSkinInfo = pSkinInfo;
+		pSkinInfo->AddRef();
+
+		pMeshContainer->pOrigMesh = pMesh;
+		pMesh->AddRef();
+
+		// Will need an array of offset matrices to move the vertices from the figure space to the bone's space
+		cBones = pSkinInfo->GetNumBones();
+		pMeshContainer->pBoneOffsetMatrices = new D3DXMATRIX[cBones];
+		if (pMeshContainer->pBoneOffsetMatrices == NULL)
+		{
+			hr = E_OUTOFMEMORY;
+			goto e_Exit;
+		}
+
+		// get each of the bone offset matrices so that we don't need to get them later
+		for (iBone = 0; iBone < cBones; iBone++)
+		{
+			pMeshContainer->pBoneOffsetMatrices[iBone] = *(pMeshContainer->pSkinInfo->GetBoneOffsetMatrix(iBone));
+		}
+
+		// GenerateSkinnedMesh will take the general skinning information and transform it to a HW friendly version
+		hr = GenerateSkinnedMesh(pDevice, pMeshContainer);
+		if (FAILED(hr))
+			goto e_Exit;
 	}
-	//ローカルに生成したメッシュコンテナーを呼び出し側にコピーする
+
 	*ppMeshContainer = pMeshContainer;
+	pMeshContainer = NULL;
 
-	//参照カウンタを増やしたので減らす
+e_Exit:
 	SAFE_RELEASE(pDevice);
-	return S_OK;
+
+	// call Destroy function to properly clean up the memory allocated 
+	if (pMeshContainer != NULL)
+	{
+		DestroyMeshContainer(pMeshContainer);
+	}
+
+	return hr;
 }
 
 //=============================================================================
@@ -394,7 +367,7 @@ HRESULT MY_HIERARCHY::DestroyFrame(LPD3DXFRAME pFrameToFree)
 HRESULT MY_HIERARCHY::DestroyMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase)
 {
 	int iMaterial;
-	MYMESHCONTAINER *pMeshContainer = (MYMESHCONTAINER*)pMeshContainerBase;
+	D3DXMESHCONTAINER_DERIVED *pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)pMeshContainerBase;
 	SAFE_DELETE_ARRAY(pMeshContainer->Name);
 	SAFE_RELEASE(pMeshContainer->MeshData.pMesh);
 	SAFE_DELETE_ARRAY(pMeshContainer->pAdjacency);
@@ -411,14 +384,14 @@ HRESULT MY_HIERARCHY::DestroyMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBas
 	SAFE_RELEASE(pMeshContainer->pSkinInfo);
 
 
-	SAFE_DELETE_ARRAY(pMeshContainer->ppBoneMatrix);
+	SAFE_DELETE_ARRAY(pMeshContainer->ppBoneMatrixPtrs);
 
 
 
-	SAFE_RELEASE(pMeshContainer->pOriMesh);
-	if (pMeshContainer->pBoneBuffer != NULL)
+	SAFE_RELEASE(pMeshContainer->pOrigMesh);
+	if (pMeshContainer->pBoneCombinationBuf != NULL)
 	{
-		SAFE_RELEASE(pMeshContainer->pBoneBuffer);
+		SAFE_RELEASE(pMeshContainer->pBoneCombinationBuf);
 		SAFE_DELETE_ARRAY(pMeshContainer->pBoneOffsetMatrices);
 	}
 	SAFE_DELETE(pMeshContainer);
@@ -454,6 +427,9 @@ CSkinMesh::CSkinMesh()
 	m_CurrentTrackDesc.Speed = 1;
 	// 次のアニメーションへシフトするのにかかる時間
 	m_fShiftTime = SKIN_ANIME_WEIGHT;
+
+	// シェーダのアドレスを取得
+	pEffect = ShaderManager::GetEffect(ShaderManager::SKINMESH);
 }
 
 //=============================================================================
@@ -480,18 +456,18 @@ VOID CSkinMesh::Release()
 	//メッシュコンテナありのフレーム参照変数の要素を削除
 	m_IntoMeshFrameArray.clear();
 }
-
+	
 //=============================================================================
 // ボーン行列取得関数
 //=============================================================================
 HRESULT CSkinMesh::AllocateBoneMatrix(LPD3DXFRAME pFrameRoot, LPD3DXMESHCONTAINER pMeshContainerBase)
 {
-	MYFRAME *pFrame = NULL;
+	D3DXFRAME_DERIVED *pFrame = NULL;
 	DWORD dwBoneNum = 0;
 	//メッシュコンテナの型をオリジナルの型として扱う
 	//(メッシュコンテナ生成時にオリジナルの型として作っているので問題はないが、
 	//基本ダウンキャストは危険なので多用は避けるべき)
-	MYMESHCONTAINER *pMeshContainer = (MYMESHCONTAINER*)pMeshContainerBase;
+	D3DXMESHCONTAINER_DERIVED *pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)pMeshContainerBase;
 	//スキンメッシュでなければ
 	if (pMeshContainer->pSkinInfo == NULL)
 	{
@@ -500,20 +476,20 @@ HRESULT CSkinMesh::AllocateBoneMatrix(LPD3DXFRAME pFrameRoot, LPD3DXMESHCONTAINE
 	//ボーンの数取得
 	dwBoneNum = pMeshContainer->pSkinInfo->GetNumBones();
 	//各ボーンのワールド行列格納用領域を確保
-	SAFE_DELETE(pMeshContainer->ppBoneMatrix);
-	pMeshContainer->ppBoneMatrix = new D3DXMATRIX*[dwBoneNum];
+	SAFE_DELETE(pMeshContainer->ppBoneMatrixPtrs);
+	pMeshContainer->ppBoneMatrixPtrs = new D3DXMATRIX*[dwBoneNum];
 	//ボーンの数だけループ
 	for (DWORD i = 0; i<dwBoneNum; i++)
 	{
 		//子フレーム(ボーン)のアドレスを検索してpFrameに格納
-		pFrame = (MYFRAME*)D3DXFrameFind(pFrameRoot, pMeshContainer->pSkinInfo->GetBoneName(i));
+		pFrame = (D3DXFRAME_DERIVED*)D3DXFrameFind(pFrameRoot, pMeshContainer->pSkinInfo->GetBoneName(i));
 		//子フレームがなければ処理を終了する
 		if (pFrame == NULL)
 		{
 			return E_FAIL;
 		}
 		//各ボーンのワールド行列格納用変数に最終行列を格納
-		pMeshContainer->ppBoneMatrix[i] = &pFrame->CombinedTransformationMatrix;
+		pMeshContainer->ppBoneMatrixPtrs[i] = &pFrame->CombinedTransformationMatrix;
 	}
 	return S_OK;
 }
@@ -556,83 +532,228 @@ HRESULT CSkinMesh::AllocateAllBoneMatrices(LPD3DXFRAME pFrameRoot, LPD3DXFRAME p
 //=============================================================================
 //VOID RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice,MYMESHCONTAINER* pMeshContainer, MYFRAME* pFrame)
 //フレーム内のそれぞれのメッシュをレンダリングする
-VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, MYMESHCONTAINER* pMeshContainer, MYFRAME* pFrame)
+VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, D3DXMESHCONTAINER_DERIVED* pMeshContainerBase, D3DXFRAME_DERIVED* pFrameBase)
 {
-	DWORD i, k;
-	DWORD dwBlendMatrixNum;
-	DWORD dwPrevBoneID;
-	LPD3DXBONECOMBINATION pBoneCombination;
+	//DWORD i, k;
+	//DWORD dwBlendMatrixNum;
+	//DWORD dwPrevBoneID;
+	//LPD3DXBONECOMBINATION pBoneCombination;
+	//UINT iMatrixIndex;
+	//D3DXMATRIX mStack;
+
+	HRESULT hr;
+	D3DXMESHCONTAINER_DERIVED* pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)pMeshContainerBase;
+	D3DXFRAME_DERIVED* pFrame = (D3DXFRAME_DERIVED*)pFrameBase;
+	UINT iMaterial;
+	UINT NumBlend;
+	UINT iAttrib;
+	DWORD AttribIdPrev;
+	LPD3DXBONECOMBINATION pBoneComb;
+
 	UINT iMatrixIndex;
-	D3DXMATRIX mStack;
+	UINT iPaletteEntry;
+	D3DXMATRIXA16 matTemp;
+	D3DCAPS9 d3dCaps;
+	pDevice->GetDeviceCaps(&d3dCaps);
+
+	D3DDEVICE_CREATION_PARAMETERS cp;
+	pDevice->GetCreationParameters(&cp);
+	g_dwBehaviorFlags = cp.BehaviorFlags;
+
+	D3DXMATRIX mtxWorld, mtxView, mtxProjection;
+	pDevice->GetTransform(D3DTS_VIEW, &mtxView);
+	pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjection);
+
+
+
 	//スキンメッシュの描画
 	if (pMeshContainer->pSkinInfo != NULL)
 	{
-//#ifdef _DEBUG
-//		PrintDebugProc("Container  [%d]\n", m_dwContainerCount);
-//#endif
-		//ボーンテーブルからバッファの先頭アドレスを取得
-		pBoneCombination = reinterpret_cast<LPD3DXBONECOMBINATION>(pMeshContainer->pBoneBuffer->GetBufferPointer());
-		//dwPrevBoneIDにUINT_MAXの値(0xffffffff)を格納
-		dwPrevBoneID = UINT_MAX;
-		//スキニング計算
-		for (i = 0; i < pMeshContainer->dwBoneNum; i++)
+		if (pMeshContainer->UseSoftwareVP)
 		{
-			dwBlendMatrixNum = 0;
-			//影響している行列数取得
-			for (k = 0; k< pMeshContainer->dwWeight; k++)
+			// If hw or pure hw vertex processing is forced, we can't render the
+			// mesh, so just exit out.  Typical applications should create
+			// a device with appropriate vertex processing capability for this
+			// skinning method.
+			if (g_dwBehaviorFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING)
+				return;
+
+			pDevice->SetSoftwareVertexProcessing(TRUE);
+		}
+
+		pBoneComb = reinterpret_cast<LPD3DXBONECOMBINATION>(pMeshContainer->pBoneCombinationBuf->GetBufferPointer
+		());
+		for (iAttrib = 0; iAttrib < pMeshContainer->NumAttributeGroups; iAttrib++)
+		{
+			// first calculate all the world matrices
+			for (iPaletteEntry = 0; iPaletteEntry < pMeshContainer->NumPaletteEntries; ++iPaletteEntry)
 			{
-				//UINT_MAX(-1)
-				if (pBoneCombination[i].BoneId[k] != UINT_MAX)
-				{
-					//現在影響を受けているボーンの数
-					dwBlendMatrixNum = k;
-				}
-			}
-			//ジオメトリブレンディングを使用するために行列の個数を指定
-			pDevice->SetRenderState(D3DRS_VERTEXBLEND, dwBlendMatrixNum);
-			//影響している行列の検索
-			for (k = 0; k < pMeshContainer->dwWeight; k++)
-			{
-				//iMatrixIndexに1度の呼び出しで描画出来る各ボーンを識別する値を格納
-				//( このBoneID配列の長さはメッシュの種類によって異なる
-				//( インデックスなしであれば　=　頂点ごとの重み であり
-				// インデックスありであれば　=　ボーン行列パレットのエントリ数)
-				//現在のボーン(i番目)からみてk番目のボーンid
-				iMatrixIndex = pBoneCombination[i].BoneId[k];
-				//行列の情報があれば
+				iMatrixIndex = pBoneComb[iAttrib].BoneId[iPaletteEntry];
 				if (iMatrixIndex != UINT_MAX)
 				{
-					//mStackにオフセット行列*ボーン行列を格納
-					mStack = pMeshContainer->pBoneOffsetMatrices[iMatrixIndex] * (*pMeshContainer->ppBoneMatrix[iMatrixIndex]);
-					//行列スタックに格納
-					pDevice->SetTransform(D3DTS_WORLDMATRIX(k), &mStack);
+					D3DXMatrixMultiply(&matTemp, &pMeshContainer->pBoneOffsetMatrices[iMatrixIndex],
+						pMeshContainer->ppBoneMatrixPtrs[iMatrixIndex]);
+					D3DXMatrixMultiply(&g_pBoneMatrices[iPaletteEntry], &matTemp, &mtxView);
 				}
 			}
-			D3DMATERIAL9 TmpMat = pMeshContainer->pMaterials[pBoneCombination[i].AttribId].MatD3D;
-			TmpMat.Emissive.a = TmpMat.Diffuse.a = TmpMat.Ambient.a = 1.0f;
-			pDevice->SetMaterial(&TmpMat);
-			pDevice->SetTexture(0, pMeshContainer->ppTextures[pBoneCombination[i].AttribId]);
-			//dwPrevBoneIDに属性テーブルの識別子を格納
-			dwPrevBoneID = pBoneCombination[i].AttribId;
-			//メッシュの描画
-			//pMeshContainer->MeshData.pMesh->DrawSubset(i);
-			if (FAILED(pMeshContainer->MeshData.pMesh->DrawSubset(i)))
+
+			// テクスチャある場合
+			if (pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId])
 			{
-				MessageBox(NULL, "描画に失敗しました。", "SkinMeshX", MB_OK);
+				// テクニック t0 を使用
+				pEffect->SetTechnique("t0");
+				// テクスチャをセット
+				pEffect->SetTexture("tex", pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId]);
+			}
+			else
+			{
+				// テクニック t1 を使用
+				pEffect->SetTechnique("t1");
 			}
 
-//#ifdef _DEBUG
-			//PrintDebugProc("Bone  [Con:%d  ID:%d  Name:%s]\n", 
-			//	m_dwContainerCount,
-			//	m_dwBoneCount,
-			//	pMeshContainer->pSkinInfo->GetBoneName(i));
-//#endif
-			m_dwBoneCount++;
+			{	// ライトON
+				Camera* pCamera = CameraManager::GetCameraNow();
+				D3DXVECTOR4 eyeTmp = D3DXVECTOR4(pCamera->GetEye(), 0.0f);
+				if (FAILED(pEffect->SetVector("eye", &eyeTmp)))
+				{
+					// エラー
+					MessageBox(NULL, "カメラEye情報のセットに失敗しました。", "eye", MB_OK);
+				}
+				// ライト情報を取得
+				Light* pLight = LightManager::GetLightAdr(LightManager::Main);
+				// ライト情報をセット
+				if (FAILED(pEffect->SetValue("lt", &pLight->value, sizeof(Light::LIGHTVALUE))))
+				{
+					// エラー
+					MessageBox(NULL, "ライト情報のセットに失敗しました。", "lt", MB_OK);
+				}
+			}
+
+			pEffect->SetMatrixArray("mWorldMatrixArray", g_pBoneMatrices,
+				pMeshContainer->NumPaletteEntries);
+
+			// Sum of all ambient and emissive contribution
+			//D3DXCOLOR color1(pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D.Ambient);
+			//D3DXCOLOR color2(.25, .25, .25, 1.0);
+			//D3DXCOLOR ambEmm;
+			//D3DXColorModulate(&ambEmm, &color1, &color2);
+			//ambEmm += D3DXCOLOR(pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D.Emissive);
+
+			//// set material color properties 
+			//pEffect->SetVector("MaterialDiffuse",
+			//	(D3DXVECTOR4*)&(
+			//		pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D.Diffuse));
+			//pEffect->SetVector("MaterialAmbient", (D3DXVECTOR4*)&ambEmm);
+
+			pEffect->SetValue("mat", &pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D, sizeof(D3DMATERIAL9));
+
+
+			// setup the material of the mesh subset - REMEMBER to use the original pre-skinning attribute id to get the correct material id
+			//pDevice->SetTexture(0, pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId]);
+
+			// Set CurNumBones to select the correct vertex shader for the number of bones
+			pEffect->SetInt("CurNumBones", pMeshContainer->NumInfl - 1);
+
+			pEffect->SetMatrix("mViewProj", &mtxProjection);
+
+			// 結果を確定させる
+			pEffect->CommitChanges();
+
+			// Start the effect now all parameters have been updated
+			UINT numPasses;
+			pEffect->Begin(&numPasses, D3DXFX_DONOTSAVESTATE);
+			for (UINT iPass = 0; iPass < numPasses; iPass++)
+			{
+				pEffect->BeginPass(iPass);
+
+				// draw the subset with the current world matrix palette and material state
+				pMeshContainer->MeshData.pMesh->DrawSubset(iAttrib);
+
+				pEffect->EndPass();
+			}
+
+			pEffect->End();
+
+			pDevice->SetVertexShader(NULL);
 		}
-//#ifdef _DEBUG
-//		PrintDebugProc("BoneMax  [%d]\n", m_dwBoneCount);
-//#endif
+
+		// remember to reset back to hw vertex processing if software was required
+		if (pMeshContainer->UseSoftwareVP)
+		{
+			pDevice->SetSoftwareVertexProcessing(FALSE);
+		}
 	}
+
+
+////#ifdef _DEBUG
+////		PrintDebugProc("Container  [%d]\n", m_dwContainerCount);
+////#endif
+//		//ボーンテーブルからバッファの先頭アドレスを取得
+//		pBoneCombination = reinterpret_cast<LPD3DXBONECOMBINATION>(pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
+//		//dwPrevBoneIDにUINT_MAXの値(0xffffffff)を格納
+//		dwPrevBoneID = UINT_MAX;
+//		//スキニング計算
+//		for (i = 0; i < pMeshContainer->NumAttributeGroups; i++)
+//		{
+//			dwBlendMatrixNum = 0;
+//			//影響している行列数取得
+//			for (k = 0; k< pMeshContainer->NumInfl; k++)
+//			{
+//				//UINT_MAX(-1)
+//				if (pBoneCombination[i].BoneId[k] != UINT_MAX)
+//				{
+//					//現在影響を受けているボーンの数
+//					dwBlendMatrixNum = k;
+//				}
+//			}
+//			//ジオメトリブレンディングを使用するために行列の個数を指定
+//			pDevice->SetRenderState(D3DRS_VERTEXBLEND, dwBlendMatrixNum);
+//			//影響している行列の検索
+//			for (k = 0; k < pMeshContainer->NumInfl; k++)
+//			{
+//				//iMatrixIndexに1度の呼び出しで描画出来る各ボーンを識別する値を格納
+//				//( このBoneID配列の長さはメッシュの種類によって異なる
+//				//( インデックスなしであれば　=　頂点ごとの重み であり
+//				// インデックスありであれば　=　ボーン行列パレットのエントリ数)
+//				//現在のボーン(i番目)からみてk番目のボーンid
+//				iMatrixIndex = pBoneCombination[i].BoneId[k];
+//				//行列の情報があれば
+//				if (iMatrixIndex != UINT_MAX)
+//				{
+//					//mStackにオフセット行列*ボーン行列を格納
+//					mStack = pMeshContainer->pBoneOffsetMatrices[iMatrixIndex] * (*pMeshContainer->ppBoneMatrixPtrs[iMatrixIndex]);
+//					//行列スタックに格納
+//					pDevice->SetTransform(D3DTS_WORLDMATRIX(k), &mStack);
+//				}
+//			}
+//
+//
+//
+//			D3DMATERIAL9 TmpMat = pMeshContainer->pMaterials[pBoneCombination[i].AttribId].MatD3D;
+//			TmpMat.Emissive.a = TmpMat.Diffuse.a = TmpMat.Ambient.a = 1.0f;
+//			pDevice->SetMaterial(&TmpMat);
+//			pDevice->SetTexture(0, pMeshContainer->ppTextures[pBoneCombination[i].AttribId]);
+//			//dwPrevBoneIDに属性テーブルの識別子を格納
+//			dwPrevBoneID = pBoneCombination[i].AttribId;
+//			//メッシュの描画
+//			//pMeshContainer->MeshData.pMesh->DrawSubset(i);
+//			if (FAILED(pMeshContainer->MeshData.pMesh->DrawSubset(i)))
+//			{
+//				MessageBox(NULL, "描画に失敗しました。", "SkinMeshX", MB_OK);
+//			}
+//
+////#ifdef _DEBUG
+//			//PrintDebugProc("Bone  [Con:%d  ID:%d  Name:%s]\n", 
+//			//	m_dwContainerCount,
+//			//	m_dwBoneCount,
+//			//	pMeshContainer->pSkinInfo->GetBoneName(i));
+////#endif
+//			m_dwBoneCount++;
+//		}
+////#ifdef _DEBUG
+////		PrintDebugProc("BoneMax  [%d]\n", m_dwBoneCount);
+////#endif
+	//}
 	//通常メッシュの場合
 	else
 	{
@@ -641,43 +762,43 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, MYMESHCONTAINER* 
 	}
 }
 
-//メッシュの現在のMatrixデータ取得
-bool CSkinMesh::GetMatrix(D3DXMATRIX* out,int dwCon, int dwBone)
-{
-	MYFRAME* pFrame = (MYFRAME*)m_pFrameRoot;
-	MYMESHCONTAINER* pMeshContainer = (MYMESHCONTAINER*)pFrame->pMeshContainer;
-
-	for (unsigned int i = 0; i < dwCon; i++)
-	{
-		if (pMeshContainer != NULL)
-		{
-			//次のメッシュコンテナへアクティブを移す
-			pMeshContainer = (MYMESHCONTAINER*)pMeshContainer->pNextMeshContainer;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	if (dwBone <= pMeshContainer->dwBoneNum)
-	{
-		UINT iMatrixIndex;
-		LPD3DXBONECOMBINATION pBoneCombination;
-		//ボーンテーブルからバッファの先頭アドレスを取得
-		pBoneCombination = reinterpret_cast<LPD3DXBONECOMBINATION>(pMeshContainer->pBoneBuffer->GetBufferPointer());
-		iMatrixIndex = pBoneCombination[dwBone].BoneId[0];
-
-		//行列の情報があれば
-		if (iMatrixIndex != UINT_MAX)
-		{
-			//mStackにオフセット行列*ボーン行列を格納
-			*out = pMeshContainer->pBoneOffsetMatrices[iMatrixIndex] * (*pMeshContainer->ppBoneMatrix[iMatrixIndex]);
-		}
-		return true;
-	}
-	return false;
-}
+////メッシュの現在のMatrixデータ取得
+//bool CSkinMesh::GetMatrix(D3DXMATRIX* out,int dwCon, int dwBone)
+//{
+//	MYFRAME* pFrame = (MYFRAME*)m_pFrameRoot;
+//	MYMESHCONTAINER* pMeshContainer = (MYMESHCONTAINER*)pFrame->pMeshContainer;
+//
+//	for (unsigned int i = 0; i < dwCon; i++)
+//	{
+//		if (pMeshContainer != NULL)
+//		{
+//			//次のメッシュコンテナへアクティブを移す
+//			pMeshContainer = (MYMESHCONTAINER*)pMeshContainer->pNextMeshContainer;
+//		}
+//		else
+//		{
+//			return false;
+//		}
+//	}
+//
+//	if (dwBone <= pMeshContainer->dwBoneNum)
+//	{
+//		UINT iMatrixIndex;
+//		LPD3DXBONECOMBINATION pBoneCombination;
+//		//ボーンテーブルからバッファの先頭アドレスを取得
+//		pBoneCombination = reinterpret_cast<LPD3DXBONECOMBINATION>(pMeshContainer->pBoneBuffer->GetBufferPointer());
+//		iMatrixIndex = pBoneCombination[dwBone].BoneId[0];
+//
+//		//行列の情報があれば
+//		if (iMatrixIndex != UINT_MAX)
+//		{
+//			//mStackにオフセット行列*ボーン行列を格納
+//			*out = pMeshContainer->pBoneOffsetMatrices[iMatrixIndex] * (*pMeshContainer->ppBoneMatrix[iMatrixIndex]);
+//		}
+//		return true;
+//	}
+//	return false;
+//}
 
 //=============================================================================
 // フレームレンダリング関数
@@ -686,9 +807,8 @@ bool CSkinMesh::GetMatrix(D3DXMATRIX* out,int dwCon, int dwBone)
 //フレームをレンダリングする。
 VOID CSkinMesh::DrawFrame(LPDIRECT3DDEVICE9 pDevice, LPD3DXFRAME pFrameBase)
 {
-	m_dwBoneCount = 0;
-	MYFRAME* pFrame = (MYFRAME*)pFrameBase;
-	MYMESHCONTAINER* pMeshContainer = (MYMESHCONTAINER*)pFrame->pMeshContainer;
+	D3DXFRAME_DERIVED* pFrame = (D3DXFRAME_DERIVED*)pFrameBase;
+	D3DXMESHCONTAINER_DERIVED* pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)pFrame->pMeshContainer;
 	while (pMeshContainer != NULL)
 	{
 		//SHADER_KIND a = GetpShader()->GetShaderKind();
@@ -699,7 +819,7 @@ VOID CSkinMesh::DrawFrame(LPDIRECT3DDEVICE9 pDevice, LPD3DXFRAME pFrameBase)
 		RenderMeshContainer(pDevice, pMeshContainer, pFrame);
 		// }
 		//次のメッシュコンテナへアクティブを移す
-		pMeshContainer = (MYMESHCONTAINER*)pMeshContainer->pNextMeshContainer;
+		pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)pMeshContainer->pNextMeshContainer;
 		m_dwContainerCount++;
 	}
 	if (pFrame->pFrameSibling != NULL)
@@ -719,7 +839,7 @@ VOID CSkinMesh::DrawFrame(LPDIRECT3DDEVICE9 pDevice, LPD3DXFRAME pFrameBase)
 //フレーム内のメッシュ毎にワールド変換行列を更新する
 VOID CSkinMesh::UpdateFrameMatrices(LPD3DXFRAME pFrameBase, LPD3DXMATRIX pParentMatrix)
 {
-	MYFRAME *pFrame = (MYFRAME*)pFrameBase;
+	D3DXFRAME_DERIVED *pFrame = (D3DXFRAME_DERIVED*)pFrameBase;
 	if (pParentMatrix != NULL)
 	{
 		//CombinedTransformationMatrixに最終行列を格納
@@ -790,24 +910,24 @@ HRESULT CSkinMesh::Init(LPDIRECT3DDEVICE9 lpD3DDevice, LPSTR pMeshPass) {
 	m_IntoMeshFrameArray.clear();
 	CreateFrameArray(m_pFrameRoot);
 
-	MYFRAME *pFrame = NULL;
+	D3DXFRAME_DERIVED *pFrame = NULL;
 
 
 	//フレーム配列にオフセット情報作成
 	for (DWORD i = 0; i<m_IntoMeshFrameArray.size(); i++) {
-		MYMESHCONTAINER* pMyMeshContainer = (MYMESHCONTAINER*)m_IntoMeshFrameArray[i]->pMeshContainer;
+		D3DXMESHCONTAINER_DERIVED* pMyMeshContainer = (D3DXMESHCONTAINER_DERIVED*)m_IntoMeshFrameArray[i]->pMeshContainer;
 		while (pMyMeshContainer) {
 			//スキン情報
 			if (pMyMeshContainer->pSkinInfo) {
 				DWORD cBones = pMyMeshContainer->pSkinInfo->GetNumBones();
 				for (DWORD iBone = 0; iBone<cBones; iBone++) 
 				{
-					pFrame = (MYFRAME*)D3DXFrameFind(m_pFrameRoot, pMyMeshContainer->pSkinInfo->GetBoneName(iBone));
+					pFrame = (D3DXFRAME_DERIVED*)D3DXFrameFind(m_pFrameRoot, pMyMeshContainer->pSkinInfo->GetBoneName(iBone));
 					if (pFrame == NULL)
 					{
 						return E_FAIL;
 					}
-					pMyMeshContainer->ppBoneMatrix[iBone] = &pFrame->CombinedTransformationMatrix;
+					pMyMeshContainer->ppBoneMatrixPtrs[iBone] = &pFrame->CombinedTransformationMatrix;
 
 
 					////フレーム内から同じ名前のフレームを検索
@@ -823,7 +943,7 @@ HRESULT CSkinMesh::Init(LPDIRECT3DDEVICE9 lpD3DDevice, LPSTR pMeshPass) {
 				}
 			}
 			//次へ
-			pMyMeshContainer = (MYMESHCONTAINER *)pMyMeshContainer->pNextMeshContainer;
+			pMyMeshContainer = (D3DXMESHCONTAINER_DERIVED *)pMyMeshContainer->pNextMeshContainer;
 		}
 	}
 	return S_OK;
@@ -835,7 +955,7 @@ HRESULT CSkinMesh::Init(LPDIRECT3DDEVICE9 lpD3DDevice, LPSTR pMeshPass) {
 VOID CSkinMesh::CreateFrameArray(LPD3DXFRAME _pFrame) {
 	if (_pFrame == NULL) { return; }
 	//フレームアドレス格納
-	MYFRAME* pMyFrame = (MYFRAME*)_pFrame;
+	D3DXFRAME_DERIVED* pMyFrame = (D3DXFRAME_DERIVED*)_pFrame;
 	m_FrameArray.push_back(pMyFrame);
 	//メッシュコンテナがある場合はIntoMeshFrameArrayにアドレスを格納
 	if (pMyFrame->pMeshContainer != NULL) {
@@ -895,6 +1015,13 @@ VOID CSkinMesh::Update(void) {
 		m_pAnimController->SetTrackEnable(1, false);				// 前のアニメーションを無効にする
 	}
 
+	//現在のアニメーション番号を適応
+	m_pAnimController->SetTrackAnimationSet(0, m_pAnimSet[m_CurrentTrack]);
+	//0(再生中の)トラックからトラックデスクをセットする
+	m_pAnimController->SetTrackDesc(0, &(m_CurrentTrackDesc));
+	//アニメーション時間データの更新
+	m_pAnimController->AdvanceTime(m_AnimSpeed, NULL);
+
 	//アニメーション時間を更新
 	m_AnimeTime++;
 }
@@ -911,12 +1038,7 @@ VOID CSkinMesh::Draw(LPDIRECT3DDEVICE9 lpD3DDevice, D3DXMATRIX _World)
 	m_World = _World;
 	// メッシュコンテナカウンタを初期化
 	m_dwContainerCount = 0;
-	//現在のアニメーション番号を適応
-	m_pAnimController->SetTrackAnimationSet(0, m_pAnimSet[m_CurrentTrack]);
-	//0(再生中の)トラックからトラックデスクをセットする
-	m_pAnimController->SetTrackDesc(0, &(m_CurrentTrackDesc));
-	//アニメーション時間データの更新
-	m_pAnimController->AdvanceTime(m_AnimSpeed, NULL);
+
 	//アニメーションデータを更新
 	UpdateFrameMatrices(m_pFrameRoot, &m_World);
 	//アニメーション描画
@@ -969,8 +1091,8 @@ VOID CSkinMesh::ChangeAnim(DWORD _NewAnimNum, FLOAT fShift)
 //=============================================================================
 // 対象ボーン検索関数
 //=============================================================================
-MYFRAME* CSkinMesh::SearchBoneFrame(LPSTR _BoneName, D3DXFRAME* _pFrame) {
-	MYFRAME* pFrame = (MYFRAME*)_pFrame;
+D3DXFRAME_DERIVED* CSkinMesh::SearchBoneFrame(LPSTR _BoneName, D3DXFRAME* _pFrame) {
+	D3DXFRAME_DERIVED* pFrame = (D3DXFRAME_DERIVED*)_pFrame;
 	if (pFrame->Name != NULL)
 	{
 		if (strcmp(pFrame->Name, _BoneName) == 0) {
@@ -998,7 +1120,7 @@ MYFRAME* CSkinMesh::SearchBoneFrame(LPSTR _BoneName, D3DXFRAME* _pFrame) {
 // ボーンのマトリクス取得関数
 //=============================================================================
 D3DXMATRIX CSkinMesh::GetBoneMatrix(LPSTR _BoneName) {
-	MYFRAME* pFrame = SearchBoneFrame(_BoneName, m_pFrameRoot);
+	D3DXFRAME_DERIVED* pFrame = SearchBoneFrame(_BoneName, m_pFrameRoot);
 	//ボーンが見つかれば
 	if (pFrame != NULL) {
 		//ボーン行列を返す
@@ -1019,7 +1141,7 @@ D3DXMATRIX CSkinMesh::GetBoneMatrix(LPSTR _BoneName) {
 D3DXMATRIX* CSkinMesh::GetpBoneMatrix(LPSTR _BoneName) {
 	/////////////////////////////////////
 	//注意）RokDeBone用に設定(対象ボーンの一つ先の行列をとってくる)
-	MYFRAME* pFrame = SearchBoneFrame(_BoneName, m_pFrameRoot);
+	D3DXFRAME_DERIVED* pFrame = SearchBoneFrame(_BoneName, m_pFrameRoot);
 	//ボーンが見つかれば
 	if (pFrame != NULL) {
 		return &pFrame->CombinedTransformationMatrix;
@@ -1029,4 +1151,287 @@ D3DXMATRIX* CSkinMesh::GetpBoneMatrix(LPSTR _BoneName) {
 		//NULLを返す
 		return NULL;
 	}
+}
+
+//--------------------------------------------------------------------------------------
+// Called either by CreateMeshContainer when loading a skin mesh, or when 
+// changing methods.  This function uses the pSkinInfo of the mesh 
+// container to generate the desired drawable mesh and bone combination 
+// table.
+//--------------------------------------------------------------------------------------
+HRESULT GenerateSkinnedMesh(IDirect3DDevice9* pd3dDevice, D3DXMESHCONTAINER_DERIVED* pMeshContainer)
+{
+	HRESULT hr = S_OK;
+	D3DCAPS9 d3dCaps;
+	pd3dDevice->GetDeviceCaps(&d3dCaps);
+
+	if (pMeshContainer->pSkinInfo == NULL)
+		return hr;
+
+	g_bUseSoftwareVP = false;
+
+	SAFE_RELEASE(pMeshContainer->MeshData.pMesh);
+	SAFE_RELEASE(pMeshContainer->pBoneCombinationBuf);
+
+	// if non-indexed skinning mode selected, use ConvertToBlendedMesh to generate drawable mesh
+	if (g_SkinningMethod == D3DNONINDEXED)
+	{
+
+		hr = pMeshContainer->pSkinInfo->ConvertToBlendedMesh
+		(
+			pMeshContainer->pOrigMesh,
+			D3DXMESH_MANAGED | D3DXMESHOPT_VERTEXCACHE,
+			pMeshContainer->pAdjacency,
+			NULL, NULL, NULL,
+			&pMeshContainer->NumInfl,
+			&pMeshContainer->NumAttributeGroups,
+			&pMeshContainer->pBoneCombinationBuf,
+			&pMeshContainer->MeshData.pMesh
+		);
+		if (FAILED(hr))
+			goto e_Exit;
+
+
+		// If the device can only do 2 matrix blends, ConvertToBlendedMesh cannot approximate all meshes to it
+		// Thus we split the mesh in two parts: The part that uses at most 2 matrices and the rest. The first is
+		// drawn using the device's HW vertex processing and the rest is drawn using SW vertex processing.
+		LPD3DXBONECOMBINATION rgBoneCombinations = reinterpret_cast<LPD3DXBONECOMBINATION>(
+			pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
+
+		// look for any set of bone combinations that do not fit the caps
+		for (pMeshContainer->iAttributeSW = 0; pMeshContainer->iAttributeSW < pMeshContainer->NumAttributeGroups;
+			pMeshContainer->iAttributeSW++)
+		{
+			DWORD cInfl = 0;
+
+			for (DWORD iInfl = 0; iInfl < pMeshContainer->NumInfl; iInfl++)
+			{
+				if (rgBoneCombinations[pMeshContainer->iAttributeSW].BoneId[iInfl] != UINT_MAX)
+				{
+					++cInfl;
+				}
+			}
+
+			if (cInfl > d3dCaps.MaxVertexBlendMatrices)
+			{
+				break;
+			}
+		}
+
+		// if there is both HW and SW, add the Software Processing flag
+		if (pMeshContainer->iAttributeSW < pMeshContainer->NumAttributeGroups)
+		{
+			LPD3DXMESH pMeshTmp;
+
+			hr = pMeshContainer->MeshData.pMesh->CloneMeshFVF(D3DXMESH_SOFTWAREPROCESSING |
+				pMeshContainer->MeshData.pMesh->GetOptions(),
+				pMeshContainer->MeshData.pMesh->GetFVF(),
+				pd3dDevice, &pMeshTmp);
+			if (FAILED(hr))
+			{
+				goto e_Exit;
+			}
+
+			pMeshContainer->MeshData.pMesh->Release();
+			pMeshContainer->MeshData.pMesh = pMeshTmp;
+			pMeshTmp = NULL;
+		}
+	}
+	// if indexed skinning mode selected, use ConvertToIndexedsBlendedMesh to generate drawable mesh
+	else if (g_SkinningMethod == D3DINDEXED)
+	{
+		DWORD NumMaxFaceInfl;
+		DWORD Flags = D3DXMESHOPT_VERTEXCACHE;
+
+		LPDIRECT3DINDEXBUFFER9 pIB;
+		hr = pMeshContainer->pOrigMesh->GetIndexBuffer(&pIB);
+		if (FAILED(hr))
+			goto e_Exit;
+
+		hr = pMeshContainer->pSkinInfo->GetMaxFaceInfluences(pIB,
+			pMeshContainer->pOrigMesh->GetNumFaces(),
+			&NumMaxFaceInfl);
+		pIB->Release();
+		if (FAILED(hr))
+			goto e_Exit;
+
+		// 12 entry palette guarantees that any triangle (4 independent influences per vertex of a tri)
+		// can be handled
+		NumMaxFaceInfl = min(NumMaxFaceInfl, 12);
+
+		if (d3dCaps.MaxVertexBlendMatrixIndex + 1 < NumMaxFaceInfl)
+		{
+			// HW does not support indexed vertex blending. Use SW instead
+			pMeshContainer->NumPaletteEntries = min(256, pMeshContainer->pSkinInfo->GetNumBones());
+			pMeshContainer->UseSoftwareVP = true;
+			g_bUseSoftwareVP = true;
+			Flags |= D3DXMESH_SYSTEMMEM;
+		}
+		else
+		{
+			// using hardware - determine palette size from caps and number of bones
+			// If normals are present in the vertex data that needs to be blended for lighting, then 
+			// the number of matrices is half the number specified by MaxVertexBlendMatrixIndex.
+			pMeshContainer->NumPaletteEntries = min((d3dCaps.MaxVertexBlendMatrixIndex + 1) / 2,
+				pMeshContainer->pSkinInfo->GetNumBones());
+			pMeshContainer->UseSoftwareVP = false;
+			Flags |= D3DXMESH_MANAGED;
+		}
+
+		pMeshContainer->NumPaletteEntries = NumMaxFaceInfl;
+
+		hr = pMeshContainer->pSkinInfo->ConvertToIndexedBlendedMesh
+		(
+			pMeshContainer->pOrigMesh,
+			Flags,
+			pMeshContainer->NumPaletteEntries,
+			pMeshContainer->pAdjacency,
+			NULL, NULL, NULL,
+			&pMeshContainer->NumInfl,
+			&pMeshContainer->NumAttributeGroups,
+			&pMeshContainer->pBoneCombinationBuf,
+			&pMeshContainer->MeshData.pMesh);
+		if (FAILED(hr))
+			goto e_Exit;
+	}
+	// if vertex shader indexed skinning mode selected, use ConvertToIndexedsBlendedMesh to generate drawable mesh
+	else if ((g_SkinningMethod == D3DINDEXEDVS) || (g_SkinningMethod == D3DINDEXEDHLSLVS))
+	{
+		// Get palette size
+		// First 9 constants are used for other data.  Each 4x3 matrix takes up 3 constants.
+		// (96 - 9) /3 i.e. Maximum constant count - used constants 
+		UINT MaxMatrices = 26;
+		pMeshContainer->NumPaletteEntries = min(MaxMatrices, pMeshContainer->pSkinInfo->GetNumBones());
+
+		DWORD Flags = D3DXMESHOPT_VERTEXCACHE;
+		if (d3dCaps.VertexShaderVersion >= D3DVS_VERSION(1, 1))
+		{
+			pMeshContainer->UseSoftwareVP = false;
+			Flags |= D3DXMESH_MANAGED;
+		}
+		else
+		{
+			pMeshContainer->UseSoftwareVP = true;
+			g_bUseSoftwareVP = true;
+			Flags |= D3DXMESH_SYSTEMMEM;
+		}
+
+		SAFE_RELEASE(pMeshContainer->MeshData.pMesh);
+
+		hr = pMeshContainer->pSkinInfo->ConvertToIndexedBlendedMesh
+		(
+			pMeshContainer->pOrigMesh,
+			Flags,
+			pMeshContainer->NumPaletteEntries,
+			pMeshContainer->pAdjacency,
+			NULL, NULL, NULL,
+			&pMeshContainer->NumInfl,
+			&pMeshContainer->NumAttributeGroups,
+			&pMeshContainer->pBoneCombinationBuf,
+			&pMeshContainer->MeshData.pMesh);
+		if (FAILED(hr))
+			goto e_Exit;
+
+
+		// FVF has to match our declarator. Vertex shaders are not as forgiving as FF pipeline
+		DWORD NewFVF = (pMeshContainer->MeshData.pMesh->GetFVF() & D3DFVF_POSITION_MASK) | D3DFVF_NORMAL |
+			D3DFVF_TEX1 | D3DFVF_LASTBETA_UBYTE4;
+		if (NewFVF != pMeshContainer->MeshData.pMesh->GetFVF())
+		{
+			LPD3DXMESH pMesh;
+			hr = pMeshContainer->MeshData.pMesh->CloneMeshFVF(pMeshContainer->MeshData.pMesh->GetOptions(), NewFVF,
+				pd3dDevice, &pMesh);
+			if (!FAILED(hr))
+			{
+				pMeshContainer->MeshData.pMesh->Release();
+				pMeshContainer->MeshData.pMesh = pMesh;
+				pMesh = NULL;
+			}
+		}
+
+		D3DVERTEXELEMENT9 pDecl[MAX_FVF_DECL_SIZE];
+		LPD3DVERTEXELEMENT9 pDeclCur;
+		hr = pMeshContainer->MeshData.pMesh->GetDeclaration(pDecl);
+		if (FAILED(hr))
+			goto e_Exit;
+
+		// the vertex shader is expecting to interpret the UBYTE4 as a D3DCOLOR, so update the type 
+		//   NOTE: this cannot be done with CloneMesh, that would convert the UBYTE4 data to float and then to D3DCOLOR
+		//          this is more of a "cast" operation
+		pDeclCur = pDecl;
+		while (pDeclCur->Stream != 0xff)
+		{
+			if ((pDeclCur->Usage == D3DDECLUSAGE_BLENDINDICES) && (pDeclCur->UsageIndex == 0))
+				pDeclCur->Type = D3DDECLTYPE_D3DCOLOR;
+			pDeclCur++;
+		}
+
+		hr = pMeshContainer->MeshData.pMesh->UpdateSemantics(pDecl);
+		if (FAILED(hr))
+			goto e_Exit;
+
+		// allocate a buffer for bone matrices, but only if another mesh has not allocated one of the same size or larger
+		if (g_NumBoneMatricesMax < pMeshContainer->pSkinInfo->GetNumBones())
+		{
+			g_NumBoneMatricesMax = pMeshContainer->pSkinInfo->GetNumBones();
+
+			// Allocate space for blend matrices
+			delete[] g_pBoneMatrices;
+			g_pBoneMatrices = new D3DXMATRIXA16[g_NumBoneMatricesMax];
+			if (g_pBoneMatrices == NULL)
+			{
+				hr = E_OUTOFMEMORY;
+				goto e_Exit;
+			}
+		}
+
+	}
+	// if software skinning selected, use GenerateSkinnedMesh to create a mesh that can be used with UpdateSkinnedMesh
+	else if (g_SkinningMethod == SOFTWARE)
+	{
+		hr = pMeshContainer->pOrigMesh->CloneMeshFVF(D3DXMESH_MANAGED, pMeshContainer->pOrigMesh->GetFVF(),
+			pd3dDevice, &pMeshContainer->MeshData.pMesh);
+		if (FAILED(hr))
+			goto e_Exit;
+
+		hr = pMeshContainer->MeshData.pMesh->GetAttributeTable(NULL, &pMeshContainer->NumAttributeGroups);
+		if (FAILED(hr))
+			goto e_Exit;
+
+		delete[] pMeshContainer->pAttributeTable;
+		pMeshContainer->pAttributeTable = new D3DXATTRIBUTERANGE[pMeshContainer->NumAttributeGroups];
+		if (pMeshContainer->pAttributeTable == NULL)
+		{
+			hr = E_OUTOFMEMORY;
+			goto e_Exit;
+		}
+
+		hr = pMeshContainer->MeshData.pMesh->GetAttributeTable(pMeshContainer->pAttributeTable, NULL);
+		if (FAILED(hr))
+			goto e_Exit;
+
+		// allocate a buffer for bone matrices, but only if another mesh has not allocated one of the same size or larger
+		if (g_NumBoneMatricesMax < pMeshContainer->pSkinInfo->GetNumBones())
+		{
+			g_NumBoneMatricesMax = pMeshContainer->pSkinInfo->GetNumBones();
+
+			// Allocate space for blend matrices
+			delete[] g_pBoneMatrices;
+			g_pBoneMatrices = new D3DXMATRIXA16[g_NumBoneMatricesMax];
+			if (g_pBoneMatrices == NULL)
+			{
+				hr = E_OUTOFMEMORY;
+				goto e_Exit;
+			}
+		}
+	}
+	else  // invalid g_SkinningMethod value
+	{
+		// return failure due to invalid skinning method value
+		hr = E_INVALIDARG;
+		goto e_Exit;
+	}
+
+e_Exit:
+	return hr;
 }

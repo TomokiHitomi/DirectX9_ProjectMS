@@ -48,6 +48,7 @@ public:
 	~CharacterManager(void);
 	CSkinMesh *GetCharData(CharacterManager::TYPE);
 	static bool m_bUse;
+
 private:
 };
 

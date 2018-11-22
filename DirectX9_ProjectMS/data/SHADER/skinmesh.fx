@@ -1,156 +1,201 @@
-//=============================================================================
 //
-// スキンメッシュシェーダ [skinmesh.fx]
-// Author : GP12A295 25 人見友基
+// Skinned Mesh Effect file 
+// Copyright (c) 2000-2002 Microsoft Corporation. All rights reserved.
 //
-//=============================================================================
-float4x4	world;		// ワールドマトリクス
-float4x4	view;		// ビューマトリクス
-float4x4	proj;		// プロジェクションマトリクス
-float3		ld;			// ライトベクトル
+
+//float4 lhtDir = { 0.0f, 0.0f, -1.0f, 1.0f };    //light Direction 
+//float4 lightDiffuse = { 1.0f, 1.0f, 1.0f, 1.0f }; // Light Diffuse
+//float4 MaterialAmbient : MATERIALAMBIENT = { 0.1f, 0.1f, 0.1f, 1.0f };
+//float4 MaterialDiffuse : MATERIALDIFFUSE = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+// Matrix Pallette
+static const int MAX_MATRICES = 26;
+float4x3    mWorldMatrixArray[MAX_MATRICES] : WORLDMATRIXARRAY;
+float4x4    mViewProj : VIEWPROJECTION;
+float4		eye;		// 視点座標
+float4 test = float4(1.0f, 1.0f, 1.0f, 1.0f);
+
 
 // ライト
-float4		dif_lt;		// ディフューズ
-float4		amb_lt;		// 環境光
-float4		spc_lt;		// スペキュラー光
-float3		dir_lt;		// 平行光源の方向
+typedef struct _LIGHT
+{
+	float4		dif;	// 拡散光
+	float4		amb;	// 環境光
+	float4		spc;	// 反射光
+	float3		pos;	// 座標
+	float3		dir;	// 平行光源
+}LIGHT;
 
 // マテリアル
-float4		dif_mat;	// ディフューズ光
-float4		emi_mat;	// エミッシブ光
-float4		amb_mat;	// 環境光
-float4		spc_mat;	// スペキュラー
-float		pwr_mat;	// スペキュラー光のパワー値
+typedef struct _MATERIAL
+{	// D3DMATERIAL9と同じ並び
+	float4		dif;	// 拡散光
+	float4		amb;	// 環境光
+	float4		spc;	// 反射光
+	float4		emi;	// 自発光
+	float		pwr;	// 反射光のパワー値
+}MATERIAL;
+
+LIGHT		lt;
+MATERIAL	mat;
 
 texture tex;			// 使用するテクスチャ
 sampler smp = sampler_state {
 	texture = <tex>;
+	//MinFilter = LINEAR;
+	//MagFilter = LINEAR;
+	//MipFilter = NONE;
+
+	//AddressU = Clamp;
+	//AddressV = Clamp;
 };
 
-//*****************************************************************************
-// 構造体定義
-//*****************************************************************************
-struct VS_IN		// 頂点シェーダの引数
+///////////////////////////////////////////////////////
+struct VS_INPUT
 {
-	float3	pos : POSITION;
-	float3	nor : NORMAL;
-	float4	col : COLOR0;
-	float2	uv : TEXCOORD0;
-
+	float4  Pos             : POSITION;
+	float4  BlendWeights    : BLENDWEIGHT;
+	float4  BlendIndices    : BLENDINDICES;
+	float3  Normal          : NORMAL;
+	float3  Tex0            : TEXCOORD0;
 };
 
-struct VS_OUT		// 頂点シェーダの戻り値かつピクセルシェーダーの引数
+struct VS_OUTPUT
 {
-	float4	pos : POSITION;
-	float4	col : COLOR0;
-	float2	uv : TEXCOORD0;
+	float4  Pos     : POSITION;
+	float4  Diffuse : COLOR;
+	float4  Specular : TEXCOORD1;
+	float2  Tex0    : TEXCOORD0;
 };
 
-//=============================================================================
-// 頂点シェーダ
-//=============================================================================
-VS_OUT vs_light_on( VS_IN In )
+//
+//float3 Diffuse(float3 Normal)
+//{
+//	float CosTheta;
+//
+//	// N.L Clamped
+//	CosTheta = max(0.0f, dot(Normal, lhtDir.xyz));
+//
+//	// propogate scalar result to vector
+//	return (CosTheta);
+//}
+
+
+VS_OUTPUT VShade(VS_INPUT i, uniform int NumBones)
 {
-	VS_OUT Out = (VS_OUT)0;
-	//VS_OUT Out;
+	VS_OUTPUT   o;
+	float3      Pos = 0.0f;
+	float       LastWeight = 0.0f;
 
-	Out.pos = float4(
-		In.pos.x,
-		In.pos.y,
-		In.pos.z,
-		1.0f
-	);
+	float3	N = 0.0f;		// ワールド空間上の法線ベクトル
+	float3	L = 0.0f;		// 光の差し込む方向
+	float3	P = 0.0f;		// ワールド空間上の頂点座標
+	float3	V = 0.0f;		// （カメラ座標ー頂点座標）ベクトル
+	float3  H = 0.0f;		//  ハーフベクトル（視線ベクトルと光の方向ベクトル）
 
-	Out.pos = mul(Out.pos, world);
-	Out.pos = mul(Out.pos, view);
-	Out.pos = mul(Out.pos, proj);
+	// Compensate for lack of UBYTE4 on Geforce3
+	int4 IndexVector = D3DCOLORtoUBYTE4(i.BlendIndices);
 
-	// 法線をワールド空間へ
-	float3 nor = mul(In.nor, world);
+	// cast the vectors to arrays for use in the for loop below
+	float BlendWeightsArray[4] = (float[4])i.BlendWeights;
+	int   IndexArray[4] = (int[4])IndexVector;
 
-   // 反射する光の強さを算出
-	//float Power = saturate(dot(normalize(nor), -normalize(dir_lt)));
-	//Power = clamp(Power, 0.0f, 1.0f);
+	// calculate the pos/normal using the "normal" weights 
+	//        and accumulate the weights to calculate the last weight
+	for (int iBone = 0; iBone < NumBones - 1; iBone++)
+	{
+		LastWeight = LastWeight + BlendWeightsArray[iBone];
 
-	// ランパード反射
-	Out.col = dif_mat * dif_lt;
-	Out.col = Out.col + amb_mat * amb_lt;
-	Out.col = Out.col + emi_mat;
+		Pos += mul(i.Pos, mWorldMatrixArray[IndexArray[iBone]]) * BlendWeightsArray[iBone];
+		N += mul(i.Normal, (float3x3)mWorldMatrixArray[IndexArray[iBone]]) * BlendWeightsArray[iBone];
+	}
+	LastWeight = 1.0f - LastWeight;
 
+	// Now that we have the calculated weight, add in the final influence
+	Pos += (mul(i.Pos, mWorldMatrixArray[IndexArray[NumBones - 1]]) * LastWeight);
+	N += (mul(i.Normal, (float3x3)mWorldMatrixArray[IndexArray[NumBones - 1]]) * LastWeight);
 
-	// スペキュラ反射（調整中）
-	//float4 spc_temp = float4(0.0f, 0.0f, 1.0f, 1.0f);
-	float3 eyePos = float3(view._41, view._42, view._43);
-	float3	V = normalize(eyePos - Out.pos);		// （カメラ座標ー頂点座標）ベクトル
-	//float3	H = -normalize(V + dir_lt);		//  ハーフベクトル（視線ベクトルと光の方向ベクトル）
-	float3	R = normalize(2 * dot(dir_lt, nor) * nor - dir_lt);
-	float specularLight = pow(saturate(dot(R, V)), 1.5f);
-	//Out.col = Out.col + (spc_temp * specularLight);
-	Out.col = Out.col + (spc_mat * specularLight);
+	// transform position from world space into view and then projection space
+	o.Pos = mul(float4(Pos.xyz, 1.0f), mViewProj);
 
+	P = o.Pos;
 
-	// 反射する光の強さを算出
-	Out.col = Out.col * saturate(dot(normalize(nor), -normalize(dir_lt)));
+	// normalize normals
+	N = normalize(N);
 
-	// α値は入力値をそのまま使用
-	Out.col.a = dif_mat.a;
+	// 平行光の差し込む方向	単位ベクトル化
+	L = normalize(-lt.dir);
 
-	// uvはそのまま使用
-	Out.uv  = In.uv;
+	// 視線ベクトルを求める
+	V = normalize(eye - P);
 
-	return Out;
+	// 光ベクトルと視線とのハーフベクトルを求める
+	H = normalize(L + V);
+
+	// 光源計算を行って出力カラーを決める
+	o.Diffuse = lt.amb * mat.amb +
+		lt.dif * mat.dif *
+		max(0.0f, dot(L, N));	// 0.0未満の場合は0.0に
+
+	o.Diffuse.a = mat.dif.a;
+
+	// スペキュラーによる反射色を計算　g_powerが大きいほど鋭く光る
+	o.Specular = lt.spc * mat.spc *
+		pow(max(0.0f, dot(N, H)), mat.pwr);
+
+	// copy the input texture coordinate through
+	o.Tex0 = i.Tex0.xy;
+
+	return o;
 }
 
-VS_OUT vs_light_off(VS_IN In)
-{
-	VS_OUT Out = (VS_OUT)0;
-
-	Out.pos = float4(
-		In.pos.x,
-		In.pos.y,
-		In.pos.z,
-		1.0f
-		);
-
-	Out.pos = mul(Out.pos, world);
-	Out.pos = mul(Out.pos, view);
-	Out.pos = mul(Out.pos, proj);
-
-	Out.uv = In.uv;
-	Out.col = In.col;
-	return Out;
-}
+int CurNumBones = 4;
+VertexShader vsArray[4] = { compile vs_3_0 VShade(1),
+							compile vs_3_0 VShade(2),
+							compile vs_3_0 VShade(3),
+							compile vs_3_0 VShade(4)
+};
 
 //=============================================================================
 // ピクセルシェーダ
 //=============================================================================
-float4 ps_light_on(VS_OUT In) : COLOR0
+float4 ps_nomal(VS_OUTPUT In) : COLOR0
 {
-	return tex2D(smp, In.uv) * In.col;
+	float4 out_color;
+	// テクスチャの色とポリゴンの色を掛け合わせて出力
+	out_color = saturate(test * tex2D(smp, In.Tex0)/* + In.Specular*/);
+	out_color.a = In.Diffuse.a;
+	return out_color;
 }
 
-float4 ps_light_off(VS_OUT In) : COLOR0
+float4 ps_notex(VS_OUTPUT In) : COLOR0
 {
-	return tex2D(smp, In.uv);
+	float4 out_color;
+	// テクスチャの色とポリゴンの色を掛け合わせて出力
+	out_color = saturate(test/* + In.Specular*/);
+	out_color.a = In.Diffuse.a;
+	return out_color;
 }
 
-//=============================================================================
-// テクニック
-//=============================================================================
-technique LIGHT_ON
+//////////////////////////////////////
+// Techniques specs follow
+//////////////////////////////////////
+technique t0
 {
 	pass p0
 	{
-		VertexShader = compile vs_3_0 vs_light_on();
-		PixelShader = compile ps_3_0 ps_light_on();
+		VertexShader = (vsArray[CurNumBones]);
+		PixelShader = compile ps_3_0 ps_nomal();
 	}
 }
 
-technique LIGHT_OFF
+technique t1
 {
 	pass p0
 	{
-		VertexShader = compile vs_3_0 vs_light_off();
-		PixelShader = compile ps_3_0 ps_light_off();
+		VertexShader = (vsArray[CurNumBones]);
+		PixelShader = compile ps_3_0 ps_notex();
 	}
 }
+
+
