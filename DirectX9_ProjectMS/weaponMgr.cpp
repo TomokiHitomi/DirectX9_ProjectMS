@@ -26,8 +26,8 @@
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-int			WeaponManager::nCount;
-Weapon*		WeaponManager::pWeapon[(int)MAX * (int)PlayerManager::PLAYER_MAX];
+Weapon*		WeaponManager::pWeapon[4];
+CXModel*	WeaponManager::pXModel[WeaponType::MAX];
 
 //=============================================================================
 // コンストラクタ（初期化処理）
@@ -40,12 +40,25 @@ WeaponManager::WeaponManager(void)
 	// オブジェクトタイプの設定
 	SetObjectType(ObjectManager::ObjectType::NORMAL);
 
-	nCount = (int)MAX * (int)PlayerManager::PLAYER_MAX;
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	for (unsigned int i = 0; i < nCount; i++)
+	for (unsigned int i = 0; i < 4; i++)
 	{
 		pWeapon[i] = NULL;
 	}
+
+	for (unsigned int i = 0; i < WeaponType::MAX; i++)
+	{
+		pXModel[i] = NULL;
+		// モデルデータをインスタンス化
+		pXModel[i] = new CXModel;
+
+
+		pXModel[i]->SetLight(false);
+	}
+	// モデルデータを初期化
+	pXModel[BEATER]->Init(pDevice, WEAPON_MODEL_BEATER, NULL);
+	pXModel[BOWL]->Init(pDevice, WEAPON_MODEL_BOWL, NULL);
 }
 
 //=============================================================================
@@ -53,9 +66,14 @@ WeaponManager::WeaponManager(void)
 //=============================================================================
 WeaponManager::~WeaponManager(void)
 {
-	for (unsigned int i = 0; i < nCount; i++)
+	for (unsigned int i = 0; i < 4; i++)
 	{
 		SAFE_DELETE(pWeapon[i]);
+	}
+
+	for (unsigned int i = 0; i < WeaponType::MAX; i++)
+	{
+		SAFE_DELETE(pXModel[i]);
 	}
 }
 
@@ -67,7 +85,7 @@ void WeaponManager::Update(void)
 #ifdef _DEBUG
 	PrintDebugProc("【 Weapon 】\n");
 #endif
-	for (unsigned int i = 0; i < nCount; i++)
+	for (unsigned int i = 0; i < 4; i++)
 	{
 		//SAFE_UPDATE(pWeapon[i]);
 		if (pWeapon[i] != NULL)
@@ -85,7 +103,7 @@ void WeaponManager::Update(void)
 //=============================================================================
 void WeaponManager::Draw(void)
 {
-	for (unsigned int i = 0; i < nCount; i++)
+	for (unsigned int i = 0; i < 4; i++)
 	{
 		//SAFE_DRAW(pWeapon[i]);
 		if (pWeapon[i] != NULL)
@@ -98,8 +116,20 @@ void WeaponManager::Draw(void)
 //=============================================================================
 // 設定処理
 //=============================================================================
-Weapon *WeaponManager::SetWeapon(int nPlayer, WeaponManager::WeaponType eType)
+//Weapon *WeaponManager::SetWeapon(int nPlayer, WeaponManager::WeaponType eType)
+//{
+//	pWeapon[nPlayer * 2 + (int)eType] = new Weapon;
+//	return pWeapon[nPlayer * 2 + (int)eType];
+//}
+
+Weapon *WeaponManager::SetWeapon(WeaponManager::WeaponType eType)
 {
-	pWeapon[nPlayer * 2 + (int)eType] = new Weapon;
-	return pWeapon[nPlayer * 2 + (int)eType];
+	for (unsigned int i = 0; i < 4; i++)
+	{
+		if (pWeapon[i] == NULL)
+		{
+			pWeapon[i] = new Weapon(pXModel[eType]);
+			return pWeapon[i];
+		}
+	}
 }

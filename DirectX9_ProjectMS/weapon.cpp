@@ -30,7 +30,7 @@
 //=============================================================================
 // コンストラクタ（初期化処理）
 //=============================================================================
-Weapon::Weapon(void)
+Weapon::Weapon(CXModel* XModel)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
@@ -38,14 +38,10 @@ Weapon::Weapon(void)
 	pXModel = NULL;
 
 	// モデルデータをインスタンス化
-	pXModel = new CXModel;
-	
-	// モデルデータを初期化
-	pXModel->Init(pDevice, WEAPON_MODEL_TEST, WEAPON_TEXTURE_TEST);
-	pXModel->SetLight(false);
+	pXModel = XModel;
 
-	vPos = ZERO_D3DXVECTOR3;				// 座標情報
-	vRot = ZERO_D3DXVECTOR3;				// 回転情報
+	vPos = ZERO_D3DXVECTOR3;			// 座標情報
+	vRot = ZERO_D3DXVECTOR3;			// 回転情報
 	vScl = WEAPON_SCL_VEC3;				// 拡縮情報
 
 	// ワールド行列を初期化
@@ -63,7 +59,7 @@ Weapon::Weapon(void)
 //=============================================================================
 Weapon::~Weapon(void)
 {
-	SAFE_RELEASE(pXModel);
+	//SAFE_RELEASE(pXModel);
 }
 
 //=============================================================================
@@ -105,7 +101,13 @@ void Weapon::Draw(void)
 	{
 		if (pXModel != NULL)
 		{
+			LPDIRECT3DDEVICE9 pDevice = GetDevice();
+			//// 両面描画する
+			//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+			// モデルを描画
 			pXModel->Draw(mtxWorld);
+			//// 裏面をカリングに戻す
+			//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 		}
 	}
 }

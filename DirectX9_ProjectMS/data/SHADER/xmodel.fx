@@ -57,6 +57,7 @@ struct VS_OUT		// 頂点シェーダの戻り値かつピクセルシェーダーの引数
 	float3	nor : NORMAL;
 	float4	col : COLOR0;
 	float2	uv : TEXCOORD0;
+	float4	spc : TEXCOORD1;
 };
 
 //=============================================================================
@@ -79,34 +80,40 @@ VS_OUT vs_light_on( VS_IN In )
 	Out.pos = mul(Out.pos, proj);
 
 	// 法線をワールド空間へ
-	//float3 nor = mul(In.nor, world);
-	Out.nor = mul(In.nor, world);
+	Out.nor = mul(In.nor, (float3x3)world);
 
-   // 反射する光の強さを算出
-	//float Power = saturate(dot(normalize(nor), -normalize(dir_lt)));
-	//Power = clamp(Power, 0.0f, 1.0f);
+	float3	N = 0.0f;		// ワールド空間上の法線ベクトル
+	float3	L = 0.0f;		// 光の差し込む方向
+	float3	P = 0.0f;		// ワールド空間上の頂点座標
+	float3	V = 0.0f;		// （カメラ座標ー頂点座標）ベクトル
+	float3  H = 0.0f;		//  ハーフベクトル（視線ベクトルと光の方向ベクトル）
 
-	//// ランパード反射
-	//Out.col = mat.dif * lt.dif;
-	//Out.col = Out.col + mat.amb * lt.amb;
-	//Out.col = Out.col + mat.emi;
+	P = Out.pos.xyz;
+
+	N = normalize(Out.nor);
+
+	// 平行光の差し込む方向	単位ベクトル化
+	L = normalize(-lt.dir);
+
+	// 視線ベクトルを求める
+	V = normalize(eye.xyz - P);
+
+	// 光ベクトルと視線とのハーフベクトルを求める
+	H = normalize(L + V);
+
+	// 光源計算を行って出力カラーを決める
+	Out.col = mat.emi +
+		lt.amb * mat.amb +
+		lt.dif * mat.dif *
+		max(0.0f, dot(N, L));	// 0.0未満の場合は0.0に
+
+	Out.col.a = mat.dif.a;
+
+	// スペキュラーによる反射色を計算　g_powerが大きいほど鋭く光る
+	Out.spc = lt.spc * mat.spc *
+		pow(max(0.0f, dot(N, H)), mat.pwr);
 
 
-	//// スペキュラ反射（調整中）
-	////float4 spc_temp = float4(0.0f, 0.0f, 1.0f, 1.0f);
-	//float3 eyePos = float3(view._41, view._42, view._43);
-	//float3	V = normalize(eyePos - Out.pos);		// （カメラ座標ー頂点座標）ベクトル
-	////float3	H = -normalize(V + dir_lt);		//  ハーフベクトル（視線ベクトルと光の方向ベクトル）
-	//float3	R = normalize(2 * dot(lt.dir, Out.nor) * Out.nor - lt.dir);
-	//float specularLight = pow(saturate(dot(R, V)), 1.5f);
-	////Out.col = Out.col + (spc_temp * specularLight);
-	//Out.col = Out.col + (mat.spc * specularLight);
-
-	//// 反射する光の強さを算出
-	//Out.col = Out.col * saturate(dot(normalize(Out.nor), -normalize(lt.dir)));
-
-	//// α値は入力値をそのまま使用
-	//Out.col.a = mat.dif.a;
 
 	// uvはそのまま使用
 	Out.uv  = In.uv;
@@ -130,77 +137,68 @@ VS_OUT vs_light_off(VS_IN In)
 	Out.pos = mul(Out.pos, proj);
 
 	Out.uv = In.uv;
-	Out.col = In.col;
+
+	// 光源計算を行って出力カラーを決める
+	Out.col = saturate(mat.emi + mat.amb + mat.dif);	// 0.0未満の場合は0.0に
+
+	Out.col.a = mat.dif.a;
+
 	return Out;
 }
 
 //=============================================================================
 // ピクセルシェーダ
 //=============================================================================
-float4 ps_light_on(VS_OUT In) : COLOR0
+float4 ps_light_on_tex(VS_OUT In) : COLOR0
 {
-	// 頂点法線
-	float3 N = normalize(In.nor.xyz);
-
-	// 視点から頂点のベクトル
-	float3 V = normalize(eye.xyz - In.pos.xyz);
-
-	// ライト座標から頂点のベクトル（現状は平行光源のみなのでDirを代入
-	float3 L = -normalize(lt.dir.xyz); /*normalize(lt.pos.xyz - In.pos.xyz);*/
-
-	// ハーフベクトル	H = norm(norm(Cp - Vp) + Ldir)
-	//float3 H = normalize(v + l);
-
-	//float  P = mat.pwr;
-
-	//// ライト座標から頂点までの距離を求める
-	////float  d = length(l);
-	//// ライト座標から頂点のベクトルを正規化
-	//l = normalize(l);
-	// 反射光のベクトルを計算
-	//float3 r = 2.0 * n * dot(n, l) - l;
-	//float3 r = l + 2.0 * dot(-l, n) * n;
-	//// 距離減退を計算（現状は使わない）
-	//float  a = 1.0f;
-	//a = saturate(1.0f / (pntLight.attenuate.x + pntLight.attenuate.y * d + pntLight.attenuate.z * d * d)); //減衰
-
-	//float powTmp = pow(saturate(dot(r, v)), mat.pwr);
-	//float powTmp = 1.0f;
-
-	// 環境光を計算
-	float3 iA =										mat.amb.xyz * lt.amb.xyz;
-	// 拡散光を計算
-	float3 iD = saturate(dot(L, N)) *				mat.dif.xyz * lt.dif.xyz;
-	// 反射光を計算
-	//float3 iS = powTmp * (mat.spc.xyz * lt.spc.xyz) * a;
-	//float3 iS = pow(saturate(dot(r, v)), mat.pwr) * (mat.spc.xyz * lt.spc.xyz) * a;
-
-
-	// スペキュラ ライティング	  = Cs * sum[Ls*(N.H)P*Atten*Spot]
-	//float3 iS = mat.spc.xyz * (lt.spc.xyz * pow(dot(N, H), P));
-
-
-	float4 iColor = float4(iA + iD /*+ iS*/, 1.0f);
-
-	float4 texcolor = tex2D(smp, In.uv);
-	//texcolor = iColor;
-	//texcolor.x = iColor.x;
-	texcolor.xyz = texcolor.xyz * iColor.xyz;
-	//color.xyz = color.xyz * (iA + iD + iS);
-
-	return saturate(texcolor);
-	//return float4(saturate(iA + iD + iS), 1.0);
-	//return tex2D(smp, In.uv) * In.col;
+	float4 out_color;
+	// テクスチャの色とポリゴンの色を掛け合わせて出力
+	out_color = saturate(In.col * tex2D(smp, In.uv) + In.spc);
+	out_color.a = In.col.a;
+	return out_color; 
 }
 
-float4 ps_light_off(VS_OUT In) : COLOR0
+float4 ps_light_off_tex(VS_OUT In) : COLOR0
 {
 	return tex2D(smp, In.uv);
 }
 
+float4 ps_light_on(VS_OUT In) : COLOR0
+{
+	float4 out_color;
+	// テクスチャの色とポリゴンの色を掛け合わせて出力
+	out_color = saturate(In.col + In.spc);
+	out_color.a = In.col.a;
+	return out_color;
+}
+
+float4 ps_light_off(VS_OUT In) : COLOR0
+{
+	return In.col;
+}
+
+
 //=============================================================================
 // テクニック
 //=============================================================================
+technique LIGHT_ON_TEX
+{
+	pass p0
+	{
+		VertexShader = compile vs_3_0 vs_light_on();
+		PixelShader = compile ps_3_0 ps_light_on_tex();
+	}
+}
+
+technique LIGHT_OFF_TEX
+{
+	pass p0
+	{
+		VertexShader = compile vs_3_0 vs_light_off();
+		PixelShader = compile ps_3_0 ps_light_off_tex();
+	}
+}
+
 technique LIGHT_ON
 {
 	pass p0

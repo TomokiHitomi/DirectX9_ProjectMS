@@ -40,7 +40,7 @@ HRESULT LightManager::Init(void)
 	cLight[Main].value.Position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	// 平行光源のベクトルを設定（POINTライトは使わない）
-	cLight[Main].value.Direction = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	cLight[Main].value.Direction = D3DXVECTOR3(0.0f, -0.5f, -0.5f);
 	// 平行光源のベクトルを正規化
 	D3DXVec3Normalize(
 		(D3DXVECTOR3*)&cLight[Main].value.Direction,

@@ -76,6 +76,7 @@ void JoyconUpdate(void);
 BOOL JcPressed(int jcNo, DWORD button);
 BOOL JcTriggered(int jcNo, DWORD button);
 BOOL JcReleased(int jcNo, DWORD button);
+void JcRumble(int jcNo, int frequency, int intensity);
 
 
 #endif

@@ -17,6 +17,7 @@
 #include "character.h"
 #include "scene.h"
 #include "weapon.h"
+#include "weaponMgr.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -38,11 +39,13 @@
 
 #define PLAYER_ALPHA_TEST			(10)
 
+/***** 操作系 *****/
 
-// テスト用
-#define PLAYER_MARGIN_MOVE			(0.03f)
-#define PLAYER_MARGIN_GUARD			(0.4f)
+// Joyconのあそび
+#define PLAYER_MARGIN_MOVE			(0.05f)
+#define PLAYER_MARGIN_GUARD			(0.5f)
 #define PLAYER_MARGIN_ATTACK		(1.1f)
+
 
 #define PLAYER_MOVE_INERTIA			(0.3f)
 
@@ -51,12 +54,14 @@
 
 // ガード
 #define PLAYER_GUARD_CD				(30)
+#define PLAYER_GUARD_COUNT			(5)		// ガードスタートカウント
 
 // ジャンプ
 #define PLAYER_GRAVITY				(0.3f)
 #define PLAYER_VELOCITY				(5.0f)
 
 // ダッシュ
+#define PLAYER_DASH_CD				(10)
 #define PLAYER_DASH					(2.0f)
 
 /***** アニメーション *****/
@@ -78,11 +83,12 @@
 //#define PLAYER_ANIM_				0x00008000
 
 // アニメーションスピード
-#define PLAYER_ANIM_SPEED_DEF	(60.0f / 3000.0f)
-#define PLAYER_ANIM_SPEED_DASH	(60.0f / 1000.0f)
+#define PLAYER_ANIM_SPEED_DEF		(60.0f / 3000.0f)
+#define PLAYER_ANIM_SPEED_DASH		(60.0f / 1000.0f)
 
-#define PLAYER_ANIM_WEIGHT_DEF	(0.1f)
-
+#define PLAYER_ANIM_WEIGHT_DEF		(0.1f)
+#define PLAYER_ANIM_WEIGHT_ATTACK	(0.3f)
+#define PLAYER_ANIM_WEIGHT_GUARD	(0.3f)
 
 //*****************************************************************************
 // 構造体定義
@@ -95,7 +101,13 @@ class Player
 {
 public:
 	CSkinMesh*		m_CSkinMesh;	// スキンメッシュ格納用
-	Weapon*			pWeapon[2];
+	enum WeaponLR
+	{
+		TYPE_LEFT,
+		TYPE_RIGHT,
+		TYPE_MAX
+	};
+	Weapon*			pWeapon[WeaponLR::TYPE_MAX];
 
 	// コンストラクタ（初期化処理）
 	Player(void);
@@ -137,7 +149,9 @@ private:
 
 
 	void	Move(void);
+	void	Action(void);
 	void	Dash(void);
+	void	DashCancel(void);
 	//void	Guard(void);
 	//void	Action(void);
 	void	Jump(void);
@@ -145,6 +159,11 @@ private:
 	void	MoveInertia(float fInertia);
 	void	RotFunc(D3DXVECTOR3);
 	void	SetNum(int nNum) { m_nNum = nNum; }
+
+	// ガード用
+	int		nGuardCount;
+	bool	bGuard;
+
 
 	// ジャンプ用
 	float	fVelocity;				// 加速度
@@ -207,7 +226,7 @@ public:
 	template <class Type>
 	void Set(PLAYER player, CharacterManager::TYPE type)
 	{
-		delete m_pPlayer[player];
+		SAFE_DELETE(m_pPlayer[player]);
 		m_pPlayer[player] = new Type;
 		m_pPlayer[player]->m_nNum = int(player);
 		m_pPlayer[player]->m_nTagNum = int(PLAYER_2P - player);
@@ -216,9 +235,6 @@ public:
 		{
 			m_pPlayer[player]->m_CSkinMesh->ChangeAnim(Player::IDOL, 0.05f);
 		}	
-		// ウェポンをセット
-		m_pPlayer[player]->pWeapon[0] = WeaponManager::SetWeapon(m_pPlayer[player]->m_nNum, WeaponManager::LEFT);
-		m_pPlayer[player]->pWeapon[1] = WeaponManager::SetWeapon(m_pPlayer[player]->m_nNum, WeaponManager::RIGHT);
 	}
 	//void ReleaseStage(void)
 	//{
@@ -260,6 +276,32 @@ public:
 	{
 
 	}
+};
+
+class Pastry : public Player
+{
+public:
+	Pastry() : Player()
+	{
+		// ウェポンをセット
+		pWeapon[Player::TYPE_LEFT] = WeaponManager::SetWeapon(WeaponManager::BEATER);
+		pWeapon[Player::TYPE_RIGHT] = WeaponManager::SetWeapon(WeaponManager::BOWL);
+	}
+	~Pastry();
+
+};
+
+class Idol : public Player
+{
+public:
+	Idol() : Player()
+	{
+		// モデルの初期化
+		//m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN, 0.05f);
+		//m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN);
+	}
+	~Idol();
+
 };
 
 //*****************************************************************************

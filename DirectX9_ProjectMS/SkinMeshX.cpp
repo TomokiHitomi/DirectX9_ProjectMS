@@ -685,7 +685,7 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, D3DXMESHCONTAINER
 
 			pEffect->End();
 
-			pDevice->SetVertexShader(NULL);
+			//pDevice->SetVertexShader(NULL);
 		}
 
 		// remember to reset back to hw vertex processing if software was required

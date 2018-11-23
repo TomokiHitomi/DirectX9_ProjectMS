@@ -52,15 +52,17 @@ HRESULT CXModel::Init(LPDIRECT3DDEVICE9 pDevice, LPSTR pMeshPass, LPSTR pTexPass
 		MessageBox(NULL, "Xファイルの読み込みに失敗しました", pMeshPass, MB_OK);
 		return E_FAIL;
 	}
-
-	// テクスチャの読み込み
-	if (FAILED(D3DXCreateTextureFromFile(
-		pDevice,				// デバイス
-		pTexPass,				// ファイル名
-		&pTexture)))			// 読み込むメモリ（複数なら配列に）
+	if (pTexPass)
 	{
-		MessageBox(NULL, "Xファイルのテクスチャ読み込みに失敗しました", pTexPass, MB_OK);
-		return E_FAIL;
+		// テクスチャの読み込み
+		if (FAILED(D3DXCreateTextureFromFile(
+			pDevice,				// デバイス
+			pTexPass,				// ファイル名
+			&pTexture)))			// 読み込むメモリ（複数なら配列に）
+		{
+			MessageBox(NULL, "Xファイルのテクスチャ読み込みに失敗しました", pTexPass, MB_OK);
+			return E_FAIL;
+		}
 	}
 }
 
@@ -89,6 +91,7 @@ void CXModel::Draw(D3DXMATRIX mtxWorld)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	D3DXMATERIAL *pMat;
 	D3DMATERIAL9 pMatDef;
+	HRESULT hr;
 
 	// ビュー・プロジェクション行列を取得
 	D3DXMATRIX mtxView, mtxProjection;
@@ -108,21 +111,31 @@ void CXModel::Draw(D3DXMATRIX mtxWorld)
 	// 使用するテクニックを定義
 	if (bLight)
 	{	// ライトON
-		if (FAILED(pEffect->SetTechnique("LIGHT_ON")))
+		if (pTexture)
 		{
-			// エラー
-			MessageBox(NULL, "テクニックの定義に失敗しました", "LIGHT_ON", MB_OK);
-			//return S_FALSE;
+			hr = pEffect->SetTechnique("LIGHT_ON_TEX");
+		}
+		else
+		{
+			hr = pEffect->SetTechnique("LIGHT_ON");
 		}
 	}
 	else
 	{	// ライトOFF
-		if (FAILED(pEffect->SetTechnique("LIGHT_OFF")))
+		if (pTexture)
 		{
-			// エラー
-			MessageBox(NULL, "テクニックの定義に失敗しました", "LIGHT_OFF", MB_OK);
-			//return S_FALSE;
+			hr = pEffect->SetTechnique("LIGHT_OFF_TEX");
 		}
+		else
+		{
+			hr = pEffect->SetTechnique("LIGHT_OFF");
+		}
+	}
+
+	if (FAILED(hr))
+	{
+		// エラー
+		MessageBox(NULL, "テクニックの定義に失敗しました。", "XMODEL", MB_OK);
 	}
 
 	// シェーダーの開始、numPassには指定してあるテクニックに定義してあるpassの数が変える
@@ -161,12 +174,8 @@ void CXModel::Draw(D3DXMATRIX mtxWorld)
 	D3DXVECTOR4  temp;
 	for (int i = 0; i < (int)dwNumMat; i++)
 	{
-		if (bLight)
-		{	// ライトON
-			// マテリアルをセット
-			pEffect->SetValue("mat", &pMat[i].MatD3D, sizeof(D3DMATERIAL9));
-			//SetShaderMat(pEffect, pMat[i].MatD3D);
-		}
+		// マテリアルをセット
+		pEffect->SetValue("mat", &pMat[i].MatD3D, sizeof(D3DMATERIAL9));
 
 		// テクスチャをセット
 		pEffect->SetTexture("tex", pTexture);

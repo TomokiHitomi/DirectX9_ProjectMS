@@ -78,7 +78,7 @@ GameScene::GameScene(void)
 	ObjectManager::CreateObject<WeaponManager>();
 	ObjectManager::CreateObject<PlayerManager>();
 	ObjectManager::CreateObject<EffectManager>();
-	ObjectManager::CreateObject<Gage>();
+	//ObjectManager::CreateObject<Gage>();
 	//new Player;
 	//new Skydome;
 	//new Cube;

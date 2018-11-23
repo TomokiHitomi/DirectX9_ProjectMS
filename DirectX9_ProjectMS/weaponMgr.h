@@ -11,7 +11,6 @@
 * インクルード
 *******************************************************************************/
 #include "object.h"
-#include "player.h"
 #include "weapon.h"
 
 //*****************************************************************************
@@ -28,7 +27,8 @@
 //
 //#define WEAPON_MOVE_SPEED	(5)
 
-
+#define	WEAPON_MODEL_BEATER	"data/MODEL/Weapon/泡立て器.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_BOWL	"data/MODEL/Weapon/ボウル.x"	// 読み込むモデル名
 
 //*****************************************************************************
 // 構造体定義
@@ -42,13 +42,14 @@ class WeaponManager : public ObjectManager
 public:
 	enum WeaponType
 	{
-		LEFT,
-		RIGHT,
+		BEATER,
+		BOWL,
 		MAX
 	};
 private:
-	static int nCount;
-	static Weapon* pWeapon[(int)MAX * (int)PlayerManager::PLAYER_MAX];
+	static Weapon*		pWeapon[4];
+	static CXModel*		pXModel[WeaponType::MAX];			// モデル格納用
+	//static Weapon* pWeapon[WeaponType::MAX * 2];
 	//Weapon *pWeapon[1];
 public:
 	// コンストラクタ（初期化処理）
@@ -61,7 +62,8 @@ public:
 	// 描画処理
 	void	Draw(void);
 
-	static Weapon *SetWeapon(int nPlayer, WeaponManager::WeaponType eType);
+	//static Weapon *SetWeapon(int nPlayer, WeaponManager::WeaponType eType);
+	static Weapon* SetWeapon(WeaponManager::WeaponType eType);
 
 
 	//template <typename Type>
