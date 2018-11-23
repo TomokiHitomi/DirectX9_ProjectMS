@@ -32,16 +32,16 @@
 //#define PLAYER_MODEL_BONE_RM		("No_45_joint_RightMiddle2")
 
 // モデルスケール
-#define PLAYER_SCL					(0.3f)
+#define PLAYER_SCL					(0.2f)
 
-#define PLAYER_MOVE_SPEED			(1.0f)
+#define PLAYER_MOVE_SPEED			(0.5f)
 
 #define PLAYER_ALPHA_TEST			(10)
 
 
 // テスト用
-#define PLAYER_MARGIN_MOVE			(0.02f)
-#define PLAYER_MARGIN_GUARD			(0.3f)
+#define PLAYER_MARGIN_MOVE			(0.03f)
+#define PLAYER_MARGIN_GUARD			(0.4f)
 #define PLAYER_MARGIN_ATTACK		(1.1f)
 
 #define PLAYER_MOVE_INERTIA			(0.3f)
@@ -57,7 +57,32 @@
 #define PLAYER_VELOCITY				(5.0f)
 
 // ダッシュ
-#define PLAYER_DASH					(5.0f)
+#define PLAYER_DASH					(2.0f)
+
+/***** アニメーション *****/
+
+// アニメーションフラグ
+#define PLAYER_ANIM_FRONT			0x00000001
+#define PLAYER_ANIM_BACK			0x00000002
+#define PLAYER_ANIM_LEFT			0x00000004
+#define PLAYER_ANIM_RIGHT			0x00000008
+#define PLAYER_ANIM_GUARD			0x00000010
+#define PLAYER_ANIM_ATK_RIGHT		0x00000020
+#define PLAYER_ANIM_ATK_LEFT		0x00000040
+//#define PLAYER_ANIM_				0x00000080
+//#define PLAYER_ANIM_				0x00000100
+//#define PLAYER_ANIM_				0x00000200
+//#define PLAYER_ANIM_				0x00001000
+//#define PLAYER_ANIM_				0x00002000
+//#define PLAYER_ANIM_				0x00004000
+//#define PLAYER_ANIM_				0x00008000
+
+// アニメーションスピード
+#define PLAYER_ANIM_SPEED_DEF	(60.0f / 3000.0f)
+#define PLAYER_ANIM_SPEED_DASH	(60.0f / 1000.0f)
+
+#define PLAYER_ANIM_WEIGHT_DEF	(0.1f)
+
 
 //*****************************************************************************
 // 構造体定義
@@ -101,6 +126,7 @@ private:
 	D3DXVECTOR3		m_vTag;				// ターゲット座標
 
 	D3DXMATRIX		m_mtxWorld;			// ワールドマトリクス
+	DWORD			m_dwAnim;
 
 	int				m_nCount;			// 汎用カウンター
 	int				m_nCoolDown;
@@ -130,27 +156,29 @@ private:
 	int				nDashCount;
 	bool			bDash;
 
+	void ChangeAnim(DWORD dwAnime, FLOAT fShift);
+	void ChangeAnimSpeed(FLOAT _AnimSpeed);
+	void SetAnim(void);
+	void Player::MoveLimit(void);
+
 public:
 	void SetTag(D3DXVECTOR3 vTag) { m_vTag = vTag; }
 	D3DXVECTOR3 GetPos(void) { return m_vPos; }
 	D3DXVECTOR3 GetTag(void) { return m_vTag; }
 
-	void SetPlayerAnime(DWORD dwAnime, FLOAT fShift);
-
 	// 追記は逆順（新しいものから格納される）
 	enum PLAYER_ANIME
 	{	// アニメーション
-		PLAYER_ANIME_HOSTAGE,	// 吹く（待機）
-		PLAYER_ANIME_RUN2,		// 吹く（歩き）
-		PLAYER_ANIME_CRYING,	// 負け
-		PLAYER_ANIME_CHEERING,	// 勝ち
-		PLAYER_ANIME_DIG,		// 吸う（水・待機）
-		PLAYER_ANIME_SNEAKING,	// 吸う（水・歩き）
-		PLAYER_ANIME_HANGING,	// 吸う（風）
-		PLAYER_ANIME_ANGRY,		// 待機（風）
-		PLAYER_ANIME_HAPPY,		// 待機（水）
-		PLAYER_ANIME_RUN,		// 走り
-		PLAYER_ANIME_MAX		// アニメージョン数
+		ATK_LEFT,
+		ATK_RIGHT,
+		GUARD_CON,
+		GUARD,
+		RIGHT,	
+		LEFT,	
+		FRONT,	
+		BACK,	
+		IDOL,	
+		MAX		
 	};
 };
 
@@ -186,7 +214,7 @@ public:
 		m_pPlayer[player]->m_CSkinMesh = SceneManager::GetCharMgr()->GetCharData(type);
 		if (m_pPlayer[player]->m_CSkinMesh)
 		{
-			m_pPlayer[player]->m_CSkinMesh->ChangeAnim(Player::PLAYER_ANIME_HOSTAGE, 0.05f);
+			m_pPlayer[player]->m_CSkinMesh->ChangeAnim(Player::IDOL, 0.05f);
 		}	
 		// ウェポンをセット
 		m_pPlayer[player]->pWeapon[0] = WeaponManager::SetWeapon(m_pPlayer[player]->m_nNum, WeaponManager::LEFT);

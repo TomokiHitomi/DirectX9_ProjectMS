@@ -279,6 +279,12 @@ HRESULT MY_HIERARCHY::CreateMeshContainer(
 					pMeshContainer->pMaterials[iMaterial].pTextureFilename = NULL;
 				}
 			}
+			pMeshContainer->pMaterials[iMaterial].MatD3D.Diffuse.r = 1.0f;
+			pMeshContainer->pMaterials[iMaterial].MatD3D.Diffuse.g = 1.0f;
+			pMeshContainer->pMaterials[iMaterial].MatD3D.Diffuse.b = 1.0f;
+			pMeshContainer->pMaterials[iMaterial].MatD3D.Ambient.r = 0.9f;
+			pMeshContainer->pMaterials[iMaterial].MatD3D.Ambient.g = 0.9f;
+			pMeshContainer->pMaterials[iMaterial].MatD3D.Ambient.b = 0.9f;
 		}
 	}
 	else // if no materials provided, use a default one
@@ -428,8 +434,8 @@ CSkinMesh::CSkinMesh()
 	// 次のアニメーションへシフトするのにかかる時間
 	m_fShiftTime = SKIN_ANIME_WEIGHT;
 
-	// シェーダのアドレスを取得
-	pEffect = ShaderManager::GetEffect(ShaderManager::SKINMESH);
+	// シェーダを初期化
+	pEffect = NULL;
 }
 
 //=============================================================================
@@ -455,6 +461,9 @@ VOID CSkinMesh::Release()
 	m_FrameArray.clear();
 	//メッシュコンテナありのフレーム参照変数の要素を削除
 	m_IntoMeshFrameArray.clear();
+
+	// シェーダの解放
+	SAFE_RELEASE(pEffect);
 }
 	
 //=============================================================================
@@ -560,10 +569,9 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, D3DXMESHCONTAINER
 	pDevice->GetCreationParameters(&cp);
 	g_dwBehaviorFlags = cp.BehaviorFlags;
 
-	D3DXMATRIX mtxWorld, mtxView, mtxProjection;
+	D3DXMATRIX  mtxView, mtxProjection;
 	pDevice->GetTransform(D3DTS_VIEW, &mtxView);
 	pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjection);
-
 
 
 	//スキンメッシュの描画
@@ -591,9 +599,11 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, D3DXMESHCONTAINER
 				iMatrixIndex = pBoneComb[iAttrib].BoneId[iPaletteEntry];
 				if (iMatrixIndex != UINT_MAX)
 				{
-					D3DXMatrixMultiply(&matTemp, &pMeshContainer->pBoneOffsetMatrices[iMatrixIndex],
+					//D3DXMatrixMultiply(&matTemp, &pMeshContainer->pBoneOffsetMatrices[iMatrixIndex],
+					//	pMeshContainer->ppBoneMatrixPtrs[iMatrixIndex]);
+					//D3DXMatrixMultiply(&g_pBoneMatrices[iPaletteEntry], &matTemp, &mtxView);
+					D3DXMatrixMultiply(&g_pBoneMatrices[iPaletteEntry], &pMeshContainer->pBoneOffsetMatrices[iMatrixIndex],
 						pMeshContainer->ppBoneMatrixPtrs[iMatrixIndex]);
-					D3DXMatrixMultiply(&g_pBoneMatrices[iPaletteEntry], &matTemp, &mtxView);
 				}
 			}
 
@@ -655,6 +665,7 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, D3DXMESHCONTAINER
 			pEffect->SetInt("CurNumBones", pMeshContainer->NumInfl - 1);
 
 			pEffect->SetMatrix("mViewProj", &mtxProjection);
+			pEffect->SetMatrix("mView", &mtxView);
 
 			// 結果を確定させる
 			pEffect->CommitChanges();
@@ -896,6 +907,13 @@ HRESULT CSkinMesh::Init(LPDIRECT3DDEVICE9 lpD3DDevice, LPSTR pMeshPass) {
 		MessageBox(NULL, "アニメーションXファイルの読み込みに失敗しました", TmpMeshPass, MB_OK);
 		return E_FAIL;
 	}
+
+	//// シェーダのアドレスを取得
+	//pEffect = ShaderManager::GetEffect(ShaderManager::SKINMESH);
+
+	// シェーダのアドレスを取得
+	ShaderManager::CreateEffect(&pEffect, ShaderManager::SKINMESH);
+
 
 	//ボーン行列初期化
 	AllocateAllBoneMatrices(m_pFrameRoot, m_pFrameRoot);

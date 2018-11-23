@@ -28,7 +28,6 @@ public:
 	// シェーダー関連
 	LPD3DXBUFFER					pErrorBuff;
 	LPD3DXEFFECT					pEffect;
-	UINT							numPass;
 
 	Shader(const char* path);
 	~Shader();
@@ -55,12 +54,14 @@ public:
 	};
 private:
 	static Shader* pShader[FILE_MAX];
+	static LPD3DXBUFFER	pErrorBuff;
 public:
 	ShaderManager();
 	~ShaderManager();
 	static HRESULT Load(void);
 	static void Delete(void);
 	// エフェクト取得メソッド
+	static HRESULT CreateEffect(LPD3DXEFFECT* pEffect,FILE eFile);
 	static LPD3DXEFFECT GetEffect(FILE eFile) { return pShader[eFile]->GetEffect(); }
 };
 //

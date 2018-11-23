@@ -30,17 +30,17 @@ HRESULT LightManager::Init(void)
 	cLight[Main].type = Light::DIRECTIONAL;
 
 	// 拡散光の設定
-	cLight[Main].value.Diffuse = D3DXCOLOR(LIGHT_DIFFUSE_0, LIGHT_DIFFUSE_0, LIGHT_DIFFUSE_0, 1.0f);
+	cLight[Main].value.Diffuse = D3DXCOLOR(0.3f, 1.0f, 0.3f, 1.0f);
 	// 環境光の設定
-	cLight[Main].value.Ambient = D3DXCOLOR(LIGHT_AMBIENT, LIGHT_AMBIENT, LIGHT_AMBIENT, 1.0f);
+	cLight[Main].value.Ambient = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	// 反射光の設定
 	cLight[Main].value.Specular = cLight[Main].value.Diffuse;
 
 	// 座標の設定（DIRECTIONALライトは使わない）
 	cLight[Main].value.Position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	// 平行光源の設定（POINTライトは使わない）
-	cLight[Main].value.Direction = D3DXVECTOR3(0.0f, -0.5f, 0.5f);
+	// 平行光源のベクトルを設定（POINTライトは使わない）
+	cLight[Main].value.Direction = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	// 平行光源のベクトルを正規化
 	D3DXVec3Normalize(
 		(D3DXVECTOR3*)&cLight[Main].value.Direction,

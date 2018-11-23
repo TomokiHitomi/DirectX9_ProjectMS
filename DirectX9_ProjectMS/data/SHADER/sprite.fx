@@ -82,7 +82,7 @@ technique Tec01		// テクスチャ描画
 {
 	pass p0
 	{
-		VertexShader = compile vs_2_0 vs_main();
-		PixelShader = compile ps_2_0 ps_nomal();
+		VertexShader = compile vs_3_0 vs_main();
+		PixelShader = compile ps_3_0 ps_nomal();
 	}
 }

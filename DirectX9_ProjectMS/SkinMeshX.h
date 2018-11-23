@@ -20,8 +20,8 @@
 //*****************************************************************************
 // É}ÉNÉçíËã`
 //*****************************************************************************
-#define SKIN_ANIME_SPEED	(60.0f / 4800.0f)
-//#define SKIN_ANIME_SPEED	(60.0f / 1500.0f)
+//#define SKIN_ANIME_SPEED	(60.0f / 4800.0f)
+#define SKIN_ANIME_SPEED	(60.0f / 3000.0f)
 #define SKIN_ANIME_WEIGHT	(0.05f)
 
 #define ANIMATION_SET_MAX	(25)

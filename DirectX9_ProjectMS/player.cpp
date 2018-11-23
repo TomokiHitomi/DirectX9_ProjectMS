@@ -14,6 +14,7 @@
 #include "joycon.h"
 #include "character.h"
 #include "weaponMgr.h"
+#include "plane.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -236,6 +237,10 @@ void Player::Update(void)
 			//			m_mtxWorld._41, m_mtxWorld._42, m_mtxWorld._43);
 			//#endif
 		}
+
+		// アニメーションを設定
+		SetAnim();
+
 		if (m_CSkinMesh != NULL)
 		{
 			// モデルを更新
@@ -255,6 +260,9 @@ void Player::LateUpdate(void)
 {
 	if (m_bUse)
 	{
+		// 移動制限処理
+		MoveLimit();
+
 		//// 移動量を座標に反映
 		//m_vPos += m_vMove;
 
@@ -359,6 +367,9 @@ void Player::Draw(void)
 //=============================================================================
 void Player::Move(void)
 {
+	// アニメーションビットパターンを初期化
+	m_dwAnim = 0x00000000l;	// 初期化
+
 	// 移動量を初期化
 	m_vMove = ZERO_D3DXVECTOR3;
 
@@ -378,9 +389,11 @@ void Player::Move(void)
 				D3DXVECTOR3 moveTmp = D3DXVECTOR3(m_mtxWorld._31, m_mtxWorld._32, m_mtxWorld._33);
 				D3DXVec3Normalize(&moveTmp, &moveTmp);
 
+				m_dwAnim |= PLAYER_ANIM_ATK_LEFT;
+
 				if (pWeapon[0]->Set(m_vPos, -moveTmp))
 				{
-					m_nCoolDown = PLAYER_ATTACK_CD;
+					//m_nCoolDown = PLAYER_ATTACK_CD;
 				}
 			}
 //#endif
@@ -395,9 +408,11 @@ void Player::Move(void)
 
 			if (pWeapon[1])
 			{
+				m_dwAnim |= PLAYER_ANIM_ATK_RIGHT;
+
 				if (pWeapon[1]->Set(m_vPos, -moveTmp))
 				{
-					m_nCoolDown = PLAYER_ATTACK_CD;
+					//m_nCoolDown = PLAYER_ATTACK_CD;
 				}
 			}
 		}
@@ -408,36 +423,57 @@ void Player::Move(void)
 //#ifdef _DEBUG
 //			PrintDebugProc("【Guard】\n");
 //#endif
-			m_nCoolDown = PLAYER_GUARD_CD;
+			m_dwAnim |= PLAYER_ANIM_GUARD;
+
+			//m_nCoolDown = PLAYER_GUARD_CD;
 		}
 
 		// 移動
 		else
 		{
+			bool bMove = false;
+			float fMoveAccel = 0.0f;
 			// 前
 			if (jcL.y > PLAYER_MARGIN_MOVE && jcR.y > PLAYER_MARGIN_MOVE)
 			{
 				m_fMoveAccel = CompHigh(jcL.y, jcR.y);
+				fMoveAccel = m_fMoveAccel;
 				MoveFunc(m_vRot.y + D3DX_PI);
+				m_dwAnim |= PLAYER_ANIM_FRONT;
 			}
 			// 後
 			else if (jcL.y < -PLAYER_MARGIN_MOVE && jcR.y < -PLAYER_MARGIN_MOVE)
 			{
 				m_fMoveAccel = CompHigh(jcL.y, jcR.y);
+				fMoveAccel = m_fMoveAccel;
 				MoveFunc(m_vRot.y);
+				m_dwAnim |= PLAYER_ANIM_BACK;
 			}
 			// 左
 			if (jcL.z > PLAYER_MARGIN_MOVE && jcR.z > PLAYER_MARGIN_MOVE)
 			{
 				m_fMoveAccel = CompHigh(jcL.z, jcR.z);
 				MoveFunc(m_vRot.y + D3DX_PI * 0.50f);
+				if (fMoveAccel < m_fMoveAccel)
+				{
+					m_dwAnim |= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
+					m_dwAnim ^= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
+					m_dwAnim |= PLAYER_ANIM_LEFT;
+				}
 			}
 			// 右
 			else if (jcL.z < -PLAYER_MARGIN_MOVE && jcR.z < -PLAYER_MARGIN_MOVE)
 			{
 				m_fMoveAccel = CompHigh(jcL.z, jcR.z);
 				MoveFunc(m_vRot.y - D3DX_PI * 0.50f);
+				if (fMoveAccel < m_fMoveAccel)
+				{
+					m_dwAnim |= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
+					m_dwAnim ^= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
+					m_dwAnim |= PLAYER_ANIM_RIGHT;
+				}
 			}
+
 
 			// ジャンプ
 			if (JcTriggered(1 + m_nNum * 2, JC_R_BUTTON_R))
@@ -455,6 +491,8 @@ void Player::Move(void)
 		Dash();
 		Jump();
 	}
+
+	// Joyconの接続がなかった場合はキーボード操作（移動のみ）
 	else if(m_nNum == 0)
 	{
 		m_fMoveAccel = 1.0f;
@@ -561,6 +599,11 @@ void Player::Dash(void)
 				nDashCount = 0;
 			}
 		}
+		ChangeAnimSpeed(PLAYER_ANIM_SPEED_DASH);
+	}
+	else
+	{
+		ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
 	}
 }
 
@@ -621,18 +664,83 @@ void Player::MoveInertia(float fInertia)
 }
 
 //=============================================================================
+// アニメーション変更関数
+//=============================================================================
+void Player::ChangeAnim(DWORD dwAnime, FLOAT fShift)
+{
+	if (m_CSkinMesh != NULL)
+	{
+		m_CSkinMesh->ChangeAnim(dwAnime, fShift);
+	}
+}
+
+//=============================================================================
+// アニメーションスピード設定関数
+//=============================================================================
+void Player::ChangeAnimSpeed(FLOAT AnimSpeed)
+{
+	if (m_CSkinMesh != NULL)
+	{
+		m_CSkinMesh->SetAnimSpeed(AnimSpeed);
+	}
+}
+
+//=============================================================================
 // アニメーション設定関数
 //=============================================================================
-void Player::SetPlayerAnime(DWORD dwAnime, FLOAT fShift)
+void Player::SetAnim(void)
 {
-	//dAnime = ANIME_MAX - dAnime - 1;
-	//if (dwAnime != m_CSkinMesh->GetAnimTrack())
-	//{
-		//m_CSkinMesh->ChangeAnim(dwAnime);
-		m_CSkinMesh->ChangeAnim(dwAnime, fShift);
-
-	//};
+	// 優先順位ごとに if 分岐
+	// 最後までモーションさせたいものにはウェイト値を設定
+	if (PLAYER_ANIM_GUARD & m_dwAnim)
+	{
+		ChangeAnim(GUARD_CON, PLAYER_ANIM_WEIGHT_DEF);
+	}
+	else if (PLAYER_ANIM_ATK_RIGHT & m_dwAnim)
+	{
+		ChangeAnim(ATK_RIGHT, PLAYER_ANIM_WEIGHT_DEF);
+	}
+	else if (PLAYER_ANIM_ATK_LEFT & m_dwAnim)
+	{
+		ChangeAnim(ATK_LEFT, PLAYER_ANIM_WEIGHT_DEF);
+	}
+	else if (PLAYER_ANIM_FRONT & m_dwAnim)
+	{
+		ChangeAnim(FRONT, PLAYER_ANIM_WEIGHT_DEF);
+	}
+	else if (PLAYER_ANIM_BACK & m_dwAnim)
+	{
+		ChangeAnim(BACK, PLAYER_ANIM_WEIGHT_DEF);
+	}
+	else if (PLAYER_ANIM_LEFT & m_dwAnim)
+	{
+		ChangeAnim(LEFT, PLAYER_ANIM_WEIGHT_DEF);
+	}
+	else if (PLAYER_ANIM_RIGHT & m_dwAnim)
+	{
+		ChangeAnim(RIGHT, PLAYER_ANIM_WEIGHT_DEF);
+	}
+	else
+	{
+		ChangeAnim(IDOL, PLAYER_ANIM_WEIGHT_DEF);
+	}
 }
+
+//=============================================================================
+// 移動制限処理
+//=============================================================================
+void Player::MoveLimit(void)
+{
+	float fLimit;
+	fLimit = PLANE_SIZE_X * PLANE_X_MAX;
+	if (m_vPos.x > fLimit) m_vPos.x = fLimit;
+	if (m_vPos.x < -fLimit)m_vPos.x = -fLimit;
+
+	fLimit = PLANE_SIZE_Y * PLANE_Y_MAX;
+	if (m_vPos.z > fLimit) m_vPos.z = fLimit;
+	if (m_vPos.z < -fLimit)m_vPos.z = -fLimit;
+}
+
 
 
 

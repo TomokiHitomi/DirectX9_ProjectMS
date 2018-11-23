@@ -5,6 +5,7 @@
 //
 //=============================================================================
 #include "shader.h"
+#include <tchar.h>
 
 // デバッグ用
 #ifdef _DEBUG
@@ -24,6 +25,18 @@ D3DXVECTOR4 ShaderColorToVec(D3DCOLORVALUE color);
 // グローバル変数
 //*****************************************************************************
 Shader* ShaderManager::pShader[FILE_MAX];
+LPD3DXBUFFER ShaderManager::pErrorBuff;
+
+// シェーダファイルのパス（FILEの通しナンバーと順番を合わせること）
+const TCHAR* cShaderFilename[] = {
+	// BGM
+	_T("data/SHADER/billboard.fx"),
+	_T("data/SHADER/xmodel.fx"),
+	_T("data/SHADER/skinassimp.fx"),
+	_T("data/SHADER/skinmesh.fx"),
+	_T("data/SHADER/plane.fx"),
+	_T("data/SHADER/box.fx")
+};
 
 //=============================================================================
 // コンストラクタ
@@ -73,6 +86,27 @@ void ShaderManager::Delete(void)
 	}
 }
 
+//=============================================================================
+// 作成処理
+//=============================================================================
+HRESULT ShaderManager::CreateEffect(LPD3DXEFFECT* pEffect, FILE eFile)
+{
+	// デバイスを取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	// ファイル( const char* path )からシェーダーファイルを読み込み読み込み
+	if (FAILED(D3DXCreateEffectFromFile(
+		pDevice, cShaderFilename[eFile], 0, 0, 0, 0, &*pEffect, &pErrorBuff)))
+	{
+		// エラー
+		MessageBox(NULL, (LPCTSTR)pErrorBuff->GetBufferPointer(), cShaderFilename[eFile], MB_OK);
+		pEffect = NULL;
+		return S_FALSE;
+	}
+	return S_OK;
+}
+
+
 ////=============================================================================
 //// 更新処理
 ////=============================================================================
@@ -99,7 +133,6 @@ Shader::Shader(const char* path)
 	// シェーダ関連の初期化
 	pErrorBuff = NULL;	// シェーダ用コンパイルエラー
 	pEffect = NULL;		// シェーダ
-	numPass = 0;		// パスを初期化
 
 	// 初期化処理
 	Init(path);

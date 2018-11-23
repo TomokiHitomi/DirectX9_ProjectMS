@@ -17,7 +17,7 @@
 //*****************************************************************************
 #define CHARACTER_FIREMAN			("test1.X")
 //#define CHARACTER_FIREMAN			("data/MODEL/Yuko.x")
-#define CHARACTER_DOCTOR			("data/MODEL/Yuko.x")
+#define CHARACTER_DOCTOR			("test1.X")
 #define CHARACTER_PASTRY			("data/MODEL/hackadollMMD.x")
 #define CHARACTER_IDOL				("data/MODEL/Yuko.x")
 
