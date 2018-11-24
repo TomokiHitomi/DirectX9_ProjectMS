@@ -326,7 +326,8 @@ HRESULT Gage::Init()
 		}
 		GageObj[i].Scale = D3DXVECTOR2(TEXTURE_GAGE_SCALE_X, TEXTURE_GAGE_SCALE_Y);
 		GageObj[i].Angle = TEXTURE_GAGE_ANGLE_X;
-		GageObj[i].NowHp = 1000.0f;
+		GageObj[i].NowHp = TEXTURE_GAGE3D_MAX_HP;
+		GageObj[i].NowSkill = 0.0f;
 		//GageObj[i].pos = D3DXVECTOR3(i*10.0f, 0.0f, 0.0f);
 		//GageObj[i].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//GageObj[i].scl = D3DXVECTOR3(1.0, 1.0, 1.0);
@@ -374,11 +375,11 @@ void Gage::Update(void)
 	{
 		if (GetKeyboardPress(DIK_1))
 		{
-			DamegeReduce(OFFSET_DAMEGE_000 * 1000, 0);
+			DamegeReduce(OFFSET_DAMEGE_000, 0);
 		}
 		if (GetKeyboardPress(DIK_2))
 		{
-			DamegeReduce(OFFSET_DAMEGE_000 * 1000, 1);
+			DamegeReduce(OFFSET_DAMEGE_000, 1);
 		}
 		if (GetKeyboardRelease(DIK_1))
 		{
@@ -390,11 +391,11 @@ void Gage::Update(void)
 		}
 		if (GetKeyboardPress(DIK_3))
 		{
-			SkillAdd(SKILL_000*33.3333,0);
+			SkillAdd(SKILL_000,0);
 		}
 		if (GetKeyboardPress(DIK_4))
 		{
-			SkillAdd(SKILL_000*33.3333, 1);
+			SkillAdd(SKILL_000, 1);
 		}
 		if (GetKeyboardPress(DIK_5))
 		{
@@ -762,7 +763,8 @@ void Gage::DamegeReduce(float Damege,int player)
 	{
 
 		GageObj[2].Use = true;
-		GageObj[4].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE004_X;
+		GageObj[4].NowHp -= Damege;
+		GageObj[4].TextureSize.x = TEXTURE_GAGE_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * GageObj[4].NowHp;
 		if (GageObj[4].TextureSize.x <= 0.0f)
 		{
 			GageObj[4].TextureSize.x = 0.0f;
@@ -772,7 +774,8 @@ void Gage::DamegeReduce(float Damege,int player)
 	if (player == 1)
 	{
 		GageObj[3].Use = true;
-		GageObj[5].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE004_X;
+		GageObj[5].NowHp -= Damege;
+		GageObj[5].TextureSize.x = TEXTURE_GAGE_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * GageObj[5].NowHp;
 		if (GageObj[5].TextureSize.x <= 0.0f)
 		{
 			GageObj[5].TextureSize.x = 0.0f;
@@ -783,7 +786,8 @@ void Gage::DamegeAdd(float Damege, int player)
 {
 	if (player == 0)
 	{
-		GageObj[4].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE004_X;
+		GageObj[4].NowHp += Damege;
+		GageObj[4].TextureSize.x = TEXTURE_GAGE_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * GageObj[4].NowHp;
 		if (GageObj[4].TextureSize.x <= TEXTURE_GAGE_SIZE004_X)
 		{
 			GageObj[4].TextureSize.x = TEXTURE_GAGE_SIZE004_X;
@@ -791,7 +795,8 @@ void Gage::DamegeAdd(float Damege, int player)
 	}
 	if (player == 1)
 	{
-		GageObj[5].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE004_X;
+		GageObj[5].NowHp += Damege;
+		GageObj[5].TextureSize.x = TEXTURE_GAGE_SIZE005_X / TEXTURE_GAGE3D_MAX_HP *GageObj[5].NowHp;
 		if (GageObj[5].TextureSize.x <= TEXTURE_GAGE_SIZE005_X)
 		{
 			GageObj[5].TextureSize.x = TEXTURE_GAGE_SIZE005_X;
@@ -802,16 +807,18 @@ void Gage::SkillReduce(float Damege, int player)
 {
 	if (player == 0)
 	{
-		GageObj[8].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE008_X;
-		if (GageObj[8].TextureSize.x <= 0.0f)
+		GageObj[8].NowSkill -= Damege;
+		GageObj[8].TextureSize.x = TEXTURE_GAGE_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * GageObj[8].NowSkill;
+		if (GageObj[8].TextureSize.x < 0.0f)
 		{
 			GageObj[8].TextureSize.x = 0.0f;
 		}
 	}
 	if (player == 1)
 	{
-		GageObj[9].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE008_X;
-		if (GageObj[9].TextureSize.x <= 0.0f)
+		GageObj[9].NowSkill -= Damege;
+		GageObj[9].TextureSize.x = TEXTURE_GAGE_SIZE005_X / TEXTURE_GAGE3D_MAX_HP * GageObj[9].NowSkill;
+		if (GageObj[9].TextureSize.x < 0.0f)
 		{
 			GageObj[9].TextureSize.x = 0.0f;
 		}
@@ -821,7 +828,8 @@ void Gage::SkillAdd(float Damege, int player)
 {
 	if (player == 0)
 	{
-		GageObj[8].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE008_X;
+		GageObj[8].NowSkill += Damege;
+		GageObj[8].TextureSize.x = TEXTURE_GAGE_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * GageObj[8].NowSkill;
 		if (GageObj[8].TextureSize.x >= TEXTURE_GAGE_SIZE004_X)
 		{
 			GageObj[8].TextureSize.x = TEXTURE_GAGE_SIZE004_X;
@@ -829,7 +837,8 @@ void Gage::SkillAdd(float Damege, int player)
 	}
 	if (player == 1)
 	{
-		GageObj[9].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE009_X;
+		GageObj[9].NowSkill += Damege;
+		GageObj[9].TextureSize.x = TEXTURE_GAGE_SIZE005_X / TEXTURE_GAGE3D_MAX_HP * GageObj[9].NowSkill;
 		if (GageObj[9].TextureSize.x >= TEXTURE_GAGE_SIZE005_X)
 		{
 			GageObj[9].TextureSize.x = TEXTURE_GAGE_SIZE005_X;

@@ -306,6 +306,7 @@ public:
 		int						Count;
 		int						Alfa;
 		float					NowHp;
+		float					NowSkill;
 		bool					Damege;
 		bool					Use;									// true:使用  false:未使用
 		LPDIRECT3DTEXTURE9		pD3DTexture;							// テクスチャへのポリゴン (*33)
