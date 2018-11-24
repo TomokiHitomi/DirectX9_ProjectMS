@@ -49,6 +49,9 @@
     <Filter Include="ソース ファイル\Object\Weapon">
       <UniqueIdentifier>{b0f81631-a733-449e-85ff-093a943ede98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Object\Ui">
+      <UniqueIdentifier>{fcd40a12-db45-4fbf-b825-31d9c2aa95cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -123,9 +126,6 @@
     <ClInclude Include="object.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
-    <ClInclude Include="wing.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
     <ClInclude Include="skydome.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
@@ -195,16 +195,10 @@
     <ClInclude Include="SkinMeshX.h">
       <Filter>ソース ファイル\Model</Filter>
     </ClInclude>
-    <ClInclude Include="selectface.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
     <ClInclude Include="select.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="character.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="titlelogo.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
     <ClInclude Include="particle.h">
@@ -214,12 +208,6 @@
       <Filter>ソース ファイル\Shader</Filter>
     </ClInclude>
     <ClInclude Include="titlemesh.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="gage.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="resultselect.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
     <ClInclude Include="stage.h">
@@ -234,35 +222,47 @@
     <ClInclude Include="box.h">
       <Filter>ソース ファイル\Stage</Filter>
     </ClInclude>
-    <ClInclude Include="gray.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
     <ClInclude Include="SkinAssimp.h">
       <Filter>ソース ファイル\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="rightleft.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="gage3d.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="ko.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="winnerlogo.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="roundlogo.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="time.h">
-      <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
     <ClInclude Include="weapon.h">
       <Filter>ソース ファイル\Object\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="weaponMgr.h">
       <Filter>ソース ファイル\Object\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="gage.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="gage3d.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="resultselect.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="rightleft.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="roundlogo.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="selectface.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="winnerlogo.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="titlelogo.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="time.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ko.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="gray.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -314,9 +314,6 @@
     <ClCompile Include="player.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
-    <ClCompile Include="wing.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
     <ClCompile Include="skydome.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
@@ -350,16 +347,10 @@
     <ClCompile Include="SkinMeshX.cpp">
       <Filter>ソース ファイル\Model</Filter>
     </ClCompile>
-    <ClCompile Include="selectface.h.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
     <ClCompile Include="select.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <ClCompile Include="character.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="titlelogo.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
     <ClCompile Include="particle.cpp">
@@ -369,12 +360,6 @@
       <Filter>ソース ファイル\Shader</Filter>
     </ClCompile>
     <ClCompile Include="titlemesh.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="gage.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="resultselect.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
     <ClCompile Include="stage.cpp">
@@ -389,35 +374,47 @@
     <ClCompile Include="box.cpp">
       <Filter>ソース ファイル\Stage</Filter>
     </ClCompile>
-    <ClCompile Include="gray.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
     <ClCompile Include="SkinAssimp.cpp">
       <Filter>ソース ファイル\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="rightleft.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="gage3d.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="ko.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="winnerlogo.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="roundlogo.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="time.cpp">
-      <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
     <ClCompile Include="weapon.cpp">
       <Filter>ソース ファイル\Object\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="weaponMgr.cpp">
       <Filter>ソース ファイル\Object\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="gage.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="gage3d.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="resultselect.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="rightleft.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="roundlogo.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="selectface.h.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="winnerlogo.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="titlelogo.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="time.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ko.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="gray.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

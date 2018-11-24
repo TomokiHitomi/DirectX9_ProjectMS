@@ -329,14 +329,7 @@ void Plane::Draw(void)
 	pDevice->SetStreamSourceFreq(0, 1);
 	pDevice->SetStreamSourceFreq(1, 1);
 
-	//// 通常ブレンドに戻す
-	//pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// αソースカラーの指定
-	//pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// αデスティネーションカラーの指定
-	//pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-
-	//// αテストを無効に
-	//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-
-	//// ラインティングを有効にする
-	//pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+	// 固定機能に戻す
+	pDevice->SetVertexShader(NULL);
+	pDevice->SetPixelShader(NULL);
 }

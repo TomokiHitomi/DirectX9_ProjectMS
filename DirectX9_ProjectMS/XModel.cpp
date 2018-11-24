@@ -191,4 +191,8 @@ void CXModel::Draw(D3DXMATRIX mtxWorld)
 	pEffect->EndPass();
 	// シェーダーを終了
 	pEffect->End();
+
+	// 固定機能に戻す
+	pDevice->SetVertexShader(NULL);
+	pDevice->SetPixelShader(NULL);
 }

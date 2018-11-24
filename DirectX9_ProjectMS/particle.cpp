@@ -267,19 +267,10 @@ void Particle::Draw(void)
 		pDevice->GetTransform(D3DTS_VIEW, &mtxView);
 		pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjection);
 
-		//// αテストを有効に
-		//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-		//pDevice->SetRenderState(D3DRS_ALPHAREF, EFFECT_ALPHA);
-		//pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-
 		// 加算合成に設定
 		pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// αソースカラーの指定
 		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);			// αデスティネーションカラーの指定
 		pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-		//////pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);			// Z比較なし
-
-		//// ラインティングを無効にする
-		//pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 		// ワールドマトリクスの初期化
 		D3DXMatrixIdentity(&mtxWorld);
@@ -364,11 +355,9 @@ void Particle::Draw(void)
 		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// αデスティネーションカラーの指定
 		pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
-		//// αテストを無効に
-		//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-
-		//// ラインティングを有効にする
-		//pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+		// 固定機能に戻す
+		pDevice->SetVertexShader(NULL);
+		pDevice->SetPixelShader(NULL);
 	}
 }
 

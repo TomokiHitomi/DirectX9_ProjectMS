@@ -683,6 +683,8 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, D3DXMESHCONTAINER
 			}
 
 			pEffect->End();
+
+			// ŒÅ’è‹@”\‚É–ß‚·
 			pDevice->SetVertexShader(NULL);
 			pDevice->SetPixelShader(NULL);
 		}
