@@ -55,9 +55,9 @@
 #define PLAYER_HP_MAX				(100)
 
 // ダメージ
-#define PLAYER_DAMAGE_NORMAL		(5)
-#define PLAYER_DAMAGE_THROW			(10)
-#define PLAYER_DAMAGE_SP			(30)
+#define PLAYER_DAMAGE_NORMAL		(5.0f)
+#define PLAYER_DAMAGE_THROW			(10.0f)
+#define PLAYER_DAMAGE_SP			(30.0f)
 
 // アタック
 #define PLAYER_ATTACK_CD			(30)		// クールダウン
@@ -163,7 +163,7 @@ private:
 	float			m_fRiseSpeed;
 
 	// ステータス
-	int				m_nHp;
+	float				m_fHp;
 
 
 
@@ -202,8 +202,8 @@ private:
 public:
 	bool SubHp(float fDamage) 
 	{
-		m_nHp -= fDamage;
-		if (m_nHp < 0) return true;
+		m_fHp -= fDamage;
+		if (m_fHp < 0.0f) return true;
 		return false;
 	}
 	void SetTag(D3DXVECTOR3 vTag) { m_vTag = vTag; }

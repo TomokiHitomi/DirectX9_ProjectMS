@@ -285,11 +285,11 @@
 #define TEXTURE_GAGE3D_COLOR_CHANGE_G			(204)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GAGE3D_COLOR_CHANGE_B			(224)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GAGE3D_COLOR_CHANGE_A			(255)																// テクスチャ頂点カラー変化前
-#define NUM_GAGE3D							(18)																	// テクスチャの数
-#define TEXTURE_GAGE3D_MAX_HP						(1000)
-#define OFFSET_DAMEGE_000							(2)
-#define DAMEGE_000							(10)
-#define SKILL_000							(1)
+#define NUM_GAGE3D								(18)																	// テクスチャの数
+#define TEXTURE_GAGE3D_MAX_HP					(100)
+#define OFFSET_DAMEGE_000						(2)
+#define DAMEGE_000								(10)
+#define SKILL_000								(1)
 //=============================================================================
 //
 //SELECT構造体

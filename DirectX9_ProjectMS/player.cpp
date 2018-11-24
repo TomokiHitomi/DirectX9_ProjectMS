@@ -164,7 +164,7 @@ Player::Player(void)
 	m_fMoveInertia = 0.3f;
 
 	// ステータス
-	m_nHp = PLAYER_HP_MAX;
+	m_fHp = PLAYER_HP_MAX;
 
 	// クールダウン値
 	m_nCoolDown = 0;
@@ -214,7 +214,7 @@ Player::~Player(void)
 void Player::Update(void)
 {
 #ifdef _DEBUG
-	PrintDebugProc("Player[%d]  Hp[%d]\n", m_nNum, m_nHp);
+	PrintDebugProc("Player[%d]  Hp[%f]\n", m_nNum, m_fHp);
 #endif
 
 	if (m_bUse)
@@ -310,10 +310,10 @@ void Player::Draw(void)
 		// ワールド変換
 		WorldConvertXYZ(&m_mtxWorld, m_vPos, m_vRot, m_vScl);
 
-		// αテストを有効に
-		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-		pDevice->SetRenderState(D3DRS_ALPHAREF, PLAYER_ALPHA_TEST);
-		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+		//// αテストを有効に
+		//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+		//pDevice->SetRenderState(D3DRS_ALPHAREF, PLAYER_ALPHA_TEST);
+		//pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
 		// 両面描画する
 		pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -328,7 +328,7 @@ void Player::Draw(void)
 		pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 		// αテストを無効に
-		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+		//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	}
 }
 

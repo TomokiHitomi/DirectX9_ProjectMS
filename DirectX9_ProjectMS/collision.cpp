@@ -11,6 +11,7 @@
 #include "player.h"
 #include "object.h"
 #include "gage3d.h"
+#include "gage.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -44,6 +45,7 @@ void ChackHit(void)
 					PLAYER_SIZE_HIT, PLAYER_SIZE_WEAPON))
 				{
 					ObjectManager::GetObjectPointer<Gage3d>(ObjectManager::GAGE3D)->DamegeReduce(PLAYER_DAMAGE_NORMAL, pTarget->m_nNum);
+					ObjectManager::GetObjectPointer<Gage>(ObjectManager::GAGE)->DamegeReduce(PLAYER_DAMAGE_NORMAL, pTarget->m_nNum);
 					pPlayer->SubHp(PLAYER_DAMAGE_NORMAL);
 					pPlayer->pWeapon[(Player::WeaponLR)j]->SetUse(false);
 				}
