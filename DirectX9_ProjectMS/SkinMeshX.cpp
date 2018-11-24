@@ -589,8 +589,7 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, D3DXMESHCONTAINER
 			pDevice->SetSoftwareVertexProcessing(TRUE);
 		}
 
-		pBoneComb = reinterpret_cast<LPD3DXBONECOMBINATION>(pMeshContainer->pBoneCombinationBuf->GetBufferPointer
-		());
+		pBoneComb = reinterpret_cast<LPD3DXBONECOMBINATION>(pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
 		for (iAttrib = 0; iAttrib < pMeshContainer->NumAttributeGroups; iAttrib++)
 		{
 			// first calculate all the world matrices
@@ -685,7 +684,7 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, D3DXMESHCONTAINER
 
 			pEffect->End();
 
-			//pDevice->SetVertexShader(NULL);
+			pDevice->SetVertexShader(NULL);
 		}
 
 		// remember to reset back to hw vertex processing if software was required

@@ -9,6 +9,8 @@
 #include "main.h"
 #include "collision.h"
 #include "player.h"
+#include "object.h"
+#include "gage3d.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -41,6 +43,7 @@ void ChackHit(void)
 				if (CheckHitBC(pPlayer->GetPosWeapon((Player::WeaponLR)j), vTarget,
 					PLAYER_SIZE_HIT, PLAYER_SIZE_WEAPON))
 				{
+					ObjectManager::GetObjectPointer<Gage3d>(ObjectManager::GAGE3D)->DamegeReduce(PLAYER_DAMAGE_NORMAL, pTarget->m_nNum);
 					pPlayer->SubHp(PLAYER_DAMAGE_NORMAL);
 					pPlayer->pWeapon[(Player::WeaponLR)j]->SetUse(false);
 				}

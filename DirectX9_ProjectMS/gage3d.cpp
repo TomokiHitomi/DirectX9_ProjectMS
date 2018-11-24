@@ -38,6 +38,9 @@ Gage3d::Gage3d()
 	// オブジェクトIDとプライオリティの設定処理
 	SetIdAndPriority(ObjectID::GAGE3D, Priority::Middle, Priority::Lowest);
 
+	// オブジェクトタイプの設定
+	SetObjectType(ObjectManager::ObjectType::NORMAL);
+
 	Init();
 }
 
@@ -845,6 +848,7 @@ void Gage3d::DamegeReduce(float Damege, int player)
 		}
 	}
 }
+
 void Gage3d::DamegeAdd(float Damege, int player)
 {
 	if (player == 0)

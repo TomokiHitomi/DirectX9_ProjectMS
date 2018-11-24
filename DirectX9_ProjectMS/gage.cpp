@@ -512,14 +512,20 @@ void Gage::Draw(void)
 
 
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
-
+		
 	for (int i = 0; i < NUM_GAGE; i++)
 	{
 		
 		if (GageObj[i].Use == true)
 		{
+
+			//// 頂点バッファをデバイスのデータストリームにバインド
+			//pDevice->SetStreamSource(0, GageObj[i].vertexWk, 0, sizeof(VERTEX_2D));
+
 			pDevice->SetTexture(0, GageObj[i].pD3DTexture);
 
 
