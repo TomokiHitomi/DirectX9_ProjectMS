@@ -335,7 +335,8 @@ HRESULT Gage3d::Init()
 		Gage3dObj[i].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		Gage3dObj[i].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		Gage3dObj[i].scl = D3DXVECTOR3(1.0, 1.0, 1.0);
-		Gage3dObj[i].NowHp = 1;
+		Gage3dObj[i].NowHp = TEXTURE_GAGE3D_MAX_HP;
+		Gage3dObj[i].NowSkill = 0.0;
 		MakeVertexGage3d(i);
 	}
 	return S_OK;
@@ -832,7 +833,8 @@ void Gage3d::DamegeReduce(float Damege, int player)
 	if (player == 0)
 	{
 		Gage3dObj[2].Use = true;
-		Gage3dObj[4].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE3D_SIZE004_X;
+		Gage3dObj[4].NowHp -= Damege;
+		Gage3dObj[4].TextureSize.x = TEXTURE_GAGE3D_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * Gage3dObj[4].NowHp;
 		if (Gage3dObj[4].TextureSize.x <= 0.0f)
 		{
 			Gage3dObj[4].TextureSize.x = 0.0f;
@@ -841,7 +843,8 @@ void Gage3d::DamegeReduce(float Damege, int player)
 	if (player == 1)
 	{
 		Gage3dObj[3].Use = true;
-		Gage3dObj[5].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE3D_SIZE005_X;
+		Gage3dObj[5].NowHp -= Damege;
+		Gage3dObj[5].TextureSize.x = TEXTURE_GAGE3D_SIZE005_X / TEXTURE_GAGE3D_MAX_HP * Gage3dObj[5].NowHp;
 		if (Gage3dObj[5].TextureSize.x <= 0.0f)
 		{
 			Gage3dObj[5].TextureSize.x = 0.0f;
@@ -853,7 +856,8 @@ void Gage3d::DamegeAdd(float Damege, int player)
 {
 	if (player == 0)
 	{
-		Gage3dObj[4].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE3D_SIZE004_X;
+		Gage3dObj[4].NowHp += Damege;
+		Gage3dObj[4].TextureSize.x = TEXTURE_GAGE3D_SIZE005_X / TEXTURE_GAGE3D_MAX_HP / Gage3dObj[4].NowHp;
 		if (Gage3dObj[4].TextureSize.x <= TEXTURE_GAGE3D_SIZE004_X)
 		{
 			Gage3dObj[4].TextureSize.x = TEXTURE_GAGE3D_SIZE004_X;
@@ -861,7 +865,8 @@ void Gage3d::DamegeAdd(float Damege, int player)
 	}
 	if (player == 1)
 	{
-		Gage3dObj[5].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE3D_SIZE004_X;
+		Gage3dObj[5].NowHp += Damege;
+		Gage3dObj[5].TextureSize.x = TEXTURE_GAGE3D_SIZE005_X / TEXTURE_GAGE3D_MAX_HP / Gage3dObj[5].NowHp;
 		if (Gage3dObj[5].TextureSize.x <= TEXTURE_GAGE3D_SIZE005_X)
 		{
 			Gage3dObj[5].TextureSize.x = TEXTURE_GAGE3D_SIZE005_X;
@@ -872,16 +877,18 @@ void Gage3d::SkillReduce(float Damege, int player)
 {
 	if (player == 0)
 	{
-		Gage3dObj[8].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE3D_SIZE008_X;
-		if (Gage3dObj[8].TextureSize.x <= 0.0f)
+		Gage3dObj[8].NowSkill -= Damege;
+		Gage3dObj[8].TextureSize.x = TEXTURE_GAGE3D_SIZE008_X / TEXTURE_GAGE3D_MAX_HP / Gage3dObj[8].NowSkill;
+		if (Gage3dObj[8].TextureSize.x < 0.0f)
 		{
 			Gage3dObj[8].TextureSize.x = 0.0f;
 		}
 	}
 	if (player == 1)
 	{
-		Gage3dObj[9].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE3D_SIZE009_X;
-		if (Gage3dObj[9].TextureSize.x <= 0.0f)
+		Gage3dObj[9].NowSkill -= Damege;
+		Gage3dObj[9].TextureSize.x = TEXTURE_GAGE3D_SIZE009_X / TEXTURE_GAGE3D_MAX_HP / Gage3dObj[9].NowSkill;
+		if (Gage3dObj[9].TextureSize.x < 0.0f)
 		{
 			Gage3dObj[9].TextureSize.x = 0.0f;
 		}
@@ -891,7 +898,8 @@ void Gage3d::SkillAdd(float Damege, int player)
 {
 	if (player == 0)
 	{
-		Gage3dObj[8].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE3D_SIZE008_X;
+		Gage3dObj[8].NowSkill += Damege;
+		Gage3dObj[8].TextureSize.x = TEXTURE_GAGE3D_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * Gage3dObj[8].NowSkill;
 		if (Gage3dObj[8].TextureSize.x >= TEXTURE_GAGE3D_SIZE004_X)
 		{
 			Gage3dObj[8].TextureSize.x = TEXTURE_GAGE3D_SIZE004_X;
@@ -899,7 +907,8 @@ void Gage3d::SkillAdd(float Damege, int player)
 	}
 	if (player == 1)
 	{
-		Gage3dObj[9].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE3D_SIZE009_X;
+		Gage3dObj[9].NowSkill += Damege;
+		Gage3dObj[9].TextureSize.x = TEXTURE_GAGE3D_SIZE005_X / TEXTURE_GAGE3D_MAX_HP * Gage3dObj[9].NowSkill;
 		if (Gage3dObj[9].TextureSize.x >= TEXTURE_GAGE3D_SIZE005_X)
 		{
 			Gage3dObj[9].TextureSize.x = TEXTURE_GAGE3D_SIZE005_X;
