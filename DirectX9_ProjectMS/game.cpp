@@ -18,10 +18,15 @@
 #include "player.h"
 #include "effect.h"
 #include "particle.h"
+#include "time.h"
+#include "rightleft.h"
+#include "ko.h"
+#include "roundlogo.h"
 #include "gage.h"
+#include "gage3d.h"
+#include "gray.h"
 #include "weaponMgr.h"
 #include "collision.h"
-
 /* デバッグ */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -88,7 +93,13 @@ GameScene::GameScene(void)
 	ObjectManager::CreateObject<WeaponManager>();
 	ObjectManager::CreateObject<PlayerManager>();
 	ObjectManager::CreateObject<EffectManager>();
-	//ObjectManager::CreateObject<Gage>();
+	ObjectManager::CreateObject<Roundlogo>();
+	ObjectManager::CreateObject<Time>();
+	ObjectManager::CreateObject<Rightleft>();
+	ObjectManager::CreateObject<Ko>();
+	ObjectManager::CreateObject<Gage>();
+	ObjectManager::CreateObject<Gage3d>();
+	ObjectManager::CreateObject<Gray>();
 	//new Player;
 	//new Skydome;
 	//new Cube;

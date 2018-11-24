@@ -16,6 +16,7 @@
 #include "particle.h"
 #include "gray.h"
 #include "resultselect.h"
+#include "winnerlogo.h"
 /* Debug */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -58,6 +59,7 @@ ResultScene::ResultScene(void)
 {
 	ObjectManager::CreateObject<ParticleManager>();
 	ObjectManager::CreateObject<StageManager>();
+	ObjectManager::CreateObject<Winnerlogo>();
 	ObjectManager::CreateObject<Gray>();
 	ObjectManager::CreateObject<Resultselect>();
 }

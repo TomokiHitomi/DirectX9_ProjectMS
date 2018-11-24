@@ -64,7 +64,35 @@ HRESULT Gray::Init()
 			GrayObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE000_X, TEXTURE_GRAY_SIZE000_Y);
 			GrayObj[i].Count = 0;
 			GrayObj[i].Alfa = 255;
-			GrayObj[i].Use = true;
+			GrayObj[i].Use = false;
+			GrayObj[i].Nowselect = true;
+			GrayObj[i].Texture = GrayObj[i].pD3DTexture;
+		}
+		if (i == 1)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GRAY_000, &GrayObj[i].pD3DTexture);
+			}
+			GrayObj[i].Pos = D3DXVECTOR3(TEXTURE_GRAY_POSITION001_X, TEXTURE_GRAY_POSITION001_Y, 0.0f);
+			GrayObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE001_X, TEXTURE_GRAY_SIZE001_Y);
+			GrayObj[i].Count = 0;
+			GrayObj[i].Alfa = 255;
+			GrayObj[i].Use = false;
+			GrayObj[i].Nowselect = true;
+			GrayObj[i].Texture = GrayObj[i].pD3DTexture;
+		}
+		if (i == 2)
+		{
+			if (type == 0)
+			{
+				D3DXCreateTextureFromFile(pDevice, TEXTURE_GRAY_000, &GrayObj[i].pD3DTexture);
+			}
+			GrayObj[i].Pos = D3DXVECTOR3(TEXTURE_GRAY_POSITION002_X, TEXTURE_GRAY_POSITION002_Y, 0.0f);
+			GrayObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE002_X, TEXTURE_GRAY_SIZE002_Y);
+			GrayObj[i].Count = 0;
+			GrayObj[i].Alfa = 255;
+			GrayObj[i].Use = false;
 			GrayObj[i].Nowselect = true;
 			GrayObj[i].Texture = GrayObj[i].pD3DTexture;
 		}
@@ -108,147 +136,24 @@ void Gray::Update(void)
 #endif
 	for (int i = 0; i< NUM_GRAY; i++)
 	{
-		//if (GrayObj[0].Nowselect == true&& GrayObj[0].Count <FRAME*2)
-		//{
-		//	GrayObj[0].Count++;
-		//	GrayObj[1].Count = 0;
-		//	GrayObj[2].Count = 0;
-
-		//	GrayObj[1].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE001_X, TEXTURE_GRAY_SIZE001_Y);
-		//	GrayObj[2].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE002_X, TEXTURE_GRAY_SIZE002_Y);
-
-		//	GrayObj[1].Nowselect = false;
-		//	GrayObj[2].Nowselect = false;
-		//	GrayObj[0].TextureSize.x += TEXTURE_GRAY_SIZE000_X/1000;
-		//	GrayObj[0].TextureSize.y += TEXTURE_GRAY_SIZE000_Y/1000;
-		//}
-		//if (GrayObj[0].Nowselect == true && GrayObj[0].Count <=FRAME*4&& GrayObj[0].Count >=FRAME * 2)
-		//{
-		//	GrayObj[0].Count++;
-		//	GrayObj[1].Count = 0;
-		//	GrayObj[2].Count = 0;
-
-		//	GrayObj[1].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE001_X, TEXTURE_GRAY_SIZE001_Y);
-		//	GrayObj[2].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE002_X, TEXTURE_GRAY_SIZE002_Y);
-
-		//	GrayObj[1].Nowselect = false;
-		//	GrayObj[2].Nowselect = false;
-		//	GrayObj[0].TextureSize.x -= TEXTURE_GRAY_SIZE000_X/1000;
-		//	GrayObj[0].TextureSize.y -= TEXTURE_GRAY_SIZE000_Y/1000;
-		//}
-		//if (GrayObj[0].Nowselect == true && GrayObj[0].Count ==FRAME*4)
-		//{
-		//	GrayObj[0].Count = 0;
-		//	GrayObj[1].Count = 0;
-		//	GrayObj[2].Count = 0;
-
-		//	GrayObj[1].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE001_X, TEXTURE_GRAY_SIZE001_Y);
-		//	GrayObj[2].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE002_X, TEXTURE_GRAY_SIZE002_Y);
-
-		//	GrayObj[1].Nowselect = false;
-		//	GrayObj[2].Nowselect = false;
-		//}
-		////1
-		//if (GrayObj[1].Nowselect == true && GrayObj[1].Count <FRAME * 2)
-		//{
-		//	GrayObj[0].Count = 0;
-		//	GrayObj[1].Count++;
-		//	GrayObj[2].Count = 0;
-
-		//	GrayObj[0].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE000_X, TEXTURE_GRAY_SIZE000_Y);
-		//	GrayObj[2].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE002_X, TEXTURE_GRAY_SIZE002_Y);
-
-		//	GrayObj[0].Nowselect = false;
-		//	GrayObj[2].Nowselect = false;
-		//	GrayObj[1].TextureSize.x += TEXTURE_GRAY_SIZE001_X / 1000;
-		//	GrayObj[1].TextureSize.y += TEXTURE_GRAY_SIZE001_Y / 1000;
-		//}
-		//if (GrayObj[1].Nowselect == true && GrayObj[1].Count <= FRAME * 4 && GrayObj[1].Count >= FRAME * 2)
-		//{
-		//	GrayObj[0].Count = 0;
-		//	GrayObj[1].Count ++;
-		//	GrayObj[2].Count = 0;
-
-		//	GrayObj[0].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE000_X, TEXTURE_GRAY_SIZE000_Y);
-		//	GrayObj[2].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE002_X, TEXTURE_GRAY_SIZE002_Y);
-
-		//	GrayObj[0].Nowselect = false;
-		//	GrayObj[2].Nowselect = false;
-		//	GrayObj[1].TextureSize.x -= TEXTURE_GRAY_SIZE001_X / 1000;
-		//	GrayObj[1].TextureSize.y -= TEXTURE_GRAY_SIZE001_Y / 1000;
-		//}
-		//if (GrayObj[1].Nowselect == true && GrayObj[1].Count == FRAME * 4)
-		//{
-		//	GrayObj[0].Count = 0;
-		//	GrayObj[1].Count = 0;
-		//	GrayObj[2].Count = 0;
-
-		//	GrayObj[0].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE000_X, TEXTURE_GRAY_SIZE000_Y);
-		//	GrayObj[2].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE002_X, TEXTURE_GRAY_SIZE002_Y);
-
-		//	GrayObj[0].Nowselect = false;
-		//	GrayObj[2].Nowselect = false;
-		//}
-		////2
-		//if (GrayObj[2].Nowselect == true && GrayObj[2].Count <FRAME * 2)
-		//{
-		//	GrayObj[0].Count = 0;
-		//	GrayObj[1].Count = 0;
-		//	GrayObj[2].Count ++;
-
-		//	GrayObj[0].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE000_X, TEXTURE_GRAY_SIZE000_Y);
-		//	GrayObj[1].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE001_X, TEXTURE_GRAY_SIZE001_Y);
-
-		//	GrayObj[0].Nowselect = false;
-		//	GrayObj[1].Nowselect = false;
-		//	GrayObj[2].TextureSize.x += TEXTURE_GRAY_SIZE002_X / 1000;
-		//	GrayObj[2].TextureSize.y += TEXTURE_GRAY_SIZE002_Y / 1000;
-		//}
-		//if (GrayObj[2].Nowselect == true && GrayObj[2].Count <= FRAME * 4 && GrayObj[2].Count >= FRAME * 2)
-		//{
-		//	GrayObj[0].Count = 0;
-		//	GrayObj[1].Count = 0;
-		//	GrayObj[2].Count ++;
-
-		//	GrayObj[0].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE000_X, TEXTURE_GRAY_SIZE000_Y);
-		//	GrayObj[1].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE001_X, TEXTURE_GRAY_SIZE001_Y);
-
-		//	GrayObj[0].Nowselect = false;
-		//	GrayObj[1].Nowselect = false;
-		//	GrayObj[2].TextureSize.x -= TEXTURE_GRAY_SIZE002_X / 1000;
-		//	GrayObj[2].TextureSize.y -= TEXTURE_GRAY_SIZE002_Y / 1000;
-		//}
-		//if (GrayObj[2].Nowselect == true && GrayObj[2].Count == FRAME * 4)
-		//{
-		//	GrayObj[0].Count = 0;
-		//	GrayObj[1].Count = 0;
-		//	GrayObj[2].Count = 0;
-
-		//	GrayObj[0].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE000_X, TEXTURE_GRAY_SIZE000_Y);
-		//	GrayObj[1].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE001_X, TEXTURE_GRAY_SIZE001_Y);
-
-		//	GrayObj[0].Nowselect = false;
-		//	GrayObj[1].Nowselect = false;
-		//}
-		//if (GetKeyboardPress(DIK_Z))
-		//{
-		//	GrayObj[0].Nowselect = true;
-		//	GrayObj[1].Nowselect = false;
-		//	GrayObj[2].Nowselect = false;
-		//}
-		//if (GetKeyboardPress(DIK_X))
-		//{
-		//	GrayObj[0].Nowselect = false;
-		//	GrayObj[1].Nowselect = true;
-		//	GrayObj[2].Nowselect = false;
-		//}
-		//if (GetKeyboardPress(DIK_C))
-		//{
-		//	GrayObj[0].Nowselect = false;
-		//	GrayObj[1].Nowselect = false;
-		//	GrayObj[2].Nowselect = true;
-		//}
-
+		if (GetKeyboardTrigger(DIK_U))
+		{
+			GrayObj[0].Use = true;
+			GrayObj[1].Use = false;
+			GrayObj[2].Use = false;
+		}
+		if (GetKeyboardTrigger(DIK_Y))
+		{
+			GrayObj[1].Use = true;
+			GrayObj[1].Pos = D3DXVECTOR3(TEXTURE_GRAY_POSITION001_X, TEXTURE_GRAY_POSITION001_Y, 0.0f);
+			GrayObj[2].Use = false;
+		}
+		if (GetKeyboardTrigger(DIK_T))
+		{
+			GrayObj[1].Use = false;
+			GrayObj[2].Use = true;
+			GrayObj[2].Pos = D3DXVECTOR3(TEXTURE_GRAY_POSITION002_X, TEXTURE_GRAY_POSITION002_Y, 0.0f);
+		}
 		//	頂点カラーの設定
 		SetVertexGray(i);
 		// テクスチャ座標を設定
@@ -304,13 +209,12 @@ void Gray::SetVertexGray(int CreateCount)
 //=============================================================================
 void Gray::SetTextureGray(int i)
 {
-	if (i == 0)
-	{
-		GrayObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GRAY_COLOR_DEFAULT000_R, TEXTURE_GRAY_COLOR_DEFAULT000_G, TEXTURE_GRAY_COLOR_DEFAULT000_B, TEXTURE_GRAY_COLOR_DEFAULT000_A);
-		GrayObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GRAY_COLOR_DEFAULT000_R, TEXTURE_GRAY_COLOR_DEFAULT000_G, TEXTURE_GRAY_COLOR_DEFAULT000_B, TEXTURE_GRAY_COLOR_DEFAULT000_A);
-		GrayObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GRAY_COLOR_DEFAULT000_R, TEXTURE_GRAY_COLOR_DEFAULT000_G, TEXTURE_GRAY_COLOR_DEFAULT000_B, TEXTURE_GRAY_COLOR_DEFAULT000_A);
-		GrayObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GRAY_COLOR_DEFAULT000_R, TEXTURE_GRAY_COLOR_DEFAULT000_G, TEXTURE_GRAY_COLOR_DEFAULT000_B, TEXTURE_GRAY_COLOR_DEFAULT000_A);
-	}
+
+	GrayObj[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(TEXTURE_GRAY_COLOR_DEFAULT000_R, TEXTURE_GRAY_COLOR_DEFAULT000_G, TEXTURE_GRAY_COLOR_DEFAULT000_B, TEXTURE_GRAY_COLOR_DEFAULT000_A);
+	GrayObj[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(TEXTURE_GRAY_COLOR_DEFAULT000_R, TEXTURE_GRAY_COLOR_DEFAULT000_G, TEXTURE_GRAY_COLOR_DEFAULT000_B, TEXTURE_GRAY_COLOR_DEFAULT000_A);
+	GrayObj[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(TEXTURE_GRAY_COLOR_DEFAULT000_R, TEXTURE_GRAY_COLOR_DEFAULT000_G, TEXTURE_GRAY_COLOR_DEFAULT000_B, TEXTURE_GRAY_COLOR_DEFAULT000_A);
+	GrayObj[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_GRAY_COLOR_DEFAULT000_R, TEXTURE_GRAY_COLOR_DEFAULT000_G, TEXTURE_GRAY_COLOR_DEFAULT000_B, TEXTURE_GRAY_COLOR_DEFAULT000_A);
+	
 }
 //=============================================================================
 // 頂点の作成

@@ -64,7 +64,7 @@ HRESULT Resultselect::Init()
 			ResultselectObj[i].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
 			ResultselectObj[i].Count = 0;
 			ResultselectObj[i].Alfa = 255;
-			ResultselectObj[i].Use = true;
+			ResultselectObj[i].Use = false;
 			ResultselectObj[i].Nowselect = true;
 			ResultselectObj[i].Texture = ResultselectObj[i].pD3DTexture;
 		}
@@ -78,7 +78,7 @@ HRESULT Resultselect::Init()
 			ResultselectObj[i].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
 			ResultselectObj[i].Count = 0;
 			ResultselectObj[i].Alfa = 255;
-			ResultselectObj[i].Use = true;
+			ResultselectObj[i].Use = false;
 			ResultselectObj[i].Nowselect = false;
 			ResultselectObj[i].Texture = ResultselectObj[i].pD3DTexture;
 		}
@@ -92,7 +92,7 @@ HRESULT Resultselect::Init()
 			ResultselectObj[i].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
 			ResultselectObj[i].Count = 0;
 			ResultselectObj[i].Alfa = 255;
-			ResultselectObj[i].Use = true;
+			ResultselectObj[i].Use = false;
 			ResultselectObj[i].Nowselect = false;
 			ResultselectObj[i].Texture = ResultselectObj[i].pD3DTexture;
 		}
@@ -136,6 +136,10 @@ void Resultselect::Update(void)
 #endif
 	for (int i = 0; i< NUM_RESULTSELECT; i++)
 	{
+		if (GetKeyboardTrigger(DIK_U))
+		{
+			ResultselectObj[i].Use = true;
+		}
 		if (ResultselectObj[0].Nowselect == true&& ResultselectObj[0].Count <FRAME*2)
 		{
 			ResultselectObj[0].Count++;

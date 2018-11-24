@@ -184,6 +184,7 @@
     <ClInclude Include="effect.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="gage.h" />
+    <ClInclude Include="gage3d.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gray.h" />
     <ClInclude Include="include\Effekseer\Effekseer.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="include\vjoyinterface.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="joycon.h" />
+    <ClInclude Include="ko.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="object.h" />
@@ -221,6 +223,7 @@
     <ClInclude Include="result.h" />
     <ClInclude Include="resultselect.h" />
     <ClInclude Include="rightleft.h" />
+    <ClInclude Include="roundlogo.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="select.h" />
     <ClInclude Include="selectface.h" />
@@ -232,12 +235,14 @@
     <ClInclude Include="stage.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="stagevirtual.h" />
+    <ClInclude Include="time.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="titlelogo.h" />
     <ClInclude Include="titlemesh.h" />
     <ClInclude Include="weapon.h" />
     <ClInclude Include="weaponMgr.h" />
     <ClInclude Include="wing.h" />
+    <ClInclude Include="winnerlogo.h" />
     <ClInclude Include="XModel.h" />
     <ClInclude Include="XTexture.h" />
   </ItemGroup>
@@ -252,6 +257,7 @@
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="gage.cpp" />
+    <ClCompile Include="gage3d.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gray.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
@@ -261,6 +267,7 @@
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="joycon.cpp" />
+    <ClCompile Include="ko.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="object.cpp" />
@@ -269,6 +276,7 @@
     <ClCompile Include="result.cpp" />
     <ClCompile Include="resultselect.cpp" />
     <ClCompile Include="rightleft.cpp" />
+    <ClCompile Include="roundlogo.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="select.cpp" />
     <ClCompile Include="selectface.h.cpp" />
@@ -280,12 +288,14 @@
     <ClCompile Include="stage.cpp" />
     <ClCompile Include="plane.cpp" />
     <ClCompile Include="stagevirtual.cpp" />
+    <ClCompile Include="time.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="titlelogo.cpp" />
     <ClCompile Include="titlemesh.cpp" />
     <ClCompile Include="weapon.cpp" />
     <ClCompile Include="weaponMgr.cpp" />
     <ClCompile Include="wing.cpp" />
+    <ClCompile Include="winnerlogo.cpp" />
     <ClCompile Include="XModel.cpp" />
     <ClCompile Include="XTexture.cpp" />
   </ItemGroup>

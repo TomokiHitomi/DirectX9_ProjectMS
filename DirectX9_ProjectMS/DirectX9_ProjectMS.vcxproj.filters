@@ -243,6 +243,21 @@
     <ClInclude Include="rightleft.h">
       <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
+    <ClInclude Include="gage3d.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ko.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="winnerlogo.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="roundlogo.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="time.h">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
     <ClInclude Include="weapon.h">
       <Filter>ソース ファイル\Object\Weapon</Filter>
     </ClInclude>
@@ -381,6 +396,21 @@
       <Filter>ソース ファイル\Model</Filter>
     </ClCompile>
     <ClCompile Include="rightleft.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="gage3d.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ko.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="winnerlogo.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="roundlogo.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="time.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
     <ClCompile Include="weapon.cpp">
