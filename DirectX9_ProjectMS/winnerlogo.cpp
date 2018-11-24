@@ -120,6 +120,11 @@ void Winnerlogo::Update(void)
 	{
 		if (GetKeyboardTrigger(DIK_1))
 		{
+			WinnerlogoObj[i].Nowselect = true;
+			
+		}
+		if (WinnerlogoObj[i].Nowselect == true)
+		{
 			Starttime();
 		}
 		if (GetKeyboardTrigger(DIK_U))

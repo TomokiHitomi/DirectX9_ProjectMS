@@ -197,7 +197,7 @@
 #define TEXTURE_GAGE3D_POSITION016_Y			(1.0f)	// ポジション
 #define TEXTURE_GAGE3D_POSITION017_X			(1.0f)	// ポジション
 #define TEXTURE_GAGE3D_POSITION017_Y			(1.0f)	// ポジション
-#define TEXTURE_GAGE3D_ANGLE_X					(0.25)	// ポジション
+#define TEXTURE_GAGE3D_ANGLE_X					(0.5)	// ポジション
 #define TEXTURE_GAGE3D_POSITION0UP_X			(20.0f)	// ポジション
 #define TEXTURE_GAGE3D_POSITION0UP_Y			(25.0f)	// ポジション
 

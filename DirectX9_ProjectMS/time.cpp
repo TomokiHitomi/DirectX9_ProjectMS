@@ -79,8 +79,13 @@ void Time::Uninit(void)
 void Time::Update(void)
 {
 	// 毎フレーム実行される処理を記述する
-	TimeObj[0].Timer--;
 
+	TimeObj[0].Timer--;
+	
+	if (TimeObj[0].Timer <0)
+	{
+		TimeObj[0].Timer=0;
+	}
 	SetTextureTime();
 
 }

@@ -103,12 +103,12 @@ GameScene::GameScene(void)
 	ObjectManager::CreateObject<PlayerManager>();
 	ObjectManager::CreateObject<EffectManager>();
 	ObjectManager::CreateObject<Roundlogo>();
-	ObjectManager::CreateObject<Time>();
 	ObjectManager::CreateObject<Rightleft>();
 	ObjectManager::CreateObject<Ko>();
 	ObjectManager::CreateObject<Gage>();
 	ObjectManager::CreateObject<Gage3d>();
 	ObjectManager::CreateObject<Gray>();
+	ObjectManager::CreateObject<Time>();
 	//new Player;
 	//new Skydome;
 	//new Cube;
