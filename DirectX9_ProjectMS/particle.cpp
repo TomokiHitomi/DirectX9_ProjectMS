@@ -200,51 +200,51 @@ void Particle::Update(void)
 	// 移動量を加算
 	//fMove = sinf(fSin) * 10.0f;
 
-	// マウスホイールでパーティクルカラーを変更
-	long ModUseZ = GetMobUseZ();
-	if (ModUseZ != 0)
-	{
-		if (ModUseZ > 0)
-		{
-			nColor++;
-			if (nColor >= COLOR_PALLET_MAX)
-			{
-				nColor = 0;
-			}
-		}
-		else
-		{
-			nColor--;
-			if (nColor < 0)
-			{
-				nColor = COLOR_PALLET_MAX - 1;
-			}
-		}
-	}
+	//// マウスホイールでパーティクルカラーを変更
+	//long ModUseZ = GetMobUseZ();
+	//if (ModUseZ != 0)
+	//{
+	//	if (ModUseZ > 0)
+	//	{
+	//		nColor++;
+	//		if (nColor >= COLOR_PALLET_MAX)
+	//		{
+	//			nColor = 0;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		nColor--;
+	//		if (nColor < 0)
+	//		{
+	//			nColor = COLOR_PALLET_MAX - 1;
+	//		}
+	//	}
+	//}
 
-	// 左クリックでエフェクト設置
-	if (IsMobUseLeftPressed())
-	{
-		Set(PARTICLE_SET,
-			D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	}
+	//// 左クリックでエフェクト設置
+	//if (IsMobUseLeftPressed())
+	//{
+	//	Set(PARTICLE_SET,
+	//		D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	//}
 
-	if (bColor)
-	{
-		fColor += PARTICLE_COLOR_SPEED;
-		if (fColor > PARTICLE_COLOR_MAX)
-		{
-			bColor = false;
-		}
-	}
-	else
-	{
-		fColor -= PARTICLE_COLOR_SPEED;
-		if (fColor < -PARTICLE_COLOR_MAX)
-		{
-			bColor = true;
-		}
-	}
+	//if (bColor)
+	//{
+	//	fColor += PARTICLE_COLOR_SPEED;
+	//	if (fColor > PARTICLE_COLOR_MAX)
+	//	{
+	//		bColor = false;
+	//	}
+	//}
+	//else
+	//{
+	//	fColor -= PARTICLE_COLOR_SPEED;
+	//	if (fColor < -PARTICLE_COLOR_MAX)
+	//	{
+	//		bColor = true;
+	//	}
+	//}
 
 #ifdef _DEBUG
 	PrintDebugProc("ParticleMax:%d\n", nCount);

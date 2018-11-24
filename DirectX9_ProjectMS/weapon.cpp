@@ -43,6 +43,9 @@ Weapon::Weapon(CXModel* XModel)
 	vPos = ZERO_D3DXVECTOR3;			// 座標情報
 	vRot = ZERO_D3DXVECTOR3;			// 回転情報
 	vScl = WEAPON_SCL_VEC3;				// 拡縮情報
+	vMove = ZERO_D3DXVECTOR3;
+	vShot = ZERO_D3DXVECTOR3;
+	vRemote = ZERO_D3DXVECTOR3;
 
 	// ワールド行列を初期化
 	D3DXMatrixIdentity(&mtxWorld);
@@ -79,7 +82,6 @@ void Weapon::Update(void)
 		}
 		else
 		{
-			nTime = 0;
 			bUse = false;
 		}
 	}
@@ -115,16 +117,21 @@ void Weapon::Draw(void)
 //=============================================================================
 // 設置処理
 //=============================================================================
-bool Weapon::Set(D3DXVECTOR3 pos, D3DXVECTOR3 move)
+bool Weapon::Set(D3DXVECTOR3 pos, D3DXVECTOR3 shot)
 {
 	if (!bUse)
 	{
+		nTime = 0;
 		vPos = pos;
 		vPos.y += WEAPON_HEIGHT;
 
-		vMove = move;
-
+		vShot = shot;
+		vMove = vShot;
 		bUse = true;
+
+		D3DXVECTOR3 vUp = UP_D3DXVECTOR3;
+		CrossProduct(&vRemote, &vUp, &vShot);
+
 		return true;
 	}
 	return false;
@@ -133,7 +140,10 @@ bool Weapon::Set(D3DXVECTOR3 pos, D3DXVECTOR3 move)
 //=============================================================================
 // 設置処理
 //=============================================================================
-void Weapon::Remote(D3DXVECTOR3 remote)
+void Weapon::Remote(float remote)
 {
-	vRemote = remote;
+	//D3DXVECTOR3 
+	//vMove = D3DXVec3Normalize()
+	////vMove 
+	////vRemote = remote;
 }

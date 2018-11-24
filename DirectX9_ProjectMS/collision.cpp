@@ -8,6 +8,7 @@
 //=============================================================================
 #include "main.h"
 #include "collision.h"
+#include "player.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -23,7 +24,29 @@
 //=============================================================================
 void ChackHit(void)
 {
+	Player* pPlayer;
+	Player* pTarget;
 
+	D3DXVECTOR3 vTarget;
+	for (unsigned int i = 0; i < PlayerManager::PLAYER_MAX; i++)
+	{
+		pPlayer = PlayerManager::GetPlayer((PlayerManager::PLAYER)i);
+		pTarget = PlayerManager::GetPlayer((PlayerManager::PLAYER)pPlayer->m_nTagNum);
+		for (unsigned int j = 0; j < Player::TYPE_MAX; j++)
+		{
+			if (pPlayer->pWeapon[(Player::WeaponLR)j]->GetUse())
+			{
+				vTarget = pTarget->GetPos();
+				vTarget.y += PLAYER_HEIGHT_HIT;
+				if (CheckHitBC(pPlayer->GetPosWeapon((Player::WeaponLR)j), vTarget,
+					PLAYER_SIZE_HIT, PLAYER_SIZE_WEAPON))
+				{
+					pPlayer->SubHp(PLAYER_DAMAGE_NORMAL);
+					pPlayer->pWeapon[(Player::WeaponLR)j]->SetUse(false);
+				}
+			}
+		}
+	}
 }
 
 //=============================================================================

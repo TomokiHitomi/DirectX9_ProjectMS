@@ -50,8 +50,6 @@ static DWORD			g_dwJcState[JOYCON_MAX];
 static DWORD			g_dwJcTrigger[JOYCON_MAX];
 static DWORD			g_dwJcRelease[JOYCON_MAX];
 static Rumble			*g_pRumble;
-static bool				bReset = false;
-static bool				bCheck = false;
 
 // sio:
 //sio::client myClient;
@@ -526,16 +524,6 @@ void handle_input(Joycon *jc, uint8_t *packet, int len) {
 
 void pollLoop()
 {
-	if ((GetKeyboardPress(DIK_LSHIFT) && GetKeyboardTrigger(DIK_J)) || bReset)
-	{
-		if (!bCheck)
-		{
-			actuallyQuit();
-			start();
-			return;
-		}
-		bReset = true;
-	}
 	// poll joycons:
 	int size = joycons.size();
 	for (int i = 0; i < size; ++i) {
@@ -794,8 +782,6 @@ void pollLoop()
 void start() {
 
 
-	bReset = false;
-
 	// set infinite reconnect attempts
 	//myClient.set_reconnect_attempts(999999999999);
 	//if (settings.broadcastMode) {
@@ -1032,129 +1018,124 @@ int GetJoyconSize(void)
 
 void JoyconUpdate(void)
 {
-	if (!bReset)
+	// Joycon数を取得
+	int size = joycons.size();
+
+	// Joyconの数だけ繰り返し処理
+	for (int i = 0; i < size; i++)
 	{
-		bCheck = true;
-		// Joycon数を取得
-		int size = joycons.size();
-
-		// Joyconの数だけ繰り返し処理
-		for (int i = 0; i < size; i++)
+		if (!g_pRumble[i].bUse)
 		{
-			if (!g_pRumble[i].bUse)
-			{
-				g_pRumble[i].nFrequency = 0;
-				g_pRumble[i].nIntensity = 0;
-			}
-
-			DWORD lastJcState;
-			lastJcState = g_dwJcState[i];
-			g_dwJcState[i] = 0x00000000l;	// 初期化
-			Joycon *jc = &joycons[i];
-			// left:
-			if (jc->left_right == 1)
-			{
-				//* ↑ボタン
-				if (jc->btns.up)						g_dwJcState[i] |= JC_L_BUTTON_UP;
-				//* ↓ボタン
-				if (jc->btns.down)						g_dwJcState[i] |= JC_L_BUTTON_DOWN;
-				//* ←ボタン
-				if (jc->btns.left)						g_dwJcState[i] |= JC_L_BUTTON_LEFT;
-				//* →ボタン
-				if (jc->btns.right)						g_dwJcState[i] |= JC_L_BUTTON_RIGHT;
-
-				//* Ｌボタン
-				if (jc->btns.l)							g_dwJcState[i] |= JC_L_BUTTON_L;
-				//* ＺＬボタン
-				if (jc->btns.zl)						g_dwJcState[i] |= JC_L_BUTTON_ZL;
-				//* ＳＬボタン
-				if (jc->btns.sl)						g_dwJcState[i] |= JC_L_BUTTON_SL;
-				//* ＳＲボタン
-				if (jc->btns.sr)						g_dwJcState[i] |= JC_L_BUTTON_SR;
-				//* －ボタン
-				if (jc->btns.minus)						g_dwJcState[i] |= JC_L_BUTTON_MINUS;
-				//* キャプチャボタン
-				if (jc->btns.capture)					g_dwJcState[i] |= JC_L_BUTTON_CAP;
-				//* スティックボタン
-				if (jc->btns.stick_button)				g_dwJcState[i] |= JC_L_BUTTON_STICK;
-
-				//* ↑スティック
-				if (jc->stick.CalY > JC_STICK_MARGIN)	g_dwJcState[i] |= JC_L_STICK_UP;
-				//* ↓スティック
-				if (jc->stick.CalY < -JC_STICK_MARGIN)	g_dwJcState[i] |= JC_L_STICK_DOWN;
-				//* ←スティック
-				if (jc->stick.CalX < -JC_STICK_MARGIN)	g_dwJcState[i] |= JC_L_STICK_LEFT;
-				//* →スティック
-				if (jc->stick.CalX > JC_STICK_MARGIN)	g_dwJcState[i] |= JC_L_STICK_RIGHT;
-
-
-#ifdef _DEBUG
-				PrintDebugProc("【Joy-Con Left】\n");
-
-				PrintDebugProc("U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
-					jc->btns.up, jc->btns.down, jc->btns.left, jc->btns.right, jc->btns.l, jc->btns.zl, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
-					jc->btns.minus, jc->btns.capture, (jc->stick.CalX), (jc->stick.CalY), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
-				PrintDebugProc("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
-				PrintDebugProc("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
-#endif
-			}
-
-			// right:
-			if (jc->left_right == 2)
-			{
-				//* ↑ボタン
-				if (jc->btns.a)							g_dwJcState[i] |= JC_R_BUTTON_A;
-				//* ↓ボタン
-				if (jc->btns.b)							g_dwJcState[i] |= JC_R_BUTTON_B;
-				//* ←ボタン
-				if (jc->btns.x)							g_dwJcState[i] |= JC_R_BUTTON_X;
-				//* →ボタン
-				if (jc->btns.y)							g_dwJcState[i] |= JC_R_BUTTON_Y;
-
-				//* Ｒボタン
-				if (jc->btns.r)							g_dwJcState[i] |= JC_R_BUTTON_R;
-				//* ＺＲボタン
-				if (jc->btns.zr)						g_dwJcState[i] |= JC_R_BUTTON_ZR;
-				//* ＳＬボタン
-				if (jc->btns.sl)						g_dwJcState[i] |= JC_R_BUTTON_SL;
-				//* ＳＲボタン
-				if (jc->btns.sr)						g_dwJcState[i] |= JC_R_BUTTON_SR;
-				//* ＋ボタン
-				if (jc->btns.plus)						g_dwJcState[i] |= JC_R_BUTTON_PLUS;
-				//* ホームボタン
-				if (jc->btns.home)						g_dwJcState[i] |= JC_R_BUTTON_HOME;
-				//* スティックボタン
-				if (jc->btns.stick_button)				g_dwJcState[i] |= JC_R_BUTTON_STICK;
-
-				//* ↑スティック
-				if (jc->stick.CalY > JC_STICK_MARGIN)	g_dwJcState[i] |= JC_R_STICK_UP;
-				//* ↓スティック
-				if (jc->stick.CalY < -JC_STICK_MARGIN)	g_dwJcState[i] |= JC_R_STICK_DOWN;
-				//* ←スティック
-				if (jc->stick.CalX < -JC_STICK_MARGIN)	g_dwJcState[i] |= JC_R_STICK_LEFT;
-				//* →スティック
-				if (jc->stick.CalX > JC_STICK_MARGIN)	g_dwJcState[i] |= JC_R_STICK_RIGHT;
-
-
-#ifdef _DEBUG
-				PrintDebugProc("【Joy-Con Right】\n");
-
-				PrintDebugProc("A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
-					jc->btns.a, jc->btns.b, jc->btns.x, jc->btns.y, jc->btns.r, jc->btns.zr, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
-					jc->btns.plus, jc->btns.home, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
-				PrintDebugProc("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
-				PrintDebugProc("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
-#endif
-			}
-
-			// Trigger設定
-			g_dwJcTrigger[i] = ((lastJcState ^ g_dwJcState[i])	// 前回と違っていて
-				& g_dwJcState[i]);					// しかも今ONのやつ
-												// Release設定
-			g_dwJcRelease[i] = ((lastJcState ^ g_dwJcState[i])	// 前回と違っていて
-				& ~g_dwJcState[i]);					// しかも今OFFのやつ
+			g_pRumble[i].nFrequency = 0;
+			g_pRumble[i].nIntensity = 0;
 		}
-		bCheck = false;
+
+		DWORD lastJcState;
+		lastJcState = g_dwJcState[i];
+		g_dwJcState[i] = 0x00000000l;	// 初期化
+		Joycon *jc = &joycons[i];
+		// left:
+		if (jc->left_right == 1)
+		{
+			//* ↑ボタン
+			if (jc->btns.up)						g_dwJcState[i] |= JC_L_BUTTON_UP;
+			//* ↓ボタン
+			if (jc->btns.down)						g_dwJcState[i] |= JC_L_BUTTON_DOWN;
+			//* ←ボタン
+			if (jc->btns.left)						g_dwJcState[i] |= JC_L_BUTTON_LEFT;
+			//* →ボタン
+			if (jc->btns.right)						g_dwJcState[i] |= JC_L_BUTTON_RIGHT;
+
+			//* Ｌボタン
+			if (jc->btns.l)							g_dwJcState[i] |= JC_L_BUTTON_L;
+			//* ＺＬボタン
+			if (jc->btns.zl)						g_dwJcState[i] |= JC_L_BUTTON_ZL;
+			//* ＳＬボタン
+			if (jc->btns.sl)						g_dwJcState[i] |= JC_L_BUTTON_SL;
+			//* ＳＲボタン
+			if (jc->btns.sr)						g_dwJcState[i] |= JC_L_BUTTON_SR;
+			//* －ボタン
+			if (jc->btns.minus)						g_dwJcState[i] |= JC_L_BUTTON_MINUS;
+			//* キャプチャボタン
+			if (jc->btns.capture)					g_dwJcState[i] |= JC_L_BUTTON_CAP;
+			//* スティックボタン
+			if (jc->btns.stick_button)				g_dwJcState[i] |= JC_L_BUTTON_STICK;
+
+			//* ↑スティック
+			if (jc->stick.CalY > JC_STICK_MARGIN)	g_dwJcState[i] |= JC_L_STICK_UP;
+			//* ↓スティック
+			if (jc->stick.CalY < -JC_STICK_MARGIN)	g_dwJcState[i] |= JC_L_STICK_DOWN;
+			//* ←スティック
+			if (jc->stick.CalX < -JC_STICK_MARGIN)	g_dwJcState[i] |= JC_L_STICK_LEFT;
+			//* →スティック
+			if (jc->stick.CalX > JC_STICK_MARGIN)	g_dwJcState[i] |= JC_L_STICK_RIGHT;
+
+
+#ifdef _DEBUG
+			PrintDebugProc("【Joy-Con Left】\n");
+
+			PrintDebugProc("U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
+				jc->btns.up, jc->btns.down, jc->btns.left, jc->btns.right, jc->btns.l, jc->btns.zl, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
+				jc->btns.minus, jc->btns.capture, (jc->stick.CalX), (jc->stick.CalY), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
+			PrintDebugProc("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
+			PrintDebugProc("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
+#endif
+		}
+
+		// right:
+		if (jc->left_right == 2)
+		{
+			//* ↑ボタン
+			if (jc->btns.a)							g_dwJcState[i] |= JC_R_BUTTON_A;
+			//* ↓ボタン
+			if (jc->btns.b)							g_dwJcState[i] |= JC_R_BUTTON_B;
+			//* ←ボタン
+			if (jc->btns.x)							g_dwJcState[i] |= JC_R_BUTTON_X;
+			//* →ボタン
+			if (jc->btns.y)							g_dwJcState[i] |= JC_R_BUTTON_Y;
+
+			//* Ｒボタン
+			if (jc->btns.r)							g_dwJcState[i] |= JC_R_BUTTON_R;
+			//* ＺＲボタン
+			if (jc->btns.zr)						g_dwJcState[i] |= JC_R_BUTTON_ZR;
+			//* ＳＬボタン
+			if (jc->btns.sl)						g_dwJcState[i] |= JC_R_BUTTON_SL;
+			//* ＳＲボタン
+			if (jc->btns.sr)						g_dwJcState[i] |= JC_R_BUTTON_SR;
+			//* ＋ボタン
+			if (jc->btns.plus)						g_dwJcState[i] |= JC_R_BUTTON_PLUS;
+			//* ホームボタン
+			if (jc->btns.home)						g_dwJcState[i] |= JC_R_BUTTON_HOME;
+			//* スティックボタン
+			if (jc->btns.stick_button)				g_dwJcState[i] |= JC_R_BUTTON_STICK;
+
+			//* ↑スティック
+			if (jc->stick.CalY > JC_STICK_MARGIN)	g_dwJcState[i] |= JC_R_STICK_UP;
+			//* ↓スティック
+			if (jc->stick.CalY < -JC_STICK_MARGIN)	g_dwJcState[i] |= JC_R_STICK_DOWN;
+			//* ←スティック
+			if (jc->stick.CalX < -JC_STICK_MARGIN)	g_dwJcState[i] |= JC_R_STICK_LEFT;
+			//* →スティック
+			if (jc->stick.CalX > JC_STICK_MARGIN)	g_dwJcState[i] |= JC_R_STICK_RIGHT;
+
+
+#ifdef _DEBUG
+			PrintDebugProc("【Joy-Con Right】\n");
+
+			PrintDebugProc("A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
+				jc->btns.a, jc->btns.b, jc->btns.x, jc->btns.y, jc->btns.r, jc->btns.zr, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
+				jc->btns.plus, jc->btns.home, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
+			PrintDebugProc("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
+			PrintDebugProc("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
+#endif
+		}
+
+		// Trigger設定
+		g_dwJcTrigger[i] = ((lastJcState ^ g_dwJcState[i])	// 前回と違っていて
+			& g_dwJcState[i]);					// しかも今ONのやつ
+											// Release設定
+		g_dwJcRelease[i] = ((lastJcState ^ g_dwJcState[i])	// 前回と違っていて
+			& ~g_dwJcState[i]);					// しかも今OFFのやつ
 	}
 }
 
@@ -1176,12 +1157,7 @@ BOOL JcReleased(int jcNo, DWORD button)
 // 振動設定
 void JcRumble(int jcNo, int frequency, int intensity)
 {
-	if (!bReset)
-	{
-		bCheck = true;
 		g_pRumble[jcNo].nFrequency = frequency;
 		g_pRumble[jcNo].nIntensity = intensity;
 		g_pRumble[jcNo].bUse = true;
-		bCheck = false;
-	}
 }

@@ -35,8 +35,10 @@
 // モデルスケール
 #define PLAYER_SCL					(0.2f)
 
+// 移動スピード
 #define PLAYER_MOVE_SPEED			(0.5f)
 
+// αテスト
 #define PLAYER_ALPHA_TEST			(10)
 
 /***** 操作系 *****/
@@ -48,6 +50,14 @@
 
 
 #define PLAYER_MOVE_INERTIA			(0.3f)
+
+// ステータス
+#define PLAYER_HP_MAX				(100)
+
+// ダメージ
+#define PLAYER_DAMAGE_NORMAL		(5)
+#define PLAYER_DAMAGE_THROW			(10)
+#define PLAYER_DAMAGE_SP			(30)
 
 // アタック
 #define PLAYER_ATTACK_CD			(30)		// クールダウン
@@ -63,6 +73,11 @@
 // ダッシュ
 #define PLAYER_DASH_CD				(10)
 #define PLAYER_DASH					(2.0f)
+
+// 当たり判定
+#define PLAYER_SIZE_HIT				(5.0f)
+#define PLAYER_SIZE_WEAPON			(1.0f)
+#define PLAYER_HEIGHT_HIT			(10.0f)
 
 /***** アニメーション *****/
 
@@ -147,6 +162,10 @@ private:
 	float			m_fMoveAccel;
 	float			m_fRiseSpeed;
 
+	// ステータス
+	int				m_nHp;
+
+
 
 	void	Move(void);
 	void	Action(void);
@@ -181,10 +200,16 @@ private:
 	void Player::MoveLimit(void);
 
 public:
+	bool SubHp(float fDamage) 
+	{
+		m_nHp -= fDamage;
+		if (m_nHp < 0) return true;
+		return false;
+	}
 	void SetTag(D3DXVECTOR3 vTag) { m_vTag = vTag; }
 	D3DXVECTOR3 GetPos(void) { return m_vPos; }
 	D3DXVECTOR3 GetTag(void) { return m_vTag; }
-
+	D3DXVECTOR3 GetPosWeapon(WeaponLR eLR) { return pWeapon[eLR]->GetPos(); }
 	// 追記は逆順（新しいものから格納される）
 	enum PLAYER_ANIME
 	{	// アニメーション
@@ -210,7 +235,7 @@ public:
 		PLAYER_2P,
 		PLAYER_MAX
 	};
-	Player		*m_pPlayer[PLAYER_MAX];
+	static Player		*m_pPlayer[PLAYER_MAX];
 
 public:
 	// コンストラクタ（初期化処理）
@@ -236,16 +261,13 @@ public:
 			m_pPlayer[player]->m_CSkinMesh->ChangeAnim(Player::IDOL, 0.05f);
 		}	
 	}
-	//void ReleaseStage(void)
-	//{
-	//	if (m_pStage != NULL)
-	//	{
-	//		delete m_pStage;
-	//	}
-	//}
 
-	Player *GetPlayer(PLAYER player) { return m_pPlayer[player]; }
-
+	static Player *GetPlayer(PLAYER player) { return m_pPlayer[player]; }
+	static D3DXVECTOR3 GetPos(PLAYER player) { return m_pPlayer[player]->GetPos(); }
+	static D3DXVECTOR3 GetPosWeapon(PLAYER player, Player::WeaponLR eLR)
+	{
+		return m_pPlayer[player]->GetPosWeapon(eLR);
+	}
 private:
 	void SetTag(void);
 };

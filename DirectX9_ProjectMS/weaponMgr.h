@@ -65,7 +65,6 @@ public:
 	//static Weapon *SetWeapon(int nPlayer, WeaponManager::WeaponType eType);
 	static Weapon* SetWeapon(WeaponManager::WeaponType eType);
 
-
 	//template <typename Type>
 	//void SetStage(void)
 	//{

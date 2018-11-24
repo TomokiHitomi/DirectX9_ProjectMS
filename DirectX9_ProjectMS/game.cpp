@@ -20,6 +20,7 @@
 #include "particle.h"
 #include "gage.h"
 #include "weaponMgr.h"
+#include "collision.h"
 
 /* デバッグ */
 #ifdef _DEBUG
@@ -45,6 +46,15 @@ extern SceneManager		g_cScene;				// Sceneマネージャ
 void GameScene::Update(void)
 {
 	ObjectManager::UpdateAll();
+#ifdef _DEBUG
+	Debugtimer timer;
+#endif
+	ChackHit();
+#ifdef _DEBUG
+	PrintDebugProc("【 COLLISION 】\n");
+	PrintDebugProc("TIME:%f\n", timer.End());
+#endif
+
 }
 
 //=============================================================================
@@ -53,7 +63,7 @@ void GameScene::Update(void)
 void GameScene::Draw(void)
 {
 	// デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	//LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	for (unsigned int i = 0; i < CameraManager::MULTI_MAX; i++)
 	{

@@ -51,7 +51,8 @@ private:
 	D3DXVECTOR3		vRot;				// 回転情報
 	D3DXVECTOR3		vScl;				// 拡縮情報
 	D3DXVECTOR3		vMove;				// 移動情報
-	D3DXVECTOR3		vRemote;			
+	D3DXVECTOR3		vShot;
+	D3DXVECTOR3		vRemote;
 	D3DXMATRIX		mtxWorld;			// ワールドマトリクス
 	int				nTime;				// 生存カウント
 	bool			bUse;				// 使用フラグ
@@ -61,8 +62,11 @@ public:
 	virtual ~Weapon();
 	virtual void Update(void);
 	virtual void Draw(void);
-	virtual bool Set(D3DXVECTOR3 pos, D3DXVECTOR3 move);
-	virtual void Remote(D3DXVECTOR3 remote);
+	virtual bool Set(D3DXVECTOR3 pos, D3DXVECTOR3 shot);
+	virtual void SetUse(bool use) { bUse = use; }
+	virtual bool GetUse(void) { return bUse; }
+	virtual void Remote(float remote);
+	virtual D3DXVECTOR3 GetPos(void) { return vPos; }
 };
 
 //*****************************************************************************

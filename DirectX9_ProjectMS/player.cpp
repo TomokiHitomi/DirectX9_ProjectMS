@@ -32,9 +32,7 @@
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-extern float		fGyroX;
-extern float		fGyroY;
-extern float		fGyroZ;
+Player* PlayerManager::m_pPlayer[PlayerManager::PLAYER_MAX];
 
 //=============================================================================
 // コンストラクタ（初期化処理）
@@ -165,6 +163,9 @@ Player::Player(void)
 	m_vRotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_fMoveInertia = 0.3f;
 
+	// ステータス
+	m_nHp = PLAYER_HP_MAX;
+
 	// クールダウン値
 	m_nCoolDown = 0;
 
@@ -212,9 +213,9 @@ Player::~Player(void)
 //=============================================================================
 void Player::Update(void)
 {
-//#ifdef _DEBUG
-//	PrintDebugProc("【 PLAYER 】\n");
-//#endif
+#ifdef _DEBUG
+	PrintDebugProc("Player[%d]  Hp[%d]\n", m_nNum, m_nHp);
+#endif
 
 	if (m_bUse)
 	{
@@ -238,9 +239,9 @@ void Player::Update(void)
 		}
 	}
 
-//#ifdef _DEBUG
-//	PrintDebugProc("\n");
-//#endif
+#ifdef _DEBUG
+	PrintDebugProc("\n");
+#endif
 }
 
 //=============================================================================
