@@ -7,6 +7,7 @@
 #include "main.h"
 #include "input.h"
 #include "gage.h"
+#include "gage3d.h"
 #include "character.h"
 #include <math.h>
 // デバッグ用
@@ -325,6 +326,11 @@ HRESULT Gage::Init()
 		}
 		GageObj[i].Scale = D3DXVECTOR2(TEXTURE_GAGE_SCALE_X, TEXTURE_GAGE_SCALE_Y);
 		GageObj[i].Angle = TEXTURE_GAGE_ANGLE_X;
+		GageObj[i].NowHp = 1000.0f;
+		//GageObj[i].pos = D3DXVECTOR3(i*10.0f, 0.0f, 0.0f);
+		//GageObj[i].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		//GageObj[i].scl = D3DXVECTOR3(1.0, 1.0, 1.0);
+
 		MakeVertexGage(i);
 	}
 	return S_OK;
@@ -343,6 +349,13 @@ void Gage::Uninit(void)
 			GageObj[i].pD3DTexture->Release();
 			GageObj[i].pD3DTexture = NULL;
 		}
+
+
+		//if (GageObj[i].pD3DXBuffMat != NULL)
+		//{// マテリアルの開放
+		//	GageObj[i].pD3DXBuffMat->Release();
+		//	GageObj[i].pD3DXBuffMat = NULL;
+		//}
 	}
 	
 }
@@ -354,41 +367,18 @@ void Gage::Update(void)
 {
 	//CharacterManager::FIREMAN;
 #ifdef _DEBUG
-	PrintDebugProc("GageObj[0].Alfa:%d\n", GageObj[0].Alfa);
-	PrintDebugProc("\n");
-
-	PrintDebugProc("GageObj[1].Alfa:%d\n", GageObj[1].Alfa);
+	PrintDebugProc("GageObj[4].TextureSize.x :%f\n", GageObj[4].TextureSize.x);
 	PrintDebugProc("\n");
 #endif
 	for (int i = 0; i< NUM_GAGE; i++)
 	{
-		
-		//if (GetKeyboardPress(DIK_1))
-		//{
-		//	GageObj[0].TextureSize.x--;
-		//}
-		//if (GetKeyboardPress(DIK_2))
-		//{
-		//	GageObj[1].TextureSize.x--;
-		//}
-		//if (GetKeyboardPress(DIK_3))
-		//{
-		//	GageObj[2].TextureSize.x--;
-		//}
-		//if (GetKeyboardPress(DIK_4))
-		//{
-		//	GageObj[3].TextureSize.x--;
-		//}
 		if (GetKeyboardPress(DIK_1))
 		{
-			GageObj[2].Use = true;
-			GageObj[4].TextureSize.x--;
-
+			DamegeReduce(OFFSET_DAMEGE_000 * 1000, 0);
 		}
 		if (GetKeyboardPress(DIK_2))
 		{
-			GageObj[3].Use = true;
-			GageObj[5].TextureSize.x--;
+			DamegeReduce(OFFSET_DAMEGE_000 * 1000, 1);
 		}
 		if (GetKeyboardRelease(DIK_1))
 		{
@@ -400,23 +390,20 @@ void Gage::Update(void)
 		}
 		if (GetKeyboardPress(DIK_3))
 		{
-			GageObj[8].TextureSize.x++;
-
+			SkillAdd(SKILL_000*33.3333,0);
 		}
 		if (GetKeyboardPress(DIK_4))
 		{
-			GageObj[9].TextureSize.x++;
+			SkillAdd(SKILL_000*33.3333, 1);
 		}
 		if (GetKeyboardPress(DIK_5))
 		{
 			GageObj[8].TextureSize.x--;
-			GageObj[8].TextureSizeAdd.y -= 0.14f;
 
 		}
 		if (GetKeyboardPress(DIK_6))
 		{
 			GageObj[9].TextureSize.x--;
-			GageObj[9].TextureSizeAdd.y -= 0.14f;
 		}
 		if (GetKeyboardPress(DIK_Q))
 		{
@@ -499,12 +486,38 @@ void Gage::Update(void)
 //=============================================================================
 void Gage::Draw(void)
 {
+	//LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	//D3DXMATRIX mtxScl, mtxRot, mtxTranslate;
+	//// ラインティングを無効にする
+	//pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+	//for (int i = 0; i < NUM_GAGE; i++)
+	//{
+	//	D3DXMatrixIdentity(&GageObj[i].mtxWorld);																	//ワールドマトリクスの初期化
+	//	D3DXMatrixScaling(&mtxScl, GageObj[i].scl.x, GageObj[i].scl.y, GageObj[i].scl.z);						//拡大を反映(拡大)
+	//	D3DXMatrixMultiply(&GageObj[i].mtxWorld, &GageObj[i].mtxWorld, &mtxScl);									//行列の合成(拡大)
+	//	D3DXMatrixRotationYawPitchRoll(&mtxRot, GageObj[i].rot.y, GageObj[i].rot.x, GageObj[i].rot.z);			//回転の反映(回転)
+	//	D3DXMatrixMultiply(&GageObj[i].mtxWorld, &GageObj[i].mtxWorld, &mtxRot);									//行列の合成(回転)
+	//	D3DXMatrixTranslation(&mtxTranslate, GageObj[i].pos.x, GageObj[i].pos.y, GageObj[i].pos.z);				//移動の反映(移動)
+	//	D3DXMatrixMultiply(&GageObj[i].mtxWorld, &GageObj[i].mtxWorld, &mtxTranslate);							//行列の合成(移動)
+	//	pDevice->SetTransform(D3DTS_WORLD, &GageObj[i].mtxWorld);													//ワールドマトリクスの設定
+	//	pDevice->SetStreamSource(0, GageObj[i].pD3DVtxBuff, 0, sizeof(VERTEX_2D));								//頂点バッファ
+	//	pDevice->SetFVF(FVF_VERTEX_2D);
+	//	pDevice->SetTexture(0, GageObj[i].pD3DTexture);
+	//	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, NUM_POLYGON);
+
+	//																												//pD3DXMat = (D3DXMATERIAL*)GageObj[i].pD3DXBuffMat->GetBufferPointer();											//マテリアル情報に対するポインタの取得
+	//}
+	//// ラインティングを無効にする
+	//pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	for (int i = 0; i < NUM_GAGE; i++)
 	{
+		
 		if (GageObj[i].Use == true)
 		{
 			pDevice->SetTexture(0, GageObj[i].pD3DTexture);
@@ -675,6 +688,52 @@ void Gage::SetTextureGage(int i)
 //=============================================================================
 HRESULT Gage::MakeVertexGage(int i)
 {
+	//LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	//// オブジェクトの頂点バッファを生成
+	//if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * NUM_VERTEX,	// 頂点データ用に確保するバッファサイズ(バイト単位)
+	//	D3DUSAGE_WRITEONLY,			// 頂点バッファの使用法　
+	//	FVF_VERTEX_3D,				// 使用する頂点フォーマット
+	//	D3DPOOL_MANAGED,			// リソースのバッファを保持するメモリクラスを指定
+	//	&GageObj[i].pD3DVtxBuff,		// 頂点バッファインターフェースへのポインタ
+	//	NULL)))						// NULLに設定
+	//{
+	//	return E_FAIL;
+	//}
+
+	//{//頂点バッファの中身を埋める
+	//	VERTEX_3D *pVtx;
+
+	//	// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
+	//	GageObj[i].pD3DVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	//	// 頂点座標の設定(local)
+	//	pVtx[0].vtx = D3DXVECTOR3(-1.0, 1.0, 1.0);
+	//	pVtx[1].vtx = D3DXVECTOR3(1.0, 1.0, 1.0);
+	//	pVtx[2].vtx = D3DXVECTOR3(-1.0, 1.0, -1.0);
+	//	pVtx[3].vtx = D3DXVECTOR3(1.0, 1.0, -1.0);
+
+	//	// 法線ベクトルの設定
+	//	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	//	pVtx[1].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	//	pVtx[2].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	//	pVtx[3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+	//	// 反射光の設定
+	//	pVtx[0].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	//	pVtx[1].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	//	pVtx[2].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	//	pVtx[3].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//	// テクスチャ座標の設定
+	//	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	//	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	//	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	//	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//	// 頂点データをアンロックする
+	//	GageObj[i].pD3DVtxBuff->Unlock();
+	//}
+
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 
@@ -696,4 +755,84 @@ HRESULT Gage::MakeVertexGage(int i)
 	GageObj[i].vertexWk[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 	
 	return S_OK;
+}
+void Gage::DamegeReduce(float Damege,int player)
+{
+	if(player == 0)
+	{
+
+		GageObj[2].Use = true;
+		GageObj[4].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE004_X;
+		if (GageObj[4].TextureSize.x <= 0.0f)
+		{
+			GageObj[4].TextureSize.x = 0.0f;
+		}
+		
+	}
+	if (player == 1)
+	{
+		GageObj[3].Use = true;
+		GageObj[5].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE004_X;
+		if (GageObj[5].TextureSize.x <= 0.0f)
+		{
+			GageObj[5].TextureSize.x = 0.0f;
+		}
+	}
+}
+void Gage::DamegeAdd(float Damege, int player)
+{
+	if (player == 0)
+	{
+		GageObj[4].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE004_X;
+		if (GageObj[4].TextureSize.x <= TEXTURE_GAGE_SIZE004_X)
+		{
+			GageObj[4].TextureSize.x = TEXTURE_GAGE_SIZE004_X;
+		}
+	}
+	if (player == 1)
+	{
+		GageObj[5].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE004_X;
+		if (GageObj[5].TextureSize.x <= TEXTURE_GAGE_SIZE005_X)
+		{
+			GageObj[5].TextureSize.x = TEXTURE_GAGE_SIZE005_X;
+		}
+	}
+}
+void Gage::SkillReduce(float Damege, int player)
+{
+	if (player == 0)
+	{
+		GageObj[8].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE008_X;
+		if (GageObj[8].TextureSize.x <= 0.0f)
+		{
+			GageObj[8].TextureSize.x = 0.0f;
+		}
+	}
+	if (player == 1)
+	{
+		GageObj[9].TextureSize.x -= Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE008_X;
+		if (GageObj[9].TextureSize.x <= 0.0f)
+		{
+			GageObj[9].TextureSize.x = 0.0f;
+		}
+	}
+}
+void Gage::SkillAdd(float Damege, int player)
+{
+	if (player == 0)
+	{
+		GageObj[8].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE008_X;
+		if (GageObj[8].TextureSize.x >= TEXTURE_GAGE_SIZE004_X)
+		{
+			GageObj[8].TextureSize.x = TEXTURE_GAGE_SIZE004_X;
+		}
+	}
+	if (player == 1)
+	{
+		GageObj[9].TextureSize.x += Damege / TEXTURE_GAGE3D_MAX_HP / TEXTURE_GAGE_SIZE009_X;
+		if (GageObj[9].TextureSize.x >= TEXTURE_GAGE_SIZE005_X)
+		{
+			GageObj[9].TextureSize.x = TEXTURE_GAGE_SIZE005_X;
+		}
+	}
 }

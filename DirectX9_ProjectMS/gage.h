@@ -15,16 +15,16 @@
 // マクロ定義
 //
 //=============================================================================
-#define TEXTURE_GAGE_000					"data/TEXTURE/gage000.png"											// gage hp
-#define TEXTURE_GAGE_001					"data/TEXTURE/gage000.png"											// gage hp
-#define TEXTURE_GAGE_002					"data/TEXTURE/gage000.png"											// gage hp
-#define TEXTURE_GAGE_003					"data/TEXTURE/gage000.png"											// gage hp
-#define TEXTURE_GAGE_004					"data/TEXTURE/gage000.png"											// gage hp
-#define TEXTURE_GAGE_005					"data/TEXTURE/gage000.png"											// gage hp
-#define TEXTURE_GAGE_006					"data/TEXTURE/gage000.png"											// gage skill
-#define TEXTURE_GAGE_007					"data/TEXTURE/gage000.png"											// gage skill
-#define TEXTURE_GAGE_008					"data/TEXTURE/gage000.png"											// gage skill
-#define TEXTURE_GAGE_009					"data/TEXTURE/gage000.png"											// gage skill
+#define TEXTURE_GAGE_000					"data/TEXTURE/white_1x1.png"											// gage hp半透明gray
+#define TEXTURE_GAGE_001					"data/TEXTURE/white_1x1.png"											// gage hp半透明gray
+#define TEXTURE_GAGE_002					"data/TEXTURE/white_1x1.png"											// gage hp赤
+#define TEXTURE_GAGE_003					"data/TEXTURE/white_1x1.png"											// gage hp赤
+#define TEXTURE_GAGE_004					"data/TEXTURE/white_1x1.png"											// gage hp青
+#define TEXTURE_GAGE_005					"data/TEXTURE/white_1x1.png"											// gage hp青
+#define TEXTURE_GAGE_006					"data/TEXTURE/white_1x1.png"											// gage skill半透明gray
+#define TEXTURE_GAGE_007					"data/TEXTURE/white_1x1.png"											// gage skill半透明gray
+#define TEXTURE_GAGE_008					"data/TEXTURE/white_1x1.png"											// gage skill黄
+#define TEXTURE_GAGE_009					"data/TEXTURE/white_1x1.png"											// gage skill黄
 #define TEXTURE_GAGE_010					"data/NAME/ショウボウシ.png"										// name
 #define TEXTURE_GAGE_011					"data/NAME/ドクター.png"											// name
 #define TEXTURE_GAGE_012					"data/NAME/パティシエ.png"											// name
@@ -133,9 +133,9 @@
 #define TEXTURE_GAGE_SIZE006_Y				(TEXTURE_GAGE_SIZE006_LATE_Y*SCREEN_HEIGHT/16/2)					// サイズ
 #define TEXTURE_GAGE_SIZE007_X				(TEXTURE_GAGE_SIZE007_LATE_X*SCREEN_WIDTH/4)						// サイズ
 #define TEXTURE_GAGE_SIZE007_Y				(TEXTURE_GAGE_SIZE007_LATE_Y*SCREEN_HEIGHT/16/2)					// サイズ
-#define TEXTURE_GAGE_SIZE008_X				(TEXTURE_GAGE_SIZE008_LATE_X*SCREEN_WIDTH/SCREEN_WIDTH)				// サイズ
+#define TEXTURE_GAGE_SIZE008_X				(TEXTURE_GAGE_SIZE008_LATE_X*SCREEN_WIDTH/SCREEN_WIDTH/3)				// サイズ
 #define TEXTURE_GAGE_SIZE008_Y				(TEXTURE_GAGE_SIZE008_LATE_Y*SCREEN_HEIGHT/16/2)					// サイズ
-#define TEXTURE_GAGE_SIZE009_X				(TEXTURE_GAGE_SIZE009_LATE_X*SCREEN_WIDTH/SCREEN_WIDTH)				// サイズ
+#define TEXTURE_GAGE_SIZE009_X				(TEXTURE_GAGE_SIZE009_LATE_X*SCREEN_WIDTH/SCREEN_WIDTH/3)				// サイズ
 #define TEXTURE_GAGE_SIZE009_Y				(TEXTURE_GAGE_SIZE009_LATE_Y*SCREEN_HEIGHT/16/2)					// サイズ
 #define TEXTURE_GAGE_SIZE010_X				(TEXTURE_GAGE_SIZE000_LATE_X*SCREEN_WIDTH/4)						// サイズ
 #define TEXTURE_GAGE_SIZE010_Y				(TEXTURE_GAGE_SIZE000_LATE_Y*SCREEN_HEIGHT/16)						// サイズ
@@ -209,6 +209,7 @@
 #define TEXTURE_GAGE_COLOR_DEFAULT001_G		(122)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GAGE_COLOR_DEFAULT001_B		(122)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GAGE_COLOR_DEFAULT001_A		(122)																// テクスチャ頂点カラー変化前
+
 #define TEXTURE_GAGE_COLOR_DEFAULT002_R		(255)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GAGE_COLOR_DEFAULT002_G		(122)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GAGE_COLOR_DEFAULT002_B		(122)																// テクスチャ頂点カラー変化前
@@ -217,6 +218,7 @@
 #define TEXTURE_GAGE_COLOR_DEFAULT003_G		(122)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GAGE_COLOR_DEFAULT003_B		(122)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GAGE_COLOR_DEFAULT003_A		(122)																// テクスチャ頂点カラー変化前
+
 #define TEXTURE_GAGE_COLOR_DEFAULT004_R		(157)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GAGE_COLOR_DEFAULT004_G		(204)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GAGE_COLOR_DEFAULT004_B		(224)																// テクスチャ頂点カラー変化前
@@ -281,6 +283,7 @@
 #define TEXTURE_GAGE_COLOR_CHANGE_B			(224)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GAGE_COLOR_CHANGE_A			(255)																// テクスチャ頂点カラー変化前
 #define NUM_GAGE							(18)																	// テクスチャの数
+
 //=============================================================================
 //
 //SELECT構造体
@@ -302,9 +305,21 @@ public:
 		float					Angle;
 		int						Count;
 		int						Alfa;
+		float					NowHp;
 		bool					Damege;
 		bool					Use;									// true:使用  false:未使用
 		LPDIRECT3DTEXTURE9		pD3DTexture;							// テクスチャへのポリゴン (*33)
+
+		//D3DXMATRIX					mtxWorld;
+		//D3DXVECTOR3					pos;										// 地面の位置
+		//D3DXVECTOR3					rot;										// 地面の向き(回転)
+		//D3DXVECTOR3					scl;										// 地面の大きさ(スケール)
+		//LPD3DXBUFFER				pD3DXBuffMat;								// マテリアル情報へのポインタ
+		//DWORD						nNumMat;									// マテリアル情報の数
+		//LPD3DXMESH					pD3DXMesh;									// メッシュ情報へのポインタ
+		//LPDIRECT3DVERTEXBUFFER9		pD3DVtxBuff;	// 頂点バッファへのポインタ
+
+
 	};
 	GageParts GageObj[NUM_GAGE];
 	void SetVertexGage(int CreateCount);
@@ -314,6 +329,10 @@ public:
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
+	void DamegeReduce(float Dmege,int player);
+	void DamegeAdd(float Dmege, int player);
+	void SkillReduce(float Dmege, int player);
+	void SkillAdd(float Dmege, int player);
 	Gage();
 	~Gage();
 };

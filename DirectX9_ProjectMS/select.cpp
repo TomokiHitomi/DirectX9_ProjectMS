@@ -19,7 +19,7 @@
 #include "effect.h"
 #include "selectface.h"
 #include "particle.h"
-#include "rightleft.h"
+
 /* デバッグ */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -78,7 +78,7 @@ SelectScene::SelectScene(void)
 	ObjectManager::CreateObject<ParticleManager>();
 	ObjectManager::CreateObject<StageManager>();
 	ObjectManager::CreateObject<Selectface>();
-	ObjectManager::CreateObject<Rightleft>();
+	
 
 }
 

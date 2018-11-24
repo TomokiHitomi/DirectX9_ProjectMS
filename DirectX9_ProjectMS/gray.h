@@ -30,8 +30,14 @@
 #define TEXTURE_GRAY_SCALE_Y				(1.0)																// 斜めサイズ
 
 
-#define TEXTURE_GRAY_SIZE000_X				(TEXTURE_GRAY_SIZE000_LATE_X*SCREEN_WIDTH/2)						// サイズ
+#define TEXTURE_GRAY_SIZE000_X				(TEXTURE_GRAY_SIZE000_LATE_X*SCREEN_WIDTH)						// サイズ
 #define TEXTURE_GRAY_SIZE000_Y				(TEXTURE_GRAY_SIZE000_LATE_Y*SCREEN_HEIGHT/2)						// サイズ
+
+
+#define TEXTURE_GRAY_SIZE001_X				(TEXTURE_GRAY_SIZE000_LATE_X*SCREEN_WIDTH/4)						// サイズ
+#define TEXTURE_GRAY_SIZE001_Y				(TEXTURE_GRAY_SIZE000_LATE_Y*SCREEN_HEIGHT/2)						// サイズ
+#define TEXTURE_GRAY_SIZE002_X				(TEXTURE_GRAY_SIZE000_LATE_X*SCREEN_WIDTH/4)						// サイズ
+#define TEXTURE_GRAY_SIZE002_Y				(TEXTURE_GRAY_SIZE000_LATE_Y*SCREEN_HEIGHT/2)						// サイズ
 
 #define TEXTURE_GRAY_OFFSET_POSITION000_X	(0.0f)																// オフセットポジション
 #define TEXTURE_GRAY_OFFSET_POSITION000_Y	(0.0f)																// オフセットポジション
@@ -39,6 +45,10 @@
 
 #define TEXTURE_GRAY_POSITION000_X			(TEXTURE_GRAY_OFFSET_POSITION000_X+SCREEN_WIDTH/2)					// ポジション
 #define TEXTURE_GRAY_POSITION000_Y			(TEXTURE_GRAY_OFFSET_POSITION000_Y+SCREEN_HEIGHT/2)	// ポジション
+#define TEXTURE_GRAY_POSITION001_X			(TEXTURE_GRAY_OFFSET_POSITION000_X+SCREEN_WIDTH/4)					// ポジション
+#define TEXTURE_GRAY_POSITION001_Y			(TEXTURE_GRAY_OFFSET_POSITION000_Y+SCREEN_HEIGHT/2)	// ポジション
+#define TEXTURE_GRAY_POSITION002_X			(TEXTURE_GRAY_OFFSET_POSITION000_X+SCREEN_WIDTH/2+SCREEN_WIDTH/4)					// ポジション
+#define TEXTURE_GRAY_POSITION002_Y			(TEXTURE_GRAY_OFFSET_POSITION000_Y+SCREEN_HEIGHT/2)	// ポジション
 #define TEXTURE_GRAY_ANGLE_X				(0.0)																// ポジション
 
 
@@ -52,7 +62,7 @@
 #define TEXTURE_GRAY_COLOR_CHANGE_G			(204)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GRAY_COLOR_CHANGE_B			(224)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GRAY_COLOR_CHANGE_A			(255)																// テクスチャ頂点カラー変化前
-#define NUM_GRAY							(1)																// テクスチャの数
+#define NUM_GRAY							(3)																// テクスチャの数
 //=============================================================================
 //
 //SELECT構造体
