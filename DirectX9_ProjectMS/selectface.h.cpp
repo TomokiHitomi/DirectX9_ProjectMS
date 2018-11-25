@@ -8,6 +8,10 @@
 #include "input.h"
 #include "selectface.h"
 #include <math.h>
+#include "scene.h"
+#include "joycon.h"
+#include "select.h"
+#include "fade.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -62,6 +66,12 @@ Selectface::~Selectface()
 //=============================================================================
 HRESULT Selectface::Init()
 {
+	for (unsigned int i = 0; i < SELECT_MAX; i++)
+	{
+		// 決定フラグを初期化
+		bSelect[i] = false;
+	}
+
 	int type = 0;
 
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
@@ -269,52 +279,57 @@ void Selectface::Update(void)
 			SelectSizeCount000 = 0;
 		}
 
-		if (GetKeyboardTrigger(DIK_RIGHT) || IsButtonPressed(0, BUTTON_LEFT))
+		// 1Pがキャラクターを確定、かつ遷移フラグが立っていなければ
+		if (!bSelect[SELECT_1P] && !SelectScene::bSceneChange)
 		{
-			if (CreateSelectCount == 8 && SelectMovePlayer000[0]==1)
+			if (GetKeyboardTrigger(DIK_RIGHT) || IsButtonPressed(0, BUTTON_LEFT)
+				|| JcTriggered(0, JC_L_BUTTON_RIGHT | JC_L_STICK_RIGHT))
 			{
-				SelectMovePlayer000[0] = 0;
-				SelectMovePlayer000[1] = 1;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
-				break;
+				if (CreateSelectCount == 8 && SelectMovePlayer000[0] == 1)
+				{
+					SelectMovePlayer000[0] = 0;
+					SelectMovePlayer000[1] = 1;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
+					break;
+				}
+				if (CreateSelectCount == 8 && SelectMovePlayer000[1] == 1)
+				{
+					SelectMovePlayer000[1] = 0;
+					SelectMovePlayer000[2] = 1;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
+					break;
+				}
+				if (CreateSelectCount == 8 && SelectMovePlayer000[2] == 1)
+				{
+					SelectMovePlayer000[2] = 0;
+					SelectMovePlayer000[3] = 1;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT03_MOVE_X, TEXTURE_SELECT03_MOVE_Y, 0.0f);
+					break;
+				}
 			}
-			if (CreateSelectCount == 8 && SelectMovePlayer000[1] == 1)
+			if (GetKeyboardTrigger(DIK_LEFT) || IsButtonPressed(0, BUTTON_LEFT)
+				|| JcTriggered(0, JC_L_BUTTON_LEFT | JC_L_STICK_LEFT))
 			{
-				SelectMovePlayer000[1] = 0;
-				SelectMovePlayer000[2] = 1;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
-				break;
-			}
-			if (CreateSelectCount == 8 && SelectMovePlayer000[2] == 1)
-			{
-				SelectMovePlayer000[2] = 0;
-				SelectMovePlayer000[3] = 1;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT03_MOVE_X, TEXTURE_SELECT03_MOVE_Y, 0.0f);
-				break;
+				if (CreateSelectCount == 8 && SelectMovePlayer000[1] == 1)
+				{
+					SelectMovePlayer000[0] = 1;
+					SelectMovePlayer000[1] = 0;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT00_MOVE_X, TEXTURE_SELECT00_MOVE_Y, 0.0f);
+				}
+				if (CreateSelectCount == 8 && SelectMovePlayer000[2] == 1)
+				{
+					SelectMovePlayer000[1] = 1;
+					SelectMovePlayer000[2] = 0;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
+				}
+				if (CreateSelectCount == 8 && SelectMovePlayer000[3] == 1)
+				{
+					SelectMovePlayer000[2] = 1;
+					SelectMovePlayer000[3] = 0;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
+				}
 			}
 		}
-		if (GetKeyboardTrigger(DIK_LEFT) || IsButtonPressed(0, BUTTON_LEFT))
-		{
-			if (CreateSelectCount == 8 && SelectMovePlayer000[1] == 1)
-			{
-				SelectMovePlayer000[0] = 1;
-				SelectMovePlayer000[1] = 0;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT00_MOVE_X, TEXTURE_SELECT00_MOVE_Y, 0.0f);
-			}
-			if (CreateSelectCount == 8 && SelectMovePlayer000[2] == 1)
-			{
-				SelectMovePlayer000[1] = 1;
-				SelectMovePlayer000[2] = 0;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
-			}
-			if (CreateSelectCount == 8 && SelectMovePlayer000[3] == 1)
-			{
-				SelectMovePlayer000[2] = 1;
-				SelectMovePlayer000[3] = 0;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
-			}
-		}
-
 
 		if (CreateSelectCount == 9)
 		{
@@ -336,59 +351,65 @@ void Selectface::Update(void)
 			SelectSizeCount001 = 0;
 		}
 
-		if (GetKeyboardTrigger(DIK_D) || IsButtonPressed(0, BUTTON_LEFT))
+		// 2Pがキャラクターを確定、かつ遷移フラグが立っていなければ
+		if (!bSelect[SELECT_2P] && !SelectScene::bSceneChange)
 		{
-			if (CreateSelectCount == 9 && SelectMovePlayer001[0] == 1)
+			if (GetKeyboardTrigger(DIK_D) || IsButtonPressed(0, BUTTON_LEFT)
+				|| JcTriggered(2, JC_L_BUTTON_RIGHT | JC_L_STICK_RIGHT))
 			{
-				SelectMovePlayer001[0] = 0;
-				SelectMovePlayer001[1] = 1;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X+ TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
-				break;
+				if (CreateSelectCount == 9 && SelectMovePlayer001[0] == 1)
+				{
+					SelectMovePlayer001[0] = 0;
+					SelectMovePlayer001[1] = 1;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
+					break;
+				}
+				if (CreateSelectCount == 9 && SelectMovePlayer001[1] == 1)
+				{
+					SelectMovePlayer001[1] = 0;
+					SelectMovePlayer001[2] = 1;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
+					break;
+				}
+				if (CreateSelectCount == 9 && SelectMovePlayer001[2] == 1)
+				{
+					SelectMovePlayer001[2] = 0;
+					SelectMovePlayer001[3] = 1;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT03_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT03_MOVE_Y, 0.0f);
+					break;
+				}
 			}
-			if (CreateSelectCount == 9 && SelectMovePlayer001[1] == 1)
+			if (GetKeyboardTrigger(DIK_A) || IsButtonPressed(0, BUTTON_LEFT)
+				|| JcTriggered(2, JC_L_BUTTON_LEFT | JC_L_STICK_LEFT))
 			{
-				SelectMovePlayer001[1] = 0;
-				SelectMovePlayer001[2] = 1;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X+ TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
-				break;
-			}
-			if (CreateSelectCount == 9 && SelectMovePlayer001[2] == 1)
-			{
-				SelectMovePlayer001[2] = 0;
-				SelectMovePlayer001[3] = 1;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT03_MOVE_X+ TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT03_MOVE_Y, 0.0f);
-				break;
+				if (CreateSelectCount == 9 && SelectMovePlayer001[1] == 1)
+				{
+					SelectMovePlayer001[0] = 1;
+					SelectMovePlayer001[1] = 0;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT00_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT00_MOVE_Y, 0.0f);
+				}
+				if (CreateSelectCount == 9 && SelectMovePlayer001[2] == 1)
+				{
+					SelectMovePlayer001[1] = 1;
+					SelectMovePlayer001[2] = 0;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
+				}
+				if (CreateSelectCount == 9 && SelectMovePlayer001[3] == 1)
+				{
+					SelectMovePlayer001[2] = 1;
+					SelectMovePlayer001[3] = 0;
+					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
+				}
 			}
 		}
-		if (GetKeyboardTrigger(DIK_A) || IsButtonPressed(0, BUTTON_LEFT))
-		{
-			if (CreateSelectCount == 9 && SelectMovePlayer001[1] == 1)
-			{
-				SelectMovePlayer001[0] = 1;
-				SelectMovePlayer001[1] = 0;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT00_MOVE_X+ TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT00_MOVE_Y, 0.0f);
-			}
-			if (CreateSelectCount == 9 && SelectMovePlayer001[2] == 1)
-			{
-				SelectMovePlayer001[1] = 1;
-				SelectMovePlayer001[2] = 0;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X+ TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
-			}
-			if (CreateSelectCount == 9 && SelectMovePlayer001[3] == 1)
-			{
-				SelectMovePlayer001[2] = 1;
-				SelectMovePlayer001[3] = 0;
-				Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X+ TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
-			}
-		}
-
 		//	頂点カラーの設定
 		SetVertexSelect(CreateSelectCount);
 		// テクスチャ座標を設定
 		SetTextureSelect(CreateSelectCount);
 	}
 
-
+	// 決定処理
+	SetChar();
 }
 
 //=============================================================================
@@ -999,4 +1020,61 @@ void Selectface::SetTextureSelect(int CreateSelectCount)
 		Select[CreateSelectCount].vertexSelectWk[3].diffuse = D3DCOLOR_RGBA(TEXTURE_SELECT_COLOR_CHANGE_R,TEXTURE_SELECT_COLOR_CHANGE_G,TEXTURE_SELECT_COLOR_CHANGE_B,TEXTURE_SELECT_COLOR_CHANGE_A);
 	}
 
+}
+
+//=============================================================================
+// キャラクター設定処理
+//=============================================================================
+void Selectface::SetChar(void)
+{
+	for (unsigned int i = 0; i < SELECT_MAX;i++)
+	{
+		// Joyconで Aボタン または決定ボタンになりえるボタンが押された場合
+		if (JcTriggered(0 + i * 2, JC_L_BUTTON_L | JC_L_BUTTON_ZL)
+			|| JcTriggered(1 + i * 2, JC_R_BUTTON_R | JC_R_BUTTON_ZR | JC_R_BUTTON_A)
+			|| GetKeyboardTrigger(DIK_RETURN))
+		{
+			// 選択中のキャラクターを探査して シーンマネージャーに保管
+			if (i == SELECT_1P)
+				SceneManager::SetSelectChar(i, SearchChar(SelectMovePlayer000));
+			else if (i == SELECT_2P)
+				SceneManager::SetSelectChar(i, SearchChar(SelectMovePlayer001));
+
+			// 選択したキャラクターを確定
+			bSelect[i] = true;
+		}
+
+		// Joyconで Bボタン が押された場合
+		else if (JcTriggered(1 + i * 2, JC_R_BUTTON_B) || GetKeyboardTrigger(DIK_ESCAPE))
+		{
+			// 決定したキャラクターをキャンセル
+			bSelect[i] = false;
+		}
+	}
+
+	// 1Pと2Pの双方が決定済みだった場合
+	if (bSelect[SELECT_1P] && bSelect[SELECT_2P])
+	{
+		// シーン遷移フラグが立っていなければ
+		if (!SelectScene::bSceneChange)
+		{
+			// シーン遷移開始
+			SetFadeScene(SceneManager::TITLE);
+			// シーン遷移フラグを立てる
+			SelectScene::bSceneChange = true;
+		}
+	}
+}
+
+//=============================================================================
+// 選択情報の探査処理
+//=============================================================================
+int Selectface::SearchChar(int* nSMP)
+{
+	// 選択情報の数だけ探査する
+	for (unsigned int i = 0; i < NUM_SELECT_MAX; i++, nSMP++)
+	{
+		// 0以外が格納されていたら i を返す
+		if (*nSMP)return i;
+	}
 }

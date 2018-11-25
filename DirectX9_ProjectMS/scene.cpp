@@ -41,13 +41,11 @@
 //*****************************************************************************
 //始めはシーンを空にしておく
 BaseScene			*SceneManager::m_pScene = NULL;
-
+bool				 BaseScene::bSceneChange = false;
+bool				 BaseScene::bPause = false;
 SceneManager::SCENE	SceneManager::m_eScene;
 
-int					SceneManager::m_nTotalBurnBonus;
-int					SceneManager::m_nTotalWetBonus;
-int					SceneManager::m_nTotalBurnChain;
-
+int					SceneManager::m_nSelectChar[2];
 int					SceneManager::m_nMulti;
 CharacterManager	*SceneManager::CharMgr = NULL;
 CameraManager		*SceneManager::CameraMgr = NULL;
@@ -113,8 +111,8 @@ void SceneManager::Init(HINSTANCE hInst, HWND hWnd)
 	InitFade();				// フェード
 
 	// 初期のシーンをTITLEに設定
-	//m_eScene = TITLE;
-	m_eScene = GAME;
+	m_eScene = TITLE;
+	//m_eScene = GAME;
 
 	ChangeScene(m_eScene);	// 初期シーン設定
 

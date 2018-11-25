@@ -15,26 +15,25 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-//// モデル
-#define	WEAPON_MODEL_TEST	"data/MODEL/Weapon/泡立て器.x"	// 読み込むモデル名
-//#define	WEAPON_MODEL_TEST	"data/MODEL/cube.x"	// 読み込むモデル名
+#define	WEAPON_SCL					(18.0f)
+#define	WEAPON_SCL_VEC3				(D3DXVECTOR3(WEAPON_SCL,WEAPON_SCL,WEAPON_SCL))			// 読み込むモデル名
 
-//#define	WEAPON_TEXTURE_TEST	"data/TEXTURE/white_1x1.png"	// 読み込むモデル名
+// 残存時間
+#define WEAPON_TIME_MAX				(300)
 
-#define	WEAPON_SCL			(18.0f)			// 読み込むモデル名
-#define	WEAPON_SCL_VEC3		(D3DXVECTOR3(WEAPON_SCL,WEAPON_SCL,WEAPON_SCL))			// 読み込むモデル名
+// 移動スピード
+#define WEAPON_MOVE_SPEED			(2.0f)
 
-#define WEAPON_TIME_MAX		(120)
+// 回転スピード
+#define WEAPON_ROT_SPEED			(0.1f)
 
-#define WEAPON_MOVE_SPEED	(3.0f)
-#define WEAPON_HEIGHT		(7.0f)
+// リモート
+#define WEAPON_REMOTE_TIME			(5)		// リモート開始時間
+#define WEAPON_REMOTE_CORRECTION	(0.005f)		// 加速度補正
+#define WEAPON_REMOTE_ADD_MAX		(0.03f)		// １フレームの最大加算値
+#define WEAPON_REMOTE_MAX			(0.35f)		// 最大加算値
 
 
-//// モデルの最大数
-//#define MODEL_STAGE_MAX			(1)
-//
-//// モデルスケール
-//#define MODEL_STAGE_SCL			(30.0f)
 
 //*****************************************************************************
 // 構造体定義
@@ -55,6 +54,8 @@ private:
 	D3DXVECTOR3		vRemote;
 	D3DXMATRIX		mtxWorld;			// ワールドマトリクス
 	int				nTime;				// 生存カウント
+	float			fRemote;
+	bool			bRot;
 	bool			bUse;				// 使用フラグ
 
 public:
@@ -62,6 +63,8 @@ public:
 	virtual ~Weapon();
 	virtual void Update(void);
 	virtual void Draw(void);
+	virtual void SetScl(float fScl);
+	virtual void SetRot(bool bUse);
 	virtual bool Set(D3DXVECTOR3 pos, D3DXVECTOR3 shot);
 	virtual void SetUse(bool use) { bUse = use; }
 	virtual bool GetUse(void) { return bUse; }

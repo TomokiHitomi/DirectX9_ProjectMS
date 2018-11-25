@@ -15,6 +15,7 @@
 #include "character.h"
 #include "weaponMgr.h"
 #include "plane.h"
+#include "rightleft.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -52,8 +53,8 @@ PlayerManager::PlayerManager(void)
 		m_pPlayer[i] = NULL;
 	}
 
-	Set<Pastry>(PLAYER_1P, CharacterManager::FIREMAN);
-	Set<Pastry>(PLAYER_2P, CharacterManager::DOCTOR);
+	Set<Idol>(PLAYER_1P, CharacterManager::IDOL);
+	Set<Pastry>(PLAYER_2P, CharacterManager::PASTRY);
 }
 
 //=============================================================================
@@ -152,16 +153,19 @@ Player::Player(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// 各プロパティの初期化
-	m_vPos = PLAYER_POS;
-	m_vRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_vPos = ZERO_D3DXVECTOR3;
+	m_vRot = ZERO_D3DXVECTOR3;
 	m_vScl = D3DXVECTOR3(PLAYER_SCL, PLAYER_SCL, PLAYER_SCL);
 
-	m_vMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_vRotInertia = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_vRotDiff = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_vRotDistance = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_vRotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_vMove = ZERO_D3DXVECTOR3;
+	m_vRotInertia = ZERO_D3DXVECTOR3;
+	m_vRotDiff = ZERO_D3DXVECTOR3;
+	m_vRotDistance = ZERO_D3DXVECTOR3;
+	m_vRotDest = ZERO_D3DXVECTOR3;
 	m_fMoveInertia = 0.3f;
+
+	// ゲージ設置座標
+	m_vPosGage = ZERO_D3DXVECTOR3;
 
 	// ステータス
 	m_fHp = PLAYER_HP_MAX;
@@ -169,16 +173,20 @@ Player::Player(void)
 	// クールダウン値
 	m_nCoolDown = 0;
 
-	// ガード用
-	nGuardCount = 0;
-	bGuard = false;
+	// 各フラグとウォームアップ・クールダウンの初期化
+	for (unsigned int i = 0; i < AC_MAX; i++)
+	{
+		m_stAcCD[i].nCnt = 0;
+		m_stAcCD[i].bFlag = false;
+		m_stAcCD[i].bUse = false;
+	}
 
-	// ジャンプ用
+	// ジャンプ
 	fVelocity = PLAYER_VELOCITY;
 	fGravity = PLAYER_GRAVITY;
 	bJump = false;
 
-	// ダッシュ用
+	// ダッシュ
 	vDash = ZERO_D3DXVECTOR3;			// 移動量情報
 	nDashCount = 0;
 	bDash = false;
@@ -222,6 +230,9 @@ void Player::Update(void)
 		// 行動処理
 		Action();
 
+		// クールダウン処理
+		ActionCD();
+
 		// 移動処理
 		Move();
 
@@ -259,7 +270,13 @@ void Player::LateUpdate(void)
 
 		//D3DXVECTOR3 vTag = pCube->GetPos();
 
-		RotFunc(m_vTag);
+
+		// アタックフラグが立っていなかったら
+		if (!m_stAcCD[AC_ATTACK].bFlag)
+		{
+			// 回転処理
+			RotFunc(m_vTag);
+		}
 
 		//// 移動量に慣性を適用
 		//MoveInertia(m_fMoveInertia);
@@ -281,7 +298,18 @@ void Player::LateUpdate(void)
 		temp.y = 30.0f;
 		temp.z *= 20.0f;
 
-		//vTag.y = -10.0f;
+
+		// 設置座標の算出
+		m_vPosGage = D3DXVECTOR3(m_mtxWorld._11, m_mtxWorld._12, m_mtxWorld._13);
+		D3DXVec3Normalize(&m_vPosGage, &m_vPosGage);
+
+		// 設置場所を調整してプレイヤーPosにオフセット
+		m_vPosGage.x = m_vPos.x + m_vPosGage.x * PLAYER_WEAPON_SET_XZ;
+		m_vPosGage.z = m_vPos.z + m_vPosGage.z * PLAYER_WEAPON_SET_XZ;
+		m_vPosGage.y = m_vPos.y + PLAYER_GAGE_HEIGHT;
+
+
+
 
 
 		// カメラをAtをモデルに設定
@@ -347,64 +375,80 @@ void Player::Action(void)
 		// アニメーションビットパターンを初期化
 		m_dwAnim = 0x00000000l;	// 初期化
 
+		// ダメージ処理
+		Damage();
+
 		if (CheckJoyconSize(4) || (CheckJoyconSize(2) && m_nNum == 0))
 		{
 			D3DXVECTOR3 jcL, jcR;
 			jcL = GetJoyconAccel(0 + m_nNum * 2);
 			jcR = GetJoyconAccel(1 + m_nNum * 2);
 
-			bGuard = false;
-
 			// アタック処理
 			if (jcL.y > PLAYER_MARGIN_ATTACK)
 			{
+				// ウェポンが正常にセットされていたら
 				if (pWeapon[TYPE_LEFT])
 				{
-					D3DXVECTOR3 moveTmp = D3DXVECTOR3(m_mtxWorld._31, m_mtxWorld._32, m_mtxWorld._33);
-					D3DXVec3Normalize(&moveTmp, &moveTmp);
-
-					if (pWeapon[TYPE_LEFT]->Set(m_vPos, -moveTmp))
-					{
-						m_dwAnim |= PLAYER_ANIM_ATK_LEFT;
-						m_nCoolDown = PLAYER_ATTACK_CD;
-						JcRumble(0 + m_nNum * 2, 100, 1);
-						return;
-					}
+					// アタックを実行
+					Attack(TYPE_LEFT);
 				}
 			}
 			if (jcR.y > PLAYER_MARGIN_ATTACK)
 			{
+				// ウェポンが正常にセットされていたら
 				if (pWeapon[TYPE_RIGHT])
 				{
-					D3DXVECTOR3 moveTmp = D3DXVECTOR3(m_mtxWorld._31, m_mtxWorld._32, m_mtxWorld._33);
-					D3DXVec3Normalize(&moveTmp, &moveTmp);
+					// アタックを実行
+					Attack(TYPE_RIGHT);
+				}
+			}
 
-					if (pWeapon[TYPE_RIGHT]->Set(m_vPos, -moveTmp))
+			// アタックフラグが立っていればアニメーションビットを立てる
+			if (m_stAcCD[AC_ATTACK_LEFT].bFlag) m_dwAnim |= PLAYER_ANIM_ATK_LEFT;
+			else if (m_stAcCD[AC_ATTACK_RIGHT].bFlag)m_dwAnim |= PLAYER_ANIM_ATK_RIGHT;
+
+			// ガード中でなければ
+			if (!m_stAcCD[AC_GURAD].bFlag)
+			{
+				// ウェポンを遠隔操作
+				pWeapon[TYPE_LEFT]->Remote(jcL.z);
+				pWeapon[TYPE_RIGHT]->Remote(jcR.z);
+			}
+
+			if (!m_stAcCD[AC_ATTACK].bFlag)
+			{
+				// ガード処理
+				if (jcL.z < -PLAYER_MARGIN_GUARD && jcR.z > PLAYER_MARGIN_GUARD)
+				{
+					// ガードフラグとカウントフラグが false ならば
+					if (!m_stAcCD[AC_GURAD].bUse && !m_stAcCD[AC_GURAD].bFlag)
 					{
-						m_dwAnim |= PLAYER_ANIM_ATK_RIGHT;
-						m_nCoolDown = PLAYER_ATTACK_CD;
-						JcRumble(1 + m_nNum * 2, 100, 1);
-						return;
+						// カウント開始
+						m_stAcCD[AC_GURAD].bFlag = true;
+						// カウント値を設定
+						m_stAcCD[AC_GURAD].nCnt = PLAYER_GUARD_COUNT;
+					}
+					// 使用フラグが true ならば
+					if (m_stAcCD[AC_GURAD].bUse)
+					{
+						// ガードアニメーションをセット
+						m_dwAnim |= PLAYER_ANIM_GUARD;
+						// ダッシュをキャンセル
+						DashCancel();
 					}
 				}
-			}
-
-			// ガード処理
-			if (jcL.z < -PLAYER_MARGIN_GUARD && jcR.z > PLAYER_MARGIN_GUARD)
-			{
-				nGuardCount++;
-				if (nGuardCount > PLAYER_GUARD_COUNT)
+				else
 				{
-					bGuard = true;
-					m_dwAnim |= PLAYER_ANIM_GUARD;
-					m_nCoolDown = PLAYER_ATTACK_CD;
-					DashCancel();
+					// ガードフラグを false
+					m_stAcCD[AC_GURAD].bUse = false;
 				}
 			}
-			else
-			{
-				nGuardCount = 0;
 
+
+			// アタック・ガード中でなければ
+			if(!m_stAcCD[AC_GURAD].bUse && !m_stAcCD[AC_ATTACK].bFlag)
+			{
 				// 移動
 				bool bMove = false;
 				float fMoveAccel = 0.0f;
@@ -461,52 +505,11 @@ void Player::Action(void)
 					bDash = true;
 				}
 			}
-
 		}
 		// Joyconの接続がなかった場合はキーボード操作（移動のみ）
-		else if (m_nNum == 0)
+		else
 		{
-			m_fMoveAccel = 1.0f;
-			if (GetKeyboardPress(DIK_W))
-			{
-				MoveFunc(m_vRot.y + D3DX_PI);
-
-			}
-			else if (GetKeyboardPress(DIK_S))
-			{
-				MoveFunc(m_vRot.y);
-			}
-
-			if (GetKeyboardPress(DIK_A))
-			{
-				MoveFunc(m_vRot.y + D3DX_PI * 0.50f);
-			}
-			else if (GetKeyboardPress(DIK_D))
-			{
-				MoveFunc(m_vRot.y - D3DX_PI * 0.50f);
-			}
-		}
-		else if (m_nNum == 1)
-		{
-			m_fMoveAccel = 1.0f;
-			if (GetKeyboardPress(DIK_UP))
-			{
-				MoveFunc(m_vRot.y + D3DX_PI);
-
-			}
-			else if (GetKeyboardPress(DIK_DOWN))
-			{
-				MoveFunc(m_vRot.y);
-			}
-
-			if (GetKeyboardPress(DIK_LEFT))
-			{
-				MoveFunc(m_vRot.y + D3DX_PI * 0.50f);
-			}
-			else if (GetKeyboardPress(DIK_RIGHT))
-			{
-				MoveFunc(m_vRot.y - D3DX_PI * 0.50f);
-			}
+			ActionKeyboard();
 		}
 	}
 	Dash();
@@ -514,11 +517,157 @@ void Player::Action(void)
 } 
 
 //=============================================================================
+// 行動処理（キーボード）
+//=============================================================================
+void Player::ActionKeyboard(void)
+{
+	if (m_nNum == 0)
+	{
+		m_fMoveAccel = 1.0f;
+		if (GetKeyboardPress(DIK_W))
+		{
+			MoveFunc(m_vRot.y + D3DX_PI);
+		}
+		else if (GetKeyboardPress(DIK_S))
+		{
+			MoveFunc(m_vRot.y);
+		}
+
+		if (GetKeyboardPress(DIK_A))
+		{
+			MoveFunc(m_vRot.y + D3DX_PI * 0.50f);
+		}
+		else if (GetKeyboardPress(DIK_D))
+		{
+			MoveFunc(m_vRot.y - D3DX_PI * 0.50f);
+		}
+	}
+
+	else if (m_nNum == 1)
+	{
+		m_fMoveAccel = 1.0f;
+		if (GetKeyboardPress(DIK_UP))
+		{
+			MoveFunc(m_vRot.y + D3DX_PI);
+		}
+		else if (GetKeyboardPress(DIK_DOWN))
+		{
+			MoveFunc(m_vRot.y);
+		}
+
+		if (GetKeyboardPress(DIK_LEFT))
+		{
+			MoveFunc(m_vRot.y + D3DX_PI * 0.50f);
+		}
+		else if (GetKeyboardPress(DIK_RIGHT))
+		{
+			MoveFunc(m_vRot.y - D3DX_PI * 0.50f);
+		}
+	}
+}
+
+//=============================================================================
 // 移動処理
 //=============================================================================
 void Player::Move(void)
 {
 	m_vPos += m_vMove;
+}
+
+//=============================================================================
+// クールダウン処理
+//=============================================================================
+void Player::ActionCD(void)
+{
+	for (unsigned int i = 0; i < AC_MAX; i++)
+	{
+		// フラグが true ならば
+		if (m_stAcCD[i].bFlag)
+		{
+			// クールダウンを減算
+			m_stAcCD[i].nCnt--;
+			// 0を下回ったら
+			if(m_stAcCD[i].nCnt < 0)
+			{
+				// フラグを false
+				m_stAcCD[i].bFlag = false;
+				// 使用フラグを true
+				m_stAcCD[i].bUse = true;
+			}
+		}
+	}
+}
+
+//=============================================================================
+// ダメージ処理
+//=============================================================================
+void Player::Damage(void)
+{
+	// ダメージフラグが true ならば
+	if (m_stAcCD[AC_DAMAGE].bFlag)
+	{
+		// ダメージ１のアニメーションフラグを立てる
+		m_dwAnim |= PLAYER_ANIM_DAMAGE_1;
+	}
+}
+
+//=============================================================================
+// アタック処理関数
+//=============================================================================
+void Player::Attack(WeaponLR eLR)
+{
+	// 設置可能状態であれば
+	if (SetRightLeft((int)eLR + m_nNum * 2))
+	{
+		if (eLR == TYPE_LEFT)
+		{
+			// RIGHT のフラグが立っていたら false にする
+			if (m_stAcCD[AC_ATTACK_RIGHT].bFlag)m_stAcCD[AC_ATTACK_RIGHT].bFlag = false;
+			// フラグを立てる
+			m_stAcCD[AC_ATTACK_LEFT].bFlag = true;
+			// クールダウン値を代入
+			m_stAcCD[AC_ATTACK_LEFT].nCnt = PLAYER_ATTACK_CD_ANIM;
+		}
+		else if (eLR == TYPE_RIGHT)
+		{
+			// LEFT のフラグが立っていたら false にする
+			if (m_stAcCD[AC_ATTACK_LEFT].bFlag)m_stAcCD[AC_ATTACK_LEFT].bFlag = false;
+			// フラグを立てる
+			m_stAcCD[AC_ATTACK_RIGHT].bFlag = true;
+			// クールダウン値を代入
+			m_stAcCD[AC_ATTACK_RIGHT].nCnt = PLAYER_ATTACK_CD_ANIM;
+		}
+
+		// フラグを立てる
+		m_stAcCD[AC_ATTACK].bFlag = true;
+		// クールダウン値を代入
+		m_stAcCD[AC_ATTACK].nCnt = PLAYER_ATTACK_CD;
+
+		// 設置座標の算出
+		D3DXVECTOR3 posTmp = D3DXVECTOR3(m_mtxWorld._11, m_mtxWorld._12, m_mtxWorld._13);
+		D3DXVec3Normalize(&posTmp, &posTmp);
+
+		// RIGHT の場合は設置posが反対側
+		if (eLR == TYPE_RIGHT)posTmp *= -1.0f;
+
+		// 設置場所を調整してプレイヤーPosにオフセット
+		posTmp.x = m_vPos.x + posTmp.x * PLAYER_WEAPON_SET_XZ;
+		posTmp.z = m_vPos.z + posTmp.z * PLAYER_WEAPON_SET_XZ;
+		posTmp.y = m_vPos.y + PLAYER_WEAPON_SET_HEIGHT;
+
+		// 移動ベクトルの算出
+		D3DXVECTOR3 moveTmp = m_vTag;
+		moveTmp.y += PLAYER_HEIGHT_HIT;
+		moveTmp = moveTmp - posTmp;
+		D3DXVec3Normalize(&moveTmp, &moveTmp);
+
+		// ウェポンをセット
+		pWeapon[eLR]->Set(posTmp, moveTmp);
+
+		// Joycon振動
+		JcRumble((int)eLR + m_nNum * 2, 100, 1);
+		return;
+	}
 }
 
 //=============================================================================
@@ -542,6 +691,15 @@ void Player::Jump(void)
 }
 
 //=============================================================================
+// ダッシュキャンセル処理関数
+//=============================================================================
+void Player::DashCancel(void)
+{
+	bDash = false;
+	nDashCount = 0;
+}
+
+//=============================================================================
 // ダッシュ処理関数
 //=============================================================================
 void Player::Dash(void)
@@ -560,7 +718,7 @@ void Player::Dash(void)
 			// 直前の移動ベクトルを正規化
 			D3DXVec3Normalize(&m_vMove, &m_vMove);
 			// 正規化した移動ベクトルにダッシュ速度を乗算
-			m_vMove *= PLAYER_DASH;
+			m_vMove *= PLAYER_DASH_SPEED;
 			// 移動ベクトルを保管
 			vDash = m_vMove;
 			// ダッシュカウントをインクリメント
@@ -573,11 +731,10 @@ void Player::Dash(void)
 			// ダッシュカウントをインクリメント
 			nDashCount++;
 			// ダッシュカウントが指定値以上の場合はダッシュ終了
-			if (nDashCount > 20)
+			if (nDashCount > PLAYER_DASH_TIME)
 			{
 				bDash = false;
 				nDashCount = 0;
-				m_nCoolDown = PLAYER_DASH_CD;
 			}
 		}
 		ChangeAnimSpeed(PLAYER_ANIM_SPEED_DASH);
@@ -586,15 +743,6 @@ void Player::Dash(void)
 	{
 		ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
 	}
-}
-
-//=============================================================================
-// ダッシュキャンセル処理関数
-//=============================================================================
-void Player::DashCancel(void)
-{
-	bDash = false;
-	nDashCount = 0;
 }
 
 
@@ -612,7 +760,8 @@ void Player::MoveFunc(float fAngle)
 //=============================================================================
 void Player::RotFunc(D3DXVECTOR3 vTag)
 {
-	D3DXVECTOR3 vecTemp;
+	D3DXVECTOR3		vecTemp;
+	float			fRotTemp;
 	//vecTemp.x = vTag.x - m_vPos.x;
 	//vecTemp.z = vTag.z - m_vPos.z;
 
@@ -628,17 +777,22 @@ void Player::RotFunc(D3DXVECTOR3 vTag)
 
 	// 角度計算
 	//m_vRotDest.y = atan2(vecTemp.x, vecTemp.z);
-	m_vRot.y = atan2(vecTemp.x, vecTemp.z);
+	fRotTemp = atan2(vecTemp.x, vecTemp.z);
 
 	//
 	//// 回転先と現在の角度差を計算
 	//float fRotDiff;
 	//fRotDiff = m_vRotDest.y - m_vRot.y;
-	//fRotDiff = PiCalculate180(fRotDiff);
+
+	fRotTemp -= m_vRot.y;
+	fRotTemp = PiCalculate180(fRotTemp);
+
+
+	m_vRot.y += fRotTemp * PLAYER_ROT_INERTIA;
 
 	//// 角度差を適用
 	//m_vRot.y += fRotDiff * 0.02f;
-	//m_vRot.y = PiCalculate180(m_vRot.y);
+	m_vRot.y = PiCalculate180(m_vRot.y);
 
 }
 
@@ -681,8 +835,11 @@ void Player::ChangeAnimSpeed(FLOAT AnimSpeed)
 void Player::SetAnim(void)
 {
 	// 優先順位ごとに if 分岐
-	// 最後までモーションさせたいものにはウェイト値を設定
-	if (PLAYER_ANIM_GUARD & m_dwAnim)
+	if (PLAYER_ANIM_DAMAGE_1 & m_dwAnim)
+	{
+		ChangeAnim(DAMAGE_1, PLAYER_ANIM_WEIGHT_DAMAGE);
+	}
+	else if (PLAYER_ANIM_GUARD & m_dwAnim)
 	{
 		ChangeAnim(GUARD_CON, PLAYER_ANIM_WEIGHT_GUARD);
 	}
@@ -729,6 +886,15 @@ void Player::MoveLimit(void)
 	fLimit = PLANE_SIZE_Y * PLANE_Y_MAX;
 	if (m_vPos.z > fLimit) m_vPos.z = fLimit;
 	if (m_vPos.z < -fLimit)m_vPos.z = -fLimit;
+}
+
+//=============================================================================
+// 座標初期化処理
+//=============================================================================
+void Player::InitPos(void)
+{
+	if (m_nNum == 0)m_vPos = PLAYER_POS;
+	else m_vPos = PLAYER_POS * -1.0f;
 }
 
 

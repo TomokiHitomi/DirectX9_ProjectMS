@@ -15,11 +15,10 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-#define CHARACTER_FIREMAN			("test1.X")
-//#define CHARACTER_FIREMAN			("data/MODEL/Yuko.x")
-#define CHARACTER_DOCTOR			("test1.X")
-#define CHARACTER_PASTRY			("data/MODEL/hackadollMMD.x")
-#define CHARACTER_IDOL				("data/MODEL/Yuko.x")
+#define CHARACTER_FIREMAN			("Idol.X")
+#define CHARACTER_PASTRY			("Idol.X")
+#define CHARACTER_IDOL				("Idol.X")
+#define CHARACTER_DOCTOR			("Idol.X")
 
 //*****************************************************************************
 // 構造体定義
@@ -34,9 +33,9 @@ public:
 	enum TYPE
 	{	// プレイヤー管理
 		FIREMAN,
-		DOCTOR,
 		PASTRY,
 		IDOL,
+		DOCTOR,
 		TYPE_MAX
 	};
 	CSkinMesh	*m_CSkinMesh[TYPE_MAX];	// スキンメッシュ格納用

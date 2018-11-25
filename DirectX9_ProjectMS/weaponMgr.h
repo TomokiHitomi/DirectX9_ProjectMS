@@ -16,19 +16,18 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-////// モデル
-//#define	WEAPON_MODEL_TEST	"data/MODEL/cube.x"	// 読み込むモデル名
-//#define	WEAPON_TEXTURE_TEST	"data/TEXTURE/white_1x1.png"	// 読み込むモデル名
-//
-//#define	WEAPON_SCL			(1.0f)			// 読み込むモデル名
-//#define	WEAPON_SCL_VEC3		(D3DXVECTOR3(WEAPON_SCL,WEAPON_SCL,WEAPON_SCL))			// 読み込むモデル名
-//
-//#define WEAPON_TIME_MAX		(120)
-//
-//#define WEAPON_MOVE_SPEED	(5)
-
 #define	WEAPON_MODEL_BEATER	"data/MODEL/Weapon/泡立て器.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_BEATER_SCL		(21.0f)
+
 #define	WEAPON_MODEL_BOWL	"data/MODEL/Weapon/ボウル.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_BOWL_SCL		(18.0f)
+
+#define	WEAPON_MODEL_MIC	"mic.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_MIC_SCL		(1.8f)
+
+#define	WEAPON_MODEL_CDCASE	"CDCase.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_CDCASE_SCL		(15.0f)
+
 
 //*****************************************************************************
 // 構造体定義
@@ -44,6 +43,8 @@ public:
 	{
 		BEATER,
 		BOWL,
+		MIC,
+		CDCASE,
 		MAX
 	};
 private:

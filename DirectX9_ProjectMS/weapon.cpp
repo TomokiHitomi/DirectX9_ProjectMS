@@ -47,11 +47,16 @@ Weapon::Weapon(CXModel* XModel)
 	vShot = ZERO_D3DXVECTOR3;
 	vRemote = ZERO_D3DXVECTOR3;
 
+	fRemote = 0.0f;
+
 	// ワールド行列を初期化
 	D3DXMatrixIdentity(&mtxWorld);
 
 	// 生存タイマーを初期化
 	nTime = 0;
+
+	// 回転設定
+	bRot = false;
 
 	// 使用フラグ
 	bUse = false;
@@ -75,8 +80,17 @@ void Weapon::Update(void)
 		if (nTime < WEAPON_TIME_MAX)
 		{
 			vPos += vMove * WEAPON_MOVE_SPEED;
-			// ワールド変換
-			WorldConvertAxis(&mtxWorld, vPos, vMove, UP_D3DXVECTOR3, vScl);
+
+			// ワールド変換（回転あり・なし）
+			if (bRot)
+			{
+				// 回転ありの場合は vRot に回転量を加算
+				vRot.x += WEAPON_ROT_SPEED;
+				vRot.z += WEAPON_ROT_SPEED * 0.1f;
+				WorldConvert(&mtxWorld, vPos, vRot, vScl);
+			}
+			else WorldConvertAxis(&mtxWorld, vPos, vMove, UP_D3DXVECTOR3, vScl);
+
 			SAFE_UPDATE(pXModel);
 			nTime++;
 		}
@@ -87,7 +101,7 @@ void Weapon::Update(void)
 	}
 
 #ifdef _DEBUG
-		PrintDebugProc("Use [%d]\n",bUse);
+		PrintDebugProc("Use [%d] Remote[%f]\n",bUse, fRemote);
 		PrintDebugProc("Pos [%f,%f,%f]\n", vPos.x, vPos.y, vPos.z);
 		PrintDebugProc("Move[%f,%f,%f]\n", vMove.x, vMove.y, vMove.z);
 		PrintDebugProc("\n");
@@ -101,17 +115,36 @@ void Weapon::Draw(void)
 {
 	if (bUse)
 	{
-		if (pXModel != NULL)
+		if (nTime > 0)
 		{
-			LPDIRECT3DDEVICE9 pDevice = GetDevice();
-			//// 両面描画する
-			//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-			// モデルを描画
-			pXModel->Draw(mtxWorld);
-			//// 裏面をカリングに戻す
-			//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+			if (pXModel != NULL)
+			{
+				LPDIRECT3DDEVICE9 pDevice = GetDevice();
+				//// 両面描画する
+				//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+				// モデルを描画
+				pXModel->Draw(mtxWorld);
+				//// 裏面をカリングに戻す
+				//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+			}
 		}
 	}
+}
+
+//=============================================================================
+// スケール設定処理
+//=============================================================================
+void Weapon::SetScl(float fScl)
+{
+	vScl = D3DXVECTOR3(fScl, fScl, fScl);
+}
+
+//=============================================================================
+// 回転設定処理
+//=============================================================================
+void Weapon::SetRot(bool bUse)
+{
+	bRot = bUse;
 }
 
 //=============================================================================
@@ -119,31 +152,49 @@ void Weapon::Draw(void)
 //=============================================================================
 bool Weapon::Set(D3DXVECTOR3 pos, D3DXVECTOR3 shot)
 {
-	if (!bUse)
-	{
-		nTime = 0;
-		vPos = pos;
-		vPos.y += WEAPON_HEIGHT;
+	nTime = 0;
+	vPos = pos;
+	fRemote = 0.0f;
+	vShot = shot;
+	vMove = vShot;
+	bUse = true;
 
-		vShot = shot;
-		vMove = vShot;
-		bUse = true;
-
-		D3DXVECTOR3 vUp = UP_D3DXVECTOR3;
-		CrossProduct(&vRemote, &vUp, &vShot);
-
-		return true;
-	}
-	return false;
+	D3DXVECTOR3 vUp = UP_D3DXVECTOR3;
+	CrossProduct(&vRemote, &vShot, &vUp);
+	return true;
 }
 
 //=============================================================================
-// 設置処理
+// 遠隔操作処理
 //=============================================================================
 void Weapon::Remote(float remote)
 {
-	//D3DXVECTOR3 
-	//vMove = D3DXVec3Normalize()
-	////vMove 
-	////vRemote = remote;
+	if (bUse)
+	{
+		// リモート開始時間を上回っていれば
+		if (nTime > WEAPON_REMOTE_TIME)
+		{
+			// リモート値（加速度値）を補正
+			remote *= WEAPON_REMOTE_CORRECTION;
+
+			//// １フレームあたりに代入できる時間に補正
+			//if (remote > WEAPON_REMOTE_ADD_MAX) remote = WEAPON_REMOTE_ADD_MAX;
+			//else if (remote < -WEAPON_REMOTE_ADD_MAX) remote = -WEAPON_REMOTE_ADD_MAX;
+
+			//// リモート値を加算
+			//fRemote += remote;
+
+			//// 最大値以内に補正
+			//if (fRemote > WEAPON_REMOTE_MAX) fRemote = WEAPON_REMOTE_MAX;
+			//else if (fRemote < -WEAPON_REMOTE_MAX) fRemote = -WEAPON_REMOTE_MAX;
+
+			vMove += vRemote * remote;
+
+
+			// 射出ベクトルと補正したリモートベクトルを足して移動量に代入
+			//vMove = vShot + (vRemote * (fRemote));
+			// 移動量を正規化
+			D3DXVec3Normalize(&vMove, &vMove);
+		}
+	}
 }

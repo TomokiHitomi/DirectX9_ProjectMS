@@ -30,7 +30,7 @@ private:
 	// シェーダー関連
 	LPD3DXEFFECT		pEffect;
 
-	LPDIRECT3DTEXTURE9	pTexture;		// テクスチャへのポインタ
+	LPDIRECT3DTEXTURE9	*ppTexture;		// テクスチャへのポインタ
 	LPD3DXMESH			pMesh;			// メッシュ情報へのポインタ
 	LPD3DXBUFFER		pBuffMat;		// マテリアル情報へのポインタ
 	DWORD				dwNumMat;		// マテリアル情報の数

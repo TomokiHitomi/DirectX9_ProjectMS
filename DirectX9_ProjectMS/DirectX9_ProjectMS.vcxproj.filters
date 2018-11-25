@@ -52,6 +52,9 @@
     <Filter Include="ソース ファイル\Object\Ui">
       <UniqueIdentifier>{fcd40a12-db45-4fbf-b825-31d9c2aa95cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Object\Character">
+      <UniqueIdentifier>{e5b8d15b-9dbf-4f17-bc10-f9af4d15abc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -189,17 +192,11 @@
     <ClInclude Include="include\Effekseer\EffekseerRendererDX9.h">
       <Filter>ソース ファイル\Include\Effekseer</Filter>
     </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
     <ClInclude Include="SkinMeshX.h">
       <Filter>ソース ファイル\Model</Filter>
     </ClInclude>
     <ClInclude Include="select.h">
       <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="character.h">
-      <Filter>ソース ファイル\Object</Filter>
     </ClInclude>
     <ClInclude Include="particle.h">
       <Filter>ソース ファイル\Effect</Filter>
@@ -264,6 +261,12 @@
     <ClInclude Include="gray.h">
       <Filter>ソース ファイル\Object\Ui</Filter>
     </ClInclude>
+    <ClInclude Include="character.h">
+      <Filter>ソース ファイル\Object\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>ソース ファイル\Object\Character</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -311,9 +314,6 @@
     <ClCompile Include="object.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
     <ClCompile Include="skydome.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
@@ -349,9 +349,6 @@
     </ClCompile>
     <ClCompile Include="select.cpp">
       <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="character.cpp">
-      <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
     <ClCompile Include="particle.cpp">
       <Filter>ソース ファイル\Effect</Filter>
@@ -415,6 +412,12 @@
     </ClCompile>
     <ClCompile Include="gray.cpp">
       <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="character.cpp">
+      <Filter>ソース ファイル\Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>ソース ファイル\Object\Character</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

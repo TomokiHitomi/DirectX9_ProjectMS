@@ -127,6 +127,8 @@
 #define ANIM_PATTERN_NUM_SELECT				(TEXTURE_SELECT00_PATTERN_DIVIDE_X*TEXTURE_SELECT00_PATTERN_DIVIDE_Y)		// アニメーションパターン数 (*34)
 #define TIME_ANIMATION_SELECT				(4)																		// アニメーションの切り替わるカウント (*34)
 #define NUM_SELECT							(10)
+#define NUM_SELECT_MAX						(4)
+
 //=============================================================================
 //
 //SELECT構造体
@@ -134,6 +136,16 @@
 //=============================================================================
 class Selectface : public ObjectManager
 {
+private:
+	enum SELECT_PLAYER
+	{
+		SELECT_1P,
+		SELECT_2P,
+		SELECT_MAX
+	};
+	// 決定フラグ
+	bool bSelect[SELECT_MAX];
+
 public:
 	struct SelectParts
 	{
@@ -148,7 +160,6 @@ public:
 
 	SelectParts Select[NUM_SELECT];
 
-
 	HRESULT MakeVertexSelect(int CreateSelectCount);
 	HRESULT Init(void);
 	void Uninit(void);
@@ -158,6 +169,10 @@ public:
 	void SetTextureSelect(int CreateSelectCount);
 	Selectface();
 	~Selectface();
+
+private:
+	void SetChar(void);
+	int SearchChar(int* nSMP);
 };
 
 

@@ -8,7 +8,9 @@
 #include "input.h"
 #include "rightleft.h"
 #include "character.h"
+#include "object.h"
 #include <math.h>
+
 // デバッグ用
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -305,4 +307,44 @@ HRESULT Rightleft::MakeVertexRightleft(int i)
 	RightleftObj[i].vertexWk[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
 	return S_OK;
+}
+
+//=============================================================================
+// 使用フラグ設定・取得メソッド
+//=============================================================================
+bool Rightleft::Set(int nLR)
+{
+	// 使用フラグが true
+	if (RightleftObj[nLR].Nowselect)
+	{
+		// リキャスト中なので false を返す
+		return false;
+	}
+	// 使用フラグが false
+	else
+	{
+		// 使用フラグを true
+		RightleftObj[nLR].Nowselect = true;
+		// カラーを 0 に設定
+		RightleftObj[nLR].Color = 0;
+		// true を返す
+		return true;
+	}
+}
+
+//=============================================================================
+// 使用フラグの設定・取得
+//=============================================================================
+bool SetRightLeft(int nLR)
+{	
+	// ObjectManager から Rightleft のポインタを取得
+	Rightleft* pRightleft = ObjectManager::GetObjectPointer<Rightleft>(ObjectManager::RIGHTLEFT);
+	// ポインタが NULL でなければ
+	if (pRightleft != NULL)
+	{
+		// Set メソッドの戻り値を返す
+		return pRightleft->Set(nLR);
+	}
+	// ポインタ NULL ならば false を返す
+	return false;
 }

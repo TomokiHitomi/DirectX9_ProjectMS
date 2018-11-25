@@ -27,7 +27,7 @@ public:
 	~TitleScene(void);
 	void Update(void);
 	void Draw(void);
-	void DemoRestart(void);
+	void SceneChange(void);
 };
 
 //*****************************************************************************

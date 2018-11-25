@@ -12,6 +12,8 @@
 #include "object.h"
 #include "gage3d.h"
 #include "gage.h"
+#include "plane.h"
+#include "calculate.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -21,6 +23,8 @@
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
+void MoveLimit(D3DXVECTOR3 pos);
+bool CheckHitBoxToPos(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, D3DXVECTOR2 size1);
 
 //=============================================================================
 // 当たり判定関数
@@ -44,14 +48,71 @@ void ChackHit(void)
 				if (CheckHitBC(pPlayer->GetPosWeapon((Player::WeaponLR)j), vTarget,
 					PLAYER_SIZE_HIT, PLAYER_SIZE_WEAPON))
 				{
+					// ターゲットのゲージHPを減算
 					ObjectManager::GetObjectPointer<Gage3d>(ObjectManager::GAGE3D)->DamegeReduce(PLAYER_DAMAGE_NORMAL, pTarget->m_nNum);
 					ObjectManager::GetObjectPointer<Gage>(ObjectManager::GAGE)->DamegeReduce(PLAYER_DAMAGE_NORMAL, pTarget->m_nNum);
-					pPlayer->SubHp(PLAYER_DAMAGE_NORMAL);
+					// ターゲットのダメージフラグを立てる
+					pTarget->SetDamage();
+					// ターゲットのHPを減算
+					pTarget->SubHp(PLAYER_DAMAGE_NORMAL);
+					// プレイヤーのウェポンを false にする
 					pPlayer->pWeapon[(Player::WeaponLR)j]->SetUse(false);
 				}
+				// マップサイズとウェポン座標の当たり判定
+				bool bHit = CheckHitBoxToPos(ZERO_D3DXVECTOR3,
+					pPlayer->pWeapon[(Player::WeaponLR)j]->GetPos(),
+					D3DXVECTOR2(PLANE_SIZE_X * PLANE_X_MAX + CHECK_HIT_MARGIN_BP,
+						PLANE_SIZE_Y * PLANE_Y_MAX + CHECK_HIT_MARGIN_BP));
+				// マップの外側なら false
+				if (!bHit)pPlayer->pWeapon[(Player::WeaponLR)j]->SetUse(false);
 			}
 		}
 	}
+}
+
+//=============================================================================
+// 移動制限処理
+//=============================================================================
+void MoveLimit(D3DXVECTOR3 pos)
+{
+	float fLimit;
+	fLimit = PLANE_SIZE_X * PLANE_X_MAX;
+	if (pos.x > fLimit) pos.x = fLimit;
+	if (pos.x < -fLimit)pos.x = -fLimit;
+
+	fLimit = PLANE_SIZE_Y * PLANE_Y_MAX;
+	if (pos.z > fLimit) pos.z = fLimit;
+	if (pos.z < -fLimit)pos.z = -fLimit;
+}
+
+//=============================================================================
+// BBの判定関数
+//=============================================================================
+bool CheckHitBoxToPos(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, D3DXVECTOR2 size1)
+{
+	// 当たり判定の確認(BB)
+	if (((pos1.x + size1.x) > (pos2.x)) && ((pos2.x) > (pos1.x - size1.x))
+		&& ((pos1.z + size1.y) > (pos2.z)) && ((pos2.z) > (pos1.z - size1.y)))
+	{
+		// 当たり判定
+		return true;
+	}
+	return false;
+}
+
+//=============================================================================
+// BBの判定関数
+//=============================================================================
+bool CheckHitBB(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, D3DXVECTOR2 size1, D3DXVECTOR2 size2)
+{
+	// 当たり判定の確認(BB)
+	if (((pos1.x + size1.x) > (pos2.x - size2.x)) && ((pos2.x + size2.x) > (pos1.x - size1.x))
+		&& ((pos1.z + size1.y) > (pos2.z - size2.y)) && ((pos2.z + size2.y) > (pos1.z - size1.y)))
+	{
+		// 当たり判定
+		return true;
+	}
+	return false;
 }
 
 //=============================================================================

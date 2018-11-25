@@ -27,6 +27,7 @@
 #include "gray.h"
 #include "weaponMgr.h"
 #include "collision.h"
+
 /* デバッグ */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -50,14 +51,29 @@ extern SceneManager		g_cScene;				// Sceneマネージャ
 //=============================================================================
 void GameScene::Update(void)
 {
-	ObjectManager::UpdateAll();
 #ifdef _DEBUG
 	Debugtimer timer;
+#endif
+	if (!bPause)
+	{
+		ObjectManager::UpdateAll();
+	}
+	else
+	{
+		//ObjectManager::GetObjectPointer<>
+	}
+#ifdef _DEBUG
+	PrintDebugProc("【 UpdateALL 】\n");
+	PrintDebugProc("TIME:%f\n", timer.End());
+#endif
+
+#ifdef _DEBUG
+	Debugtimer timer2;
 #endif
 	ChackHit();
 #ifdef _DEBUG
 	PrintDebugProc("【 COLLISION 】\n");
-	PrintDebugProc("TIME:%f\n", timer.End());
+	PrintDebugProc("TIME:%f\n", timer2.End());
 #endif
 
 }

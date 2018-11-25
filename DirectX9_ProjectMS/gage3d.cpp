@@ -334,7 +334,7 @@ HRESULT Gage3d::Init()
 		Gage3dObj[i].Angle = TEXTURE_GAGE3D_ANGLE_X;
 		Gage3dObj[i].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		Gage3dObj[i].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		Gage3dObj[i].scl = D3DXVECTOR3(1.0, 1.0, 1.0);
+		Gage3dObj[i].scl = D3DXVECTOR3(GAGE3D_SCL, GAGE3D_SCL, GAGE3D_SCL);
 		Gage3dObj[i].NowHp = TEXTURE_GAGE3D_MAX_HP;
 		Gage3dObj[i].NowSkill = 0.0;
 		MakeVertexGage3d(i);
@@ -382,7 +382,7 @@ void Gage3d::Update(void)
 		if (i == 0 || i == 2 || i == 4 || i == 6 || i == 8 || i == 10 || i == 11 || i == 12 || i == 13 )
 		{
 			D3DXVECTOR3 temp1p;
-			temp1p = ObjectManager::GetObjectPointer<PlayerManager>(ObjectManager::PLAYER)->GetPlayer(PlayerManager::PLAYER_1P)->GetPos();
+			temp1p = ObjectManager::GetObjectPointer<PlayerManager>(ObjectManager::PLAYER)->GetPlayer(PlayerManager::PLAYER_1P)->GetPosGage();
 			Gage3dObj[i].pos.x = temp1p.x;
 			Gage3dObj[i].pos.y = temp1p.y + TEXTURE_GAGE3D_POSITION0UP_Y;
 			Gage3dObj[i].pos.z = temp1p.z;
@@ -395,7 +395,7 @@ void Gage3d::Update(void)
 		if (i == 1 || i == 3 || i == 5 || i == 7 || i == 9 || i == 14 || i == 15 || i == 16 || i == 17)
 		{
 			D3DXVECTOR3 temp2p;
-			temp2p = ObjectManager::GetObjectPointer<PlayerManager>(ObjectManager::PLAYER)->GetPlayer(PlayerManager::PLAYER_2P)->GetPos();
+			temp2p = ObjectManager::GetObjectPointer<PlayerManager>(ObjectManager::PLAYER)->GetPlayer(PlayerManager::PLAYER_2P)->GetPosGage();
 			Gage3dObj[i].pos.x = temp2p.x;
 			Gage3dObj[i].pos.y = temp2p.y + TEXTURE_GAGE3D_POSITION0UP_Y;
 			Gage3dObj[i].pos.z = temp2p.z;

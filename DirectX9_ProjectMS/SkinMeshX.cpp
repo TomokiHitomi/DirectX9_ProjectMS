@@ -573,7 +573,6 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, D3DXMESHCONTAINER
 	pDevice->GetTransform(D3DTS_VIEW, &mtxView);
 	pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjection);
 
-
 	//スキンメッシュの描画
 	if (pMeshContainer->pSkinInfo != NULL)
 	{

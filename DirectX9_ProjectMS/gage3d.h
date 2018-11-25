@@ -290,6 +290,9 @@
 #define OFFSET_DAMEGE_000						(2)
 #define DAMEGE_000								(10)
 #define SKILL_000								(1)
+
+#define GAGE3D_SCL								(0.7f)
+
 //=============================================================================
 //
 //SELECTç\ë¢ëÃ

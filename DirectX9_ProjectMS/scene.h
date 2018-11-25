@@ -32,13 +32,18 @@
 class BaseScene
 {
 public:
+	static bool bSceneChange;
+	static bool bPause;
 	virtual void Update(void) = 0;
 	virtual void Draw(void) = 0;
 	virtual ~BaseScene() {};
+	BaseScene() { bSceneChange = false; bPause = false;}
 };
 
 class SceneManager
 {
+private:
+	static int m_nSelectChar[2];
 public:
 	// シーンリスト
 	enum SCENE 	{TITLE, SELECT, GAME, RESULT, MAX	};
@@ -65,13 +70,13 @@ public:
 	// マルチ画面取得
 	static int			GetMulti(void) { return m_nMulti; }
 
+	// 選択キャラクターの設定・取得
+	static void SetSelectChar(int nPlayer,int nSelect) { m_nSelectChar[nPlayer] = nSelect; }
+	static int GetSelectChar(int nPlayer) { return m_nSelectChar[nPlayer]; }
 
 	// SEの終了関数
 	static void			EndSeS(void);
 
-	static int			m_nTotalBurnBonus;
-	static int			m_nTotalWetBonus;
-	static int			m_nTotalBurnChain;
 
 private:
 	static BaseScene		*m_pScene;			// 現在のシーン
