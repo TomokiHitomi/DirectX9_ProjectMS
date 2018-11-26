@@ -88,10 +88,6 @@ HRESULT Rightleft::Init()
 		}
 		if (i == 2)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_RIGHTLEFT_000, &RightleftObj[i].pD3DTexture);
-			}
 			RightleftObj[i].Pos = D3DXVECTOR3(TEXTURE_RIGHTLEFT_POSITION002_X, TEXTURE_RIGHTLEFT_POSITION002_Y, 0.0f);
 			RightleftObj[i].TextureSize = D3DXVECTOR2(TEXTURE_RIGHTLEFT_SIZE002_X, TEXTURE_RIGHTLEFT_SIZE002_Y);
 			RightleftObj[i].Count = 0;
@@ -99,14 +95,10 @@ HRESULT Rightleft::Init()
 			RightleftObj[i].Color = 255;
 			RightleftObj[i].Use = true;
 			RightleftObj[i].Nowselect = false;
-			RightleftObj[i].Texture = RightleftObj[i].pD3DTexture;
+			RightleftObj[i].Texture = RightleftObj[0].pD3DTexture;
 		}
 		if (i == 3)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_RIGHTLEFT_001, &RightleftObj[i].pD3DTexture);
-			}
 			RightleftObj[i].Pos = D3DXVECTOR3(TEXTURE_RIGHTLEFT_POSITION003_X, TEXTURE_RIGHTLEFT_POSITION003_Y, 0.0f);
 			RightleftObj[i].TextureSize = D3DXVECTOR2(TEXTURE_RIGHTLEFT_SIZE003_X, TEXTURE_RIGHTLEFT_SIZE003_Y);
 			RightleftObj[i].Count = 0;
@@ -114,7 +106,7 @@ HRESULT Rightleft::Init()
 			RightleftObj[i].Color = 255;
 			RightleftObj[i].Use = true;
 			RightleftObj[i].Nowselect = false;
-			RightleftObj[i].Texture = RightleftObj[i].pD3DTexture;
+			RightleftObj[i].Texture = RightleftObj[1].pD3DTexture;
 		}
 		RightleftObj[i].Scale = D3DXVECTOR2(TEXTURE_RIGHTLEFT_SCALE_X, TEXTURE_RIGHTLEFT_SCALE_Y);
 		RightleftObj[i].Angle = TEXTURE_RIGHTLEFT_ANGLE_X;
@@ -131,10 +123,21 @@ void Rightleft::Uninit(void)
 {
 	for (int i = 0; i < NUM_RIGHTLEFT; i++)
 	{
-		if (RightleftObj[i].pD3DTexture != NULL)	// (*31)
-		{	// テクスチャの開放
-			RightleftObj[i].pD3DTexture->Release();
-			RightleftObj[i].pD3DTexture = NULL;
+		if (i == 0||i==2)
+		{
+			if (RightleftObj[0].pD3DTexture != NULL)	// (*31)
+			{	// テクスチャの開放
+				RightleftObj[0].pD3DTexture->Release();
+				RightleftObj[0].pD3DTexture = NULL;
+			}
+		}
+		if (i == 1 || i == 3)
+		{
+			if (RightleftObj[1].pD3DTexture != NULL)	// (*31)
+			{	// テクスチャの開放
+				RightleftObj[1].pD3DTexture->Release();
+				RightleftObj[1].pD3DTexture = NULL;
+			}
 		}
 	}
 
@@ -239,8 +242,8 @@ void Rightleft::Draw(void)
 	{
 		if (RightleftObj[i].Use == true)
 		{
-			pDevice->SetTexture(0, RightleftObj[i].pD3DTexture);
-
+			if (i == 0 || i == 2) { pDevice->SetTexture(0, RightleftObj[0].pD3DTexture); }
+			if (i == 1 || i == 3) { pDevice->SetTexture(0, RightleftObj[1].pD3DTexture); }
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, RightleftObj[i].vertexWk, sizeof(VERTEX_2D));

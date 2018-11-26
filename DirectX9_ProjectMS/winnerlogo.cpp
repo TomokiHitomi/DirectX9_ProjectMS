@@ -71,10 +71,6 @@ HRESULT Winnerlogo::Init()
 		}
 		if (i == 1)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_WINNERLOGO_001, &WinnerlogoObj[i].pD3DTexture);
-			}
 			WinnerlogoObj[i].Pos = D3DXVECTOR3(TEXTURE_WINNERLOGO_POSITION001_X, TEXTURE_WINNERLOGO_POSITION001_Y, 0.0f);
 			WinnerlogoObj[i].TextureSize = D3DXVECTOR2(TEXTURE_WINNERLOGO_SIZE001_X, TEXTURE_WINNERLOGO_SIZE001_Y);
 			WinnerlogoObj[i].Count = 0;
@@ -82,7 +78,7 @@ HRESULT Winnerlogo::Init()
 			WinnerlogoObj[i].Color = 255;
 			WinnerlogoObj[i].Use = false;
 			WinnerlogoObj[i].Nowselect = false;
-			WinnerlogoObj[i].Texture = WinnerlogoObj[i].pD3DTexture;
+			WinnerlogoObj[i].Texture = WinnerlogoObj[0].pD3DTexture;
 		}
 		WinnerlogoObj[i].Scale = D3DXVECTOR2(TEXTURE_WINNERLOGO_SCALE_X, TEXTURE_WINNERLOGO_SCALE_Y);
 		WinnerlogoObj[i].Angle = TEXTURE_WINNERLOGO_ANGLE_X;
@@ -99,10 +95,13 @@ void Winnerlogo::Uninit(void)
 {
 	for (int i = 0; i < NUM_WINNERLOGO; i++)
 	{
-		if (WinnerlogoObj[i].pD3DTexture != NULL)	// (*31)
-		{	// テクスチャの開放
-			WinnerlogoObj[i].pD3DTexture->Release();
-			WinnerlogoObj[i].pD3DTexture = NULL;
+		if (i == 0 || i == 1)
+		{
+			if (WinnerlogoObj[0].pD3DTexture != NULL)	// (*31)
+			{	// テクスチャの開放
+				WinnerlogoObj[0].pD3DTexture->Release();
+				WinnerlogoObj[0].pD3DTexture = NULL;
+			}
 		}
 	}
 
@@ -153,8 +152,10 @@ void Winnerlogo::Draw(void)
 	{
 		if (WinnerlogoObj[i].Use == true)
 		{
-			pDevice->SetTexture(0, WinnerlogoObj[i].pD3DTexture);
-
+			if (i == 0 || i == 1)
+			{
+				pDevice->SetTexture(0, WinnerlogoObj[0].pD3DTexture);
+			}
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, WinnerlogoObj[i].vertexWk, sizeof(VERTEX_2D));

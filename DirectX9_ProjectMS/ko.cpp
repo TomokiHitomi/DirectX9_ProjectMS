@@ -71,10 +71,6 @@ HRESULT Ko::Init()
 		}
 		if (i == 1)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_KO_001, &KoObj[i].pD3DTexture);
-			}
 			KoObj[i].Pos = D3DXVECTOR3(TEXTURE_KO_POSITION001_X, TEXTURE_KO_POSITION001_Y, 0.0f);
 			KoObj[i].TextureSize = D3DXVECTOR2(TEXTURE_KO_SIZE001_X, TEXTURE_KO_SIZE001_Y);
 			KoObj[i].Count = 0;
@@ -82,7 +78,7 @@ HRESULT Ko::Init()
 			KoObj[i].Color = 255;
 			KoObj[i].Use = false;
 			KoObj[i].Nowselect = false;
-			KoObj[i].Texture = KoObj[i].pD3DTexture;
+			KoObj[i].Texture = KoObj[0].pD3DTexture;
 		}
 		KoObj[i].Scale = D3DXVECTOR2(TEXTURE_KO_SCALE_X, TEXTURE_KO_SCALE_Y);
 		KoObj[i].Angle = TEXTURE_KO_ANGLE_X;
@@ -99,10 +95,13 @@ void Ko::Uninit(void)
 {
 	for (int i = 0; i < NUM_KO; i++)
 	{
-		if (KoObj[i].pD3DTexture != NULL)	// (*31)
-		{	// テクスチャの開放
-			KoObj[i].pD3DTexture->Release();
-			KoObj[i].pD3DTexture = NULL;
+		if (i == 0 || i == 1)
+		{
+			if (KoObj[0].pD3DTexture != NULL)	// (*31)
+			{	// テクスチャの開放
+				KoObj[0].pD3DTexture->Release();
+				KoObj[0].pD3DTexture = NULL;
+			}
 		}
 	}
 
@@ -161,8 +160,10 @@ void Ko::Draw(void)
 	{
 		if (KoObj[i].Use == true)
 		{
-			pDevice->SetTexture(0, KoObj[i].pD3DTexture);
-
+			if (i == 0 || i == 1)
+			{
+				pDevice->SetTexture(0, KoObj[0].pD3DTexture);
+			}
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, KoObj[i].vertexWk, sizeof(VERTEX_2D));
