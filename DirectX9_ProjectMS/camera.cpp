@@ -99,10 +99,12 @@ void CameraManager::Update(void)
 		if (pCamera[i] != NULL)
 		{
 			pCamera[i]->Update();
+#ifdef _DEBUG
 			PrintDebugProc("Multi%d  PortX:%d PortW:%d PortExt:%d\n",
 				i + 1, pCamera[i]->dvPort.X, pCamera[i]->dvPort.Width
 			, pCamera[i]->bExtension);
 			PrintDebugProc("\n");
+#endif
 		}
 	}
 #ifdef _DEBUG
