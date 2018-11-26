@@ -65,6 +65,7 @@ public:
 		ROUNDLOGO,
 		TIME,
 		TIMEUPLOGO,
+		TITLECAMERA,
 		WEAPON
 	};
 

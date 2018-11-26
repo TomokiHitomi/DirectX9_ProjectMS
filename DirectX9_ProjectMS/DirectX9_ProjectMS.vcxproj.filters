@@ -273,6 +273,9 @@
     <ClInclude Include="grayko.h">
       <Filter>ソース ファイル\Object\Ui</Filter>
     </ClInclude>
+    <ClInclude Include="titlecamera.h">
+      <Filter>ソース ファイル\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -430,6 +433,9 @@
     </ClCompile>
     <ClCompile Include="grayko.cpp">
       <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="titlecamera.cpp">
+      <Filter>ソース ファイル\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

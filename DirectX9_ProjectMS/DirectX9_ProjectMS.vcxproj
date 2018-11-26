@@ -239,6 +239,7 @@
     <ClInclude Include="time.h" />
     <ClInclude Include="timeuplogo.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="titlecamera.h" />
     <ClInclude Include="titlelogo.h" />
     <ClInclude Include="titlemesh.h" />
     <ClInclude Include="weapon.h" />
@@ -293,6 +294,7 @@
     <ClCompile Include="time.cpp" />
     <ClCompile Include="timeuplogo.cpp" />
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="titlecamera.cpp" />
     <ClCompile Include="titlelogo.cpp" />
     <ClCompile Include="titlemesh.cpp" />
     <ClCompile Include="weapon.cpp" />
