@@ -54,11 +54,13 @@
 
 // ステータス
 #define PLAYER_HP_MAX				(100)
+#define PLAYER_SP_MAX				(100)
+#define PLAYER_SP_CHARGE_AUTO		(0.05f)
+#define PLAYER_SP_CHARGE_ATTACK		(5.0f)
 
 // ダメージ
-#define PLAYER_DAMAGE_NORMAL		(5.0f)
-#define PLAYER_DAMAGE_THROW			(10.0f)
-#define PLAYER_DAMAGE_SP			(30.0f)
+#define PLAYER_DAMAGE_NORMAL		(6.0f)
+#define PLAYER_DAMAGE_SP			(25.0f)
 #define PLAYER_DAMAGE_CD			(10)
 
 // アタック
@@ -74,7 +76,7 @@
 // ジャンプ
 #define PLAYER_GRAVITY				(0.2f)
 #define PLAYER_VELOCITY				(3.0f)
-#define PLAYER_JUMP_CD				(10)			// クールダウン
+#define PLAYER_JUMP_CD				(15)			// クールダウン
 
 // ダッシュ
 #define PLAYER_DASH_CD				(10)
@@ -83,7 +85,8 @@
 
 // 当たり判定
 #define PLAYER_SIZE_HIT				(5.0f)
-#define PLAYER_SIZE_WEAPON			(1.0f)
+#define PLAYER_SIZE_WEAPON			(5.0f)
+#define PLAYER_SIZE_WEAPON_SP		(10.0f)
 #define PLAYER_HEIGHT_HIT			(7.0f)
 
 /***** アニメーション *****/
@@ -115,7 +118,8 @@
 #define PLAYER_ANIM_WEIGHT_JUMP		(0.5f)
 
 /***** UI *****/
-#define PLAYER_GAGE_HEIGHT			(-13.0f)
+#define PLAYER_GAGE_SET_XZ			(3.0f)
+#define PLAYER_GAGE_HEIGHT			(-11.0f)
 
 //*****************************************************************************
 // 構造体定義
@@ -132,9 +136,12 @@ public:
 	{
 		TYPE_LEFT,
 		TYPE_RIGHT,
+		TYPE_SP,
+		TYPE_TEMP,
 		TYPE_MAX
 	};
 	Weapon*		pWeapon[WeaponLR::TYPE_MAX];
+	WeaponLR	eLRSp;
 
 	Gage*		pGage;
 	Gage3d*		pGage3d;
@@ -203,7 +210,10 @@ private:
 
 	// ステータス
 	float				m_fHp;
+	float				m_fSp;
 	float				m_fGuardHp;
+	bool				m_bSpMax;
+	bool				m_bSpStandby;
 
 	// ジャンプ
 	float	fVelocity;				// 加速度
@@ -215,57 +225,46 @@ private:
 	int				nDashCount;
 	bool			bDash;
 
-	void	ActionCD(void);
-	void	Move(void);
-	void	Action(void);
-	void	ActionKeyboard(void);
+	void ActionCD(void);
+	void ChangeWeaponSp(void);
 
-	void	Damage(void);
-	void	Dash(void);
-	void	DashCancel(void);
-	void	Guard(void);
-	void	Attack(WeaponLR eLR);
-	void	Jump(void);
-	void	MoveFunc(float);
-	void	MoveInertia(float fInertia);
-	void	RotFunc(D3DXVECTOR3);
-	void	SetNum(int nNum) { m_nNum = nNum; }
-
-	void ChangeAnim(DWORD dwAnime, FLOAT fShift);
-	void ChangeAnimSpeed(FLOAT _AnimSpeed);
+	void Move(void);
+	void Action(void);
+	void ActionKeyboard(void);
+	void Damage(void);
+	void Dash(void);
+	void DashCancel(void);
+	void Guard(void);
+	void Attack(WeaponLR eLR);
+	void Jump(void);
+	void MoveFunc(float);
+	void MoveInertia(float fInertia);
+	void RotFunc(D3DXVECTOR3);
+	void SetNum(int nNum) { m_nNum = nNum; }
 	void SetAnim(void);
 	void Player::MoveLimit(void);
 
 public:
-	bool SubHp(float fDamage) 
-	{
-		m_fHp -= fDamage;
-		if (m_fHp <= 0.0f) return true;
-		return false;
-	}
-	bool SubHpGuard(float fDamage)
-	{
-		m_fGuardHp -= fDamage;
-		if (m_fGuardHp < 0.0f)
-		{
-			m_fGuardHp = 0.0f;
-			return true;
-		}
-		return false;
-	}
+	void ChangeAnim(DWORD dwAnime, FLOAT fShift);
+	void ChangeAnimSpeed(FLOAT _AnimSpeed);
+	void InitStatus(void);
+	void RestoreWeaponSp(void);
+	void AddSp(float fSp);
+	void ResetSp(void);
+	bool SubHp(float fDamage);
+	bool SubHpGuard(float fDamage);
 	void SetTag(D3DXVECTOR3 vTag) { m_vTag = vTag; }
 	void SetPos(D3DXVECTOR3 pos) { m_vPos = pos; }
-	void SetScl(D3DXVECTOR3 scl) { m_vScl = scl; }
-	void SetDamage(void)
-	{ 
-		m_stAction[AC_DAMAGE].bFlag = true;
-		m_stAction[AC_DAMAGE].nCnt = PLAYER_DAMAGE_CD;
-	}
+	void SetScl(float scl) { m_vScl = D3DXVECTOR3(scl, scl, scl); }
+	void SetDamage(void);
 	void InitPos(void);
+	float GetHp(void) { return m_fHp; }
 	D3DXVECTOR3 GetPos(void) { return m_vPos; }
 	D3DXVECTOR3 GetPosGage(void) { return m_vPosGage; }
 	D3DXVECTOR3 GetTag(void) { return m_vTag; }
 	D3DXVECTOR3 GetPosWeapon(WeaponLR eLR) { return pWeapon[eLR]->GetPos(); }
+	Weapon* GetWeapon(WeaponLR eLR) { return pWeapon[eLR]; }
+
 	// 追記は逆順（新しいものから格納される）
 	enum PLAYER_ANIME
 	{	// アニメーション
@@ -324,6 +323,7 @@ public:
 		}	
 	}
 
+	static void Reset(void);
 	static Player *GetPlayer(PLAYER player) { return m_pPlayer[player]; }
 	static D3DXVECTOR3 GetPos(PLAYER player) { return m_pPlayer[player]->GetPos(); }
 	static D3DXVECTOR3 GetPosWeapon(PLAYER player, Player::WeaponLR eLR)
@@ -339,17 +339,27 @@ class Fireman : public Player
 public:
 	Fireman() : Player()
 	{
+		// スケールをセット
+		SetScl(CHARACTER_FIREMAN_SCL);
+
 		// ウェポンをセット
 		pWeapon[Player::TYPE_LEFT] =
 			WeaponManager::SetWeapon(WeaponManager::EXTINGUISHER);
-		pWeapon[Player::TYPE_LEFT]->SetRot(true);
-		pWeapon[Player::TYPE_LEFT]->SetScl(WEAPON_MODEL_EXTINGUISHER_SCL);
+		pWeapon[Player::TYPE_LEFT]->SetStatus(
+			PLAYER_SIZE_WEAPON, PLAYER_DAMAGE_NORMAL,
+			WEAPON_MODEL_EXTINGUISHER_SCL, true);
 
 		pWeapon[Player::TYPE_RIGHT] =
 			WeaponManager::SetWeapon(WeaponManager::HELMET);
-		pWeapon[Player::TYPE_RIGHT]->SetRot(true);
-		pWeapon[Player::TYPE_RIGHT]->SetScl(WEAPON_MODEL_HELMET_SCL);
+		pWeapon[Player::TYPE_RIGHT]->SetStatus(
+			PLAYER_SIZE_WEAPON, PLAYER_DAMAGE_NORMAL,
+			WEAPON_MODEL_HELMET_SCL, true);
 
+		pWeapon[Player::TYPE_SP] =
+			WeaponManager::SetWeapon(WeaponManager::FIREENGIN);
+		pWeapon[Player::TYPE_SP]->SetStatus(
+			PLAYER_SIZE_WEAPON_SP, PLAYER_DAMAGE_SP,
+			WEAPON_MODEL_FIREENGIN_SCL, false);
 	}
 	~Fireman();
 
@@ -360,9 +370,8 @@ class Doctor : public Player
 public:
 	Doctor() : Player()
 	{
-		// モデルの初期化
-		//m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN, 0.05f);
-		//m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN);
+		// スケールをセット
+		SetScl(CHARACTER_DOCTOR_SCL);
 	}
 	~Doctor()
 	{
@@ -375,6 +384,9 @@ class Pastry : public Player
 public:
 	Pastry() : Player()
 	{
+		// スケールをセット
+		SetScl(CHARACTER_PASTRY_SCL);
+
 		// ウェポンをセット
 		pWeapon[Player::TYPE_LEFT] =
 			WeaponManager::SetWeapon(WeaponManager::BEATER);
@@ -395,16 +407,27 @@ class Idol : public Player
 public:
 	Idol() : Player()
 	{
+		// スケールをセット
+		SetScl(CHARACTER_IDOL_SCL);
+
 		// ウェポンをセット
 		pWeapon[Player::TYPE_LEFT] =
 			WeaponManager::SetWeapon(WeaponManager::CDCASE);
-		pWeapon[Player::TYPE_LEFT]->SetRot(true);
-		pWeapon[Player::TYPE_LEFT]->SetScl(WEAPON_MODEL_CDCASE_SCL);
+		pWeapon[Player::TYPE_LEFT]->SetStatus(
+			PLAYER_SIZE_WEAPON, PLAYER_DAMAGE_NORMAL,
+			WEAPON_MODEL_CDCASE_SCL, true);
 
 		pWeapon[Player::TYPE_RIGHT] =
 			WeaponManager::SetWeapon(WeaponManager::MIC);
-		pWeapon[Player::TYPE_RIGHT]->SetRot(true);
-		pWeapon[Player::TYPE_RIGHT]->SetScl(WEAPON_MODEL_MIC_SCL);
+		pWeapon[Player::TYPE_RIGHT]->SetStatus(
+			PLAYER_SIZE_WEAPON, PLAYER_DAMAGE_NORMAL,
+			WEAPON_MODEL_MIC_SCL, true);
+
+		pWeapon[Player::TYPE_SP] =
+			WeaponManager::SetWeapon(WeaponManager::KARAAGE);
+		pWeapon[Player::TYPE_SP]->SetStatus(
+			PLAYER_SIZE_WEAPON_SP, PLAYER_DAMAGE_SP,
+			WEAPON_MODEL_KARAAGE_SCL, false);
 	}
 	~Idol();
 

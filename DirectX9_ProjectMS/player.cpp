@@ -16,6 +16,7 @@
 #include "weaponMgr.h"
 #include "plane.h"
 #include "rightleft.h"
+#include "game.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -53,8 +54,8 @@ PlayerManager::PlayerManager(void)
 		m_pPlayer[i] = NULL;
 	}
 
-	Set<Fireman>(PLAYER_1P, CharacterManager::FIREMAN);
-	Set<Idol>(PLAYER_2P, CharacterManager::IDOL);
+	Set<Fireman>(PLAYER_2P, CharacterManager::FIREMAN);
+	Set<Idol>(PLAYER_1P, CharacterManager::IDOL);
 }
 
 //=============================================================================
@@ -74,16 +75,6 @@ PlayerManager::~PlayerManager(void)
 //=============================================================================
 void PlayerManager::Update(void)
 {
-	//if (GetKeyboardTrigger(DIK_L))
-	//{
-	//	m_pPlayer[PLAYER_1P]->m_CSkinMesh = m_CSkinMesh[FIREMAN];
-	//	m_pPlayer[PLAYER_1P]->m_CSkinMesh->ChangeAnim(Player::PLAYER_ANIME_RUN, 0.05f);
-	//}
-	//if (GetKeyboardTrigger(DIK_K))
-	//{
-	//	m_pPlayer[PLAYER_1P]->m_CSkinMesh = m_CSkinMesh[TEST2];
-	//	m_pPlayer[PLAYER_1P]->m_CSkinMesh->ChangeAnim(Player::PLAYER_ANIME_RUN, 0.05f);
-	//}
 	for (unsigned int i = 0; i < PLAYER_MAX; i++)
 	{
 		if (m_pPlayer[i] != NULL)
@@ -144,14 +135,61 @@ void PlayerManager::SetTag(void)
 	}
 }
 
+//=============================================================================
+// リセット処理
+//=============================================================================
+void PlayerManager::Reset(void)
+{
+	for (unsigned int i = 0; i < PLAYER_MAX; i++)
+	{
+		if (m_pPlayer[i] != NULL)
+		{
+			if (m_pPlayer[i]->eLRSp != Player::TYPE_TEMP)
+			{
+				// ウェポン復元処理
+				m_pPlayer[i]->RestoreWeaponSp();
+			}
+			// ステータスの初期化
+			m_pPlayer[i]->InitStatus();
+			// 座標の初期化
+			m_pPlayer[i]->InitPos();
+			// ゲージの初期化
+			// 構造上、どちらかのゲージを初期化すれば良いが回しておく
+			m_pPlayer[i]->pGage->InitStatus();
+			m_pPlayer[i]->pGage3d->InitStatus();
+		}
+	}
+}
+
+
 
 //=============================================================================
 // コンストラクタ（初期化処理）
 //=============================================================================
 Player::Player(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	// ステータス初期化
+	InitStatus();
 
+	// スキンメッシュポインタを NULL に初期化
+	m_CSkinMesh = NULL;
+
+	// ウェポンの数だけ NULL に初期化
+	for (unsigned int i = 0; i < TYPE_MAX; i++)
+	{
+		pWeapon[i] = NULL;
+	}
+
+	// ゲージのポインタを初期化
+	pGage = NULL;
+	pGage3d = NULL;
+}
+
+//=============================================================================
+// ステータス初期化処理
+//=============================================================================
+void Player::InitStatus(void)
+{
 	// 各プロパティの初期化
 	m_vPos = ZERO_D3DXVECTOR3;
 	m_vRot = ZERO_D3DXVECTOR3;
@@ -169,6 +207,9 @@ Player::Player(void)
 
 	// ステータス
 	m_fHp = PLAYER_HP_MAX;
+	m_fSp = 0;
+	m_bSpMax = false;
+	m_bSpStandby = false;
 
 	// クールダウン値
 	m_nCoolDown = 0;
@@ -198,17 +239,8 @@ Player::Player(void)
 	m_fRiseSpeed = 0.0f;
 	m_bUse = true;
 
-	m_CSkinMesh = NULL;
-
-	// ウェポンの数だけ NULL に初期化
-	for (unsigned int i = 0; i < 2; i++)
-	{
-		pWeapon[i] = NULL;
-	}
-
-	// ゲージのポインタを初期化
-	pGage = NULL;
-	pGage3d = NULL;
+	// SPアタック用 TEMP で初期化
+	eLRSp = TYPE_TEMP;
 }
 
 //=============================================================================
@@ -241,17 +273,20 @@ void Player::Update(void)
 		if (pGage3d == NULL)
 			pGage3d = ObjectManager::GetObjectPointer<Gage3d>(ObjectManager::GAGE3D);
 
-		// 行動処理
-		Action();
+		if (GameScene::GetGameFlag())
+		{
+			// 行動処理
+			Action();
 
-		// クールダウン処理
-		ActionCD();
+			// クールダウン処理
+			ActionCD();
 
-		// 移動処理
-		Move();
+			// 移動処理
+			Move();
 
-		// アニメーションを設定
-		SetAnim();
+			// アニメーションを設定
+			SetAnim();
+		}
 
 		if (m_CSkinMesh != NULL)
 		{
@@ -272,6 +307,9 @@ void Player::LateUpdate(void)
 {
 	if (m_bUse)
 	{
+		// SPの自動チャージ
+		AddSp(PLAYER_SP_CHARGE_AUTO);
+
 		// 移動制限処理
 		MoveLimit();
 
@@ -309,13 +347,13 @@ void Player::LateUpdate(void)
 		temp.z *= 20.0f;
 
 
-		// 設置座標の算出
+		// ゲージ設置座標の算出
 		m_vPosGage = D3DXVECTOR3(m_mtxWorld._11, m_mtxWorld._12, m_mtxWorld._13);
 		D3DXVec3Normalize(&m_vPosGage, &m_vPosGage);
 
-		// 設置場所を調整してプレイヤーPosにオフセット
-		m_vPosGage.x = m_vPos.x + m_vPosGage.x * PLAYER_WEAPON_SET_XZ;
-		m_vPosGage.z = m_vPos.z + m_vPosGage.z * PLAYER_WEAPON_SET_XZ;
+		// ゲージ設置場所を調整してプレイヤーPosにオフセット
+		m_vPosGage.x = m_vPos.x + m_vPosGage.x * PLAYER_GAGE_SET_XZ;
+		m_vPosGage.z = m_vPos.z + m_vPosGage.z * PLAYER_GAGE_SET_XZ;
 		m_vPosGage.y = m_vPos.y + PLAYER_GAGE_HEIGHT;
 
 
@@ -361,148 +399,145 @@ void Player::Draw(void)
 //=============================================================================
 void Player::Action(void)
 {
-	// クールダウン値を減算
-	m_nCoolDown--;
-	if (m_nCoolDown < 0)
+	// 移動量を初期化
+	m_vMove = ZERO_D3DXVECTOR3;
+
+	// アニメーションビットパターンを初期化
+	m_dwAnim = 0x00000000l;	// 初期化
+
+	// ダメージ処理
+	Damage();
+
+	if (CheckJoyconSize(4) || (CheckJoyconSize(2) && m_nNum == 0))
 	{
-		// 移動量を初期化
-		m_vMove = ZERO_D3DXVECTOR3;
+		D3DXVECTOR3 jcL, jcR;
+		jcL = GetJoyconAccel(0 + m_nNum * 2);
+		jcR = GetJoyconAccel(1 + m_nNum * 2);
 
-		// アニメーションビットパターンを初期化
-		m_dwAnim = 0x00000000l;	// 初期化
-
-		// ダメージ処理
-		Damage();
-
-		if (CheckJoyconSize(4) || (CheckJoyconSize(2) && m_nNum == 0))
+		// アタック処理
+		if (jcL.y > PLAYER_MARGIN_ATTACK)
 		{
-			D3DXVECTOR3 jcL, jcR;
-			jcL = GetJoyconAccel(0 + m_nNum * 2);
-			jcR = GetJoyconAccel(1 + m_nNum * 2);
-
-			// アタック処理
-			if (jcL.y > PLAYER_MARGIN_ATTACK)
+			// ウェポンが正常にセットされていたら
+			if (pWeapon[TYPE_LEFT])
 			{
-				// ウェポンが正常にセットされていたら
-				if (pWeapon[TYPE_LEFT])
-				{
-					// アタックを実行
-					Attack(TYPE_LEFT);
-				}
-			}
-			if (jcR.y > PLAYER_MARGIN_ATTACK)
-			{
-				// ウェポンが正常にセットされていたら
-				if (pWeapon[TYPE_RIGHT])
-				{
-					// アタックを実行
-					Attack(TYPE_RIGHT);
-				}
-			}
-
-			// アタックフラグが立っていればアニメーションビットを立てる
-			if (m_stAction[AC_ATTACK_LEFT].bFlag) m_dwAnim |= PLAYER_ANIM_ATK_LEFT;
-			else if (m_stAction[AC_ATTACK_RIGHT].bFlag)m_dwAnim |= PLAYER_ANIM_ATK_RIGHT;
-
-			// ガード中でなければ
-			if (!m_stAction[AC_GURAD_WU].bFlag)
-			{
-				// ウェポンを遠隔操作
-				pWeapon[TYPE_LEFT]->Remote(jcL.z);
-				pWeapon[TYPE_RIGHT]->Remote(jcR.z);
-			}
-
-			if (!m_stAction[AC_ATTACK].bFlag)
-			{
-				// ガード処理
-				if (jcL.z < -PLAYER_MARGIN_GUARD && jcR.z > PLAYER_MARGIN_GUARD)
-				{
-					Guard();
-				}
-				else
-				{
-					// ガードフラグを false
-					m_stAction[AC_GURAD_WU].bUse = false;
-				}
-			}
-
-			// アタック・ガード中でなければ
-			if(!m_stAction[AC_GURAD_WU].bUse && !m_stAction[AC_GURAD_CD].bFlag && !m_stAction[AC_ATTACK].bFlag)
-			{
-				// ガードの耐久値回復
-				m_fGuardHp += PLAYER_GUARD_HP_RECOVER;
-				if (m_fGuardHp > PLAYER_GUARD_HP_MAX) m_fGuardHp = PLAYER_GUARD_HP_MAX;
-
-				// 移動
-				bool bMove = false;
-				float fMoveAccel = 0.0f;
-				// 前
-				if (jcL.y > PLAYER_MARGIN_MOVE && jcR.y > PLAYER_MARGIN_MOVE)
-				{
-					m_fMoveAccel = CompHigh(jcL.y, jcR.y);
-					fMoveAccel = m_fMoveAccel;
-					MoveFunc(m_vRot.y + D3DX_PI);
-					m_dwAnim |= PLAYER_ANIM_FRONT;
-				}
-				// 後
-				else if (jcL.y < -PLAYER_MARGIN_MOVE && jcR.y < -PLAYER_MARGIN_MOVE)
-				{
-					m_fMoveAccel = CompHigh(jcL.y, jcR.y);
-					fMoveAccel = m_fMoveAccel;
-					MoveFunc(m_vRot.y);
-					m_dwAnim |= PLAYER_ANIM_BACK;
-				}
-				// 左
-				if (jcL.z > PLAYER_MARGIN_MOVE && jcR.z > PLAYER_MARGIN_MOVE)
-				{
-					m_fMoveAccel = CompHigh(jcL.z, jcR.z);
-					MoveFunc(m_vRot.y + D3DX_PI * 0.50f);
-					if (fMoveAccel < m_fMoveAccel)
-					{
-						m_dwAnim |= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
-						m_dwAnim ^= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
-						m_dwAnim |= PLAYER_ANIM_LEFT;
-					}
-				}
-				// 右
-				else if (jcL.z < -PLAYER_MARGIN_MOVE && jcR.z < -PLAYER_MARGIN_MOVE)
-				{
-					m_fMoveAccel = CompHigh(jcL.z, jcR.z);
-					MoveFunc(m_vRot.y - D3DX_PI * 0.50f);
-					if (fMoveAccel < m_fMoveAccel)
-					{
-						m_dwAnim |= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
-						m_dwAnim ^= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
-						m_dwAnim |= PLAYER_ANIM_RIGHT;
-					}
-				}
-
-				// ジャンプ
-				if (JcTriggered(1 + m_nNum * 2, JC_R_BUTTON_R))
-				{
-					if (!bJump)
-					{
-						// カウント開始
-						m_stAction[AC_JUMP_CD].bFlag = true;
-						// カウント値を設定
-						m_stAction[AC_JUMP_CD].nCnt = PLAYER_JUMP_CD;
-					}
-
-					bJump = true;
-				}
-
-				// ダッシュ
-				if (JcTriggered(0 + m_nNum * 2, JC_L_BUTTON_L))
-				{
-					bDash = true;
-				}
+				// アタックを実行
+				Attack(TYPE_LEFT);
 			}
 		}
-		// Joyconの接続がなかった場合はキーボード操作（移動のみ）
-		else
+		if (jcR.y > PLAYER_MARGIN_ATTACK)
 		{
-			ActionKeyboard();
+			// ウェポンが正常にセットされていたら
+			if (pWeapon[TYPE_RIGHT])
+			{
+				// アタックを実行
+				Attack(TYPE_RIGHT);
+			}
 		}
+
+		// アタックフラグが立っていればアニメーションビットを立てる
+		if (m_stAction[AC_ATTACK_LEFT].bFlag) m_dwAnim |= PLAYER_ANIM_ATK_LEFT;
+		else if (m_stAction[AC_ATTACK_RIGHT].bFlag)m_dwAnim |= PLAYER_ANIM_ATK_RIGHT;
+
+		// ガード中でなければ
+		if (!m_stAction[AC_GURAD_WU].bFlag)
+		{
+			// ウェポンを遠隔操作
+			pWeapon[TYPE_LEFT]->Remote(jcL.z);
+			pWeapon[TYPE_RIGHT]->Remote(jcR.z);
+		}
+
+		if (!m_stAction[AC_ATTACK].bFlag)
+		{
+			// ガード処理
+			if (jcL.z < -PLAYER_MARGIN_GUARD && jcR.z > PLAYER_MARGIN_GUARD)
+			{
+				Guard();
+			}
+			else
+			{
+				// ガードフラグを false
+				m_stAction[AC_GURAD_WU].bUse = false;
+			}
+		}
+
+		// アタック・ガード中でなければ
+		if(!m_stAction[AC_GURAD_WU].bUse && !m_stAction[AC_GURAD_CD].bFlag && !m_stAction[AC_ATTACK].bFlag)
+		{
+			// ガードの耐久値回復
+			m_fGuardHp += PLAYER_GUARD_HP_RECOVER;
+			if (m_fGuardHp > PLAYER_GUARD_HP_MAX) m_fGuardHp = PLAYER_GUARD_HP_MAX;
+
+			// 移動
+			bool bMove = false;
+			float fMoveAccel = 0.0f;
+			// 前
+			if (jcL.y > PLAYER_MARGIN_MOVE && jcR.y > PLAYER_MARGIN_MOVE)
+			{
+				m_fMoveAccel = CompHigh(jcL.y, jcR.y);
+				fMoveAccel = m_fMoveAccel;
+				MoveFunc(m_vRot.y + D3DX_PI);
+				m_dwAnim |= PLAYER_ANIM_FRONT;
+			}
+			// 後
+			else if (jcL.y < -PLAYER_MARGIN_MOVE && jcR.y < -PLAYER_MARGIN_MOVE)
+			{
+				m_fMoveAccel = CompHigh(jcL.y, jcR.y);
+				fMoveAccel = m_fMoveAccel;
+				MoveFunc(m_vRot.y);
+				m_dwAnim |= PLAYER_ANIM_BACK;
+			}
+			// 左
+			if (jcL.z > PLAYER_MARGIN_MOVE && jcR.z > PLAYER_MARGIN_MOVE)
+			{
+				m_fMoveAccel = CompHigh(jcL.z, jcR.z);
+				MoveFunc(m_vRot.y + D3DX_PI * 0.50f);
+				if (fMoveAccel < m_fMoveAccel)
+				{
+					m_dwAnim |= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
+					m_dwAnim ^= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
+					m_dwAnim |= PLAYER_ANIM_LEFT;
+				}
+			}
+			// 右
+			else if (jcL.z < -PLAYER_MARGIN_MOVE && jcR.z < -PLAYER_MARGIN_MOVE)
+			{
+				m_fMoveAccel = CompHigh(jcL.z, jcR.z);
+				MoveFunc(m_vRot.y - D3DX_PI * 0.50f);
+				if (fMoveAccel < m_fMoveAccel)
+				{
+					m_dwAnim |= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
+					m_dwAnim ^= PLAYER_ANIM_FRONT | PLAYER_ANIM_BACK;
+					m_dwAnim |= PLAYER_ANIM_RIGHT;
+				}
+			}
+
+			// ジャンプ
+			if (JcTriggered(1 + m_nNum * 2, JC_R_BUTTON_R))
+			{
+				if (!bJump)
+				{
+					// カウント開始
+					m_stAction[AC_JUMP_CD].bFlag = true;
+					// カウント値を設定
+					m_stAction[AC_JUMP_CD].nCnt = PLAYER_JUMP_CD;
+				}
+
+				bJump = true;
+			}
+
+			// ダッシュ
+			if (JcTriggered(0 + m_nNum * 2, JC_L_BUTTON_L))
+			{
+				bDash = true;
+			}
+		}
+		// SPアタック処理
+		ChangeWeaponSp();
+	}
+	// Joyconの接続がなかった場合はキーボード操作（移動のみ）
+	else
+	{
+		ActionKeyboard();
 	}
 	Dash();
 	Jump();
@@ -611,6 +646,23 @@ void Player::Attack(WeaponLR eLR)
 	// 設置可能状態であれば
 	if (SetRightLeft((int)eLR + m_nNum * 2))
 	{
+		// SPチャージ
+		AddSp(PLAYER_SP_CHARGE_ATTACK);
+
+		// SPアタックが準備済み
+		if (m_bSpStandby)
+		{
+			// Spを初期化
+			ResetSp();
+			// スタンバイフラグを false
+			m_bSpStandby = false;
+		}
+		else if (eLRSp != TYPE_TEMP)
+		{
+			// ウェポン復元処理
+			RestoreWeaponSp();
+		}
+
 		if (eLR == TYPE_LEFT)
 		{
 			// RIGHT のフラグが立っていたら false にする
@@ -656,11 +708,123 @@ void Player::Attack(WeaponLR eLR)
 		// ウェポンをセット
 		pWeapon[eLR]->Set(posTmp, moveTmp);
 
+
+
 		// Joycon振動
 		JcRumble((int)eLR + m_nNum * 2, 100, 1);
 		return;
 	}
 }
+
+//=============================================================================
+// SPウェポン変更処理
+//=============================================================================
+void Player::ChangeWeaponSp(void)
+{
+	// Spが最大値の場合
+	if (m_bSpMax && !m_bSpStandby)
+	{
+		// Joyconで
+		if (JcTriggered(0 + m_nNum * 2, JC_L_BUTTON_ZL))
+		{
+			// LEFTのポインタをテンポラリに保管
+			pWeapon[Player::TYPE_TEMP] = pWeapon[Player::TYPE_LEFT];
+			// LEFTにSPを接続
+			pWeapon[Player::TYPE_LEFT] = pWeapon[Player::TYPE_SP];
+			// 接続先を格納
+			eLRSp = TYPE_LEFT;
+			// スタンバイフラグを true
+			m_bSpStandby = true;
+		}
+		else if (JcTriggered(1 + m_nNum * 2, JC_R_BUTTON_ZR))
+		{
+			// RIGHTのポインタをテンポラリに保管
+			pWeapon[Player::TYPE_TEMP] = pWeapon[Player::TYPE_RIGHT];
+			// RIGHTにSPを接続
+			pWeapon[Player::TYPE_RIGHT] = pWeapon[Player::TYPE_SP];
+			// 接続先を格納
+			eLRSp = TYPE_RIGHT;
+			// スタンバイフラグを true
+			m_bSpStandby = true;
+		}
+	}
+}
+
+//=============================================================================
+// ウェポン復元処理
+//=============================================================================
+void Player::RestoreWeaponSp(void)
+{
+	// ウェポンのポインタを復元する
+	pWeapon[eLRSp] = pWeapon[Player::TYPE_TEMP];
+	// フラグを TEMP に戻す
+	eLRSp = TYPE_TEMP;
+}
+
+//=============================================================================
+// SP加算処理
+//=============================================================================
+void Player::AddSp(float fSp)
+{
+	m_fSp += fSp;
+	pGage->SkillAdd(fSp, m_nNum);
+	pGage3d->SkillAdd(fSp, m_nNum);
+	if (m_fSp >= PLAYER_SP_MAX)
+	{
+		m_fSp = PLAYER_SP_MAX;
+		if (!m_bSpMax)SetSe(SE_SP_MAX, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		m_bSpMax = true;
+		return;
+	}
+	m_bSpMax = false;
+}
+
+//=============================================================================
+// SPリセット
+//=============================================================================
+void Player::ResetSp(void)
+{
+	m_fSp = 0.0f;
+	pGage->SkillReduce(PLAYER_SP_MAX, m_nNum);
+	pGage3d->SkillReduce(PLAYER_SP_MAX, m_nNum);
+}
+
+//=============================================================================
+// HP減算処理
+//=============================================================================
+bool Player::SubHp(float fDamage)
+{
+	m_fHp -= fDamage;
+	// ターゲットのゲージHPを減算
+	pGage->DamegeReduce(fDamage, m_nNum);
+	pGage3d->DamegeReduce(fDamage, m_nNum);
+	if (m_fHp <= 0.0f) return true;
+	return false;
+}
+
+//=============================================================================
+// ガードHP減算処理
+//=============================================================================
+bool Player::SubHpGuard(float fDamage)
+{
+	m_fGuardHp -= fDamage;
+	if (m_fGuardHp < 0.0f)
+	{
+		m_fGuardHp = 0.0f;
+		return true;
+	}
+	return false;
+}
+
+//=============================================================================
+// ダメージクールダウン設定処理
+//=============================================================================
+void Player::SetDamage(void)
+{
+	m_stAction[AC_DAMAGE].bFlag = true;
+	m_stAction[AC_DAMAGE].nCnt = PLAYER_DAMAGE_CD;
+}
+
 
 //=============================================================================
 // ガード処理関数

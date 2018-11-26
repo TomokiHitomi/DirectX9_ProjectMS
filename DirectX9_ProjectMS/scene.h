@@ -44,6 +44,7 @@ class SceneManager
 {
 private:
 	static int m_nSelectChar[2];
+	static int m_nWinPlayer;
 public:
 	// シーンリスト
 	enum SCENE 	{TITLE, SELECT, GAME, RESULT, MAX	};
@@ -73,6 +74,10 @@ public:
 	// 選択キャラクターの設定・取得
 	static void SetSelectChar(int nPlayer,int nSelect) { m_nSelectChar[nPlayer] = nSelect; }
 	static int GetSelectChar(int nPlayer) { return m_nSelectChar[nPlayer]; }
+
+	// 勝利プレイヤーの設定・取得
+	static void SetWinPlayer(int nPlayer) { m_nWinPlayer = nPlayer; }
+	static int GetWinPlayer(void) { return m_nWinPlayer; }
 
 	// SEの終了関数
 	static void			EndSeS(void);

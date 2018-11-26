@@ -31,6 +31,8 @@
 #include "collision.h"
 #include "resultselect.h"
 #include "joycon.h"
+#include "scene.h"
+#include "time.h"
 
 /* デバッグ */
 #ifdef _DEBUG
@@ -48,16 +50,53 @@
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-extern SceneManager		g_cScene;				// Sceneマネージャ
+bool	GameScene::m_bGame = false;
+int		GameScene::m_nGameRound = 0;
+int		GameScene::m_nRoundWin = 0;
 
 //=============================================================================
 // 更新処理
 //=============================================================================
 void GameScene::Update(void)
 {
-#ifdef _DEBUG
-	Debugtimer timer;
-#endif
+	if (!m_bGame)
+	{
+		if (m_nGameCount == GAME_ROUND_START)
+		{
+			if (bSceneChange) SetFadeScene(SceneManager::RESULT);
+			else
+			{
+				if (Ko::GetUse())
+				{
+					ObjectManager::GetObjectPointer<Ko>(ObjectManager::KO)->Unset();
+				}
+
+				ObjectManager::GetObjectPointer<Time>(ObjectManager::TIME)->Reset();
+				PlayerManager::Reset();
+
+				Roundlogo* pRoundlogo = ObjectManager::GetObjectPointer<Roundlogo>(ObjectManager::ROUNDLOGO);
+				pRoundlogo->Set(m_nGameRound);
+			}
+		}
+		if (m_nGameCount > GAME_ROUND_START)
+		{
+			if (!bSceneChange)
+			{
+				Roundlogo* pRoundlogo = ObjectManager::GetObjectPointer<Roundlogo>(ObjectManager::ROUNDLOGO);
+				if (!pRoundlogo->GetUse()) 
+				{ 
+					m_bGame = true;
+					m_nGameCount = 0;
+					ObjectManager::GetObjectPointer<Time>(ObjectManager::TIME)->SetStart(true);
+				}
+			}
+		}
+		// ゲームカウントをインクリメント
+		m_nGameCount++;
+	}
+
+
+
 	// リザルトセレクトのポインタを取得
 	Resultselect* pResultselect = ObjectManager::GetObjectPointer<Resultselect>(ObjectManager::RESULTSELECT);
 
@@ -76,30 +115,42 @@ void GameScene::Update(void)
 		pResultselect->Update();
 	}
 
-	// ポーズ情報を取得
-	Pause();
-
-	// リザルトセレクトの使用フラグをポーズフラグと同期
-	for (int i = 0; i < NUM_RESULTSELECT; i++)
+	if (m_bGame)
 	{
+		if (ObjectManager::GetObjectPointer<Time>(ObjectManager::TIME)->GetEnd())
+		{
+			float fHp = 0.0f;
+			int nIdx = 0;
+			Player* pPlayer;
+			for (unsigned int i = 0; i < PlayerManager::PLAYER_MAX; i++)
+			{
+				pPlayer = PlayerManager::GetPlayer((PlayerManager::PLAYER)i);
+				if (pPlayer->GetHp() >= fHp)
+				{
+					fHp = pPlayer->GetHp();
+					nIdx = pPlayer->m_nNum;
+				}
+				pPlayer->ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
+				pPlayer->ChangeAnim(Player::IDOL, PLAYER_ANIM_WEIGHT_DAMAGE);
+			}
+			// 勝利プレイヤーを設定
+			GameScene::SetRoundWin(pPlayer->m_nNum);
+		}
+
+		// ポーズ情報を取得
+		Pause();
+
 		pGray->GrayObj[0].Use = bPause;
-		pResultselect->ResultselectObj[i].Use = bPause;
+		pResultselect->s_bUse = bPause;
+		// リザルトセレクトの使用フラグをポーズフラグと同期
+		for (int i = 0; i < NUM_RESULTSELECT; i++)
+		{
+			pResultselect->ResultselectObj[i].Use = bPause;
+		}
+
+		// 当たり判定
+		ChackHit();
 	}
-
-#ifdef _DEBUG
-	PrintDebugProc("【 UpdateALL 】\n");
-	PrintDebugProc("TIME:%f\n", timer.End());
-#endif
-
-#ifdef _DEBUG
-	Debugtimer timer2;
-#endif
-	ChackHit();
-#ifdef _DEBUG
-	PrintDebugProc("【 COLLISION 】\n");
-	PrintDebugProc("TIME:%f\n", timer2.End());
-#endif
-
 }
 
 //=============================================================================
@@ -133,6 +184,10 @@ void GameScene::Draw(void)
 //=============================================================================
 GameScene::GameScene(void)
 {
+	m_bGame = false;
+	m_nGameCount = 0;
+	m_nGameRound = 0;
+	m_nRoundWin = 0;
 	//new Copyright;
 	//new AirWaterFream;
 	//ObjectManager::CreateObject<Skydome>();
@@ -171,15 +226,30 @@ GameScene::~GameScene(void)
 }
 
 //=============================================================================
-// ゲーム停止メソッド
+// ラウンドの勝利プレイヤーを格納
 //=============================================================================
-bool GameScene::GameStop(void)
+void GameScene::SetRoundWin(int num)
 {
-	return 0;
+	ObjectManager::GetObjectPointer<Ko>(ObjectManager::KO)->Set(num);
+	m_nRoundWin += num;
+	if (m_nGameRound == 1)
+	{
+		if (m_nRoundWin == 0) { SceneManager::SetWinPlayer((int)GP1); bSceneChange = true; }
+		if (m_nRoundWin == 2) { SceneManager::SetWinPlayer((int)GP2); bSceneChange = true; }
+	}
+	else if (m_nGameRound == 2)
+	{
+		if (m_nRoundWin == 1) { SceneManager::SetWinPlayer((int)GP1); bSceneChange = true; }
+		if (m_nRoundWin == 2) { SceneManager::SetWinPlayer((int)GP2); bSceneChange = true; }
+	}
+
+	m_nGameRound++;
+	m_bGame = false;
 }
 
+
 //=============================================================================
-// の確認
+// ポーズの確認
 //=============================================================================
 void GameScene::Pause(void)
 {

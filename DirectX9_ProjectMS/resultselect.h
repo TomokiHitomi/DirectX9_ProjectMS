@@ -120,6 +120,14 @@ public:
 	void Draw(void);
 	Resultselect();
 	~Resultselect();
+
+	static bool s_bUse;
+	void Set(bool use)
+	{
+		for (int i = 0; i < NUM_RESULTSELECT; i++)
+			ResultselectObj[i].Use = use;
+		s_bUse = use;
+	}
 };
 
 

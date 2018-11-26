@@ -266,5 +266,21 @@ void Timeuplogo::TexTimeuplogo(int i,int flag)
 		TimeuplogoObj[i].vertexWk[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 		TimeuplogoObj[i].vertexWk[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 	}
+}
 
+//=============================================================================
+// タイムアップ設置処理
+//=============================================================================
+void Timeuplogo::Set(bool bUse)
+{
+	if (bUse)
+	{
+		TimeuplogoObj[0].Use = true;
+		TimeuplogoObj[0].Nowselect = 0;
+		TexTimeuplogo(0, TimeuplogoObj[0].Nowselect);
+	}
+	else
+	{
+		TimeuplogoObj[0].Use = false;
+	}
 }

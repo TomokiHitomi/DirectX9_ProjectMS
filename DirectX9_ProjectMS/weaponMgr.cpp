@@ -26,7 +26,7 @@
 //*****************************************************************************
 // ÉOÉçÅ[ÉoÉãïœêî
 //*****************************************************************************
-Weapon*		WeaponManager::pWeapon[4];
+Weapon*		WeaponManager::pWeapon[WEAPON_MAX];
 CXModel*	WeaponManager::pXModel[WeaponType::MAX];
 
 //=============================================================================
@@ -42,7 +42,7 @@ WeaponManager::WeaponManager(void)
 
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	for (unsigned int i = 0; i < 4; i++)
+	for (unsigned int i = 0; i < WEAPON_MAX; i++)
 	{
 		pWeapon[i] = NULL;
 	}
@@ -62,6 +62,8 @@ WeaponManager::WeaponManager(void)
 	pXModel[CDCASE]->Init(pDevice, WEAPON_MODEL_CDCASE, NULL);
 	pXModel[EXTINGUISHER]->Init(pDevice, WEAPON_MODEL_EXTINGUISHER, NULL);
 	pXModel[HELMET]->Init(pDevice, WEAPON_MODEL_HELMET, NULL);
+	pXModel[FIREENGIN]->Init(pDevice, WEAPON_MODEL_FIREENGIN, NULL);
+	pXModel[KARAAGE]->Init(pDevice, WEAPON_MODEL_KARAAGE, NULL);
 }
 
 //=============================================================================
@@ -69,7 +71,7 @@ WeaponManager::WeaponManager(void)
 //=============================================================================
 WeaponManager::~WeaponManager(void)
 {
-	for (unsigned int i = 0; i < 4; i++)
+	for (unsigned int i = 0; i < WEAPON_MAX; i++)
 	{
 		SAFE_DELETE(pWeapon[i]);
 	}
@@ -88,7 +90,7 @@ void WeaponManager::Update(void)
 #ifdef _DEBUG
 	PrintDebugProc("Åy Weapon Åz\n");
 #endif
-	for (unsigned int i = 0; i < 4; i++)
+	for (unsigned int i = 0; i < WEAPON_MAX; i++)
 	{
 		//SAFE_UPDATE(pWeapon[i]);
 		if (pWeapon[i] != NULL)
@@ -106,7 +108,7 @@ void WeaponManager::Update(void)
 //=============================================================================
 void WeaponManager::Draw(void)
 {
-	for (unsigned int i = 0; i < 4; i++)
+	for (unsigned int i = 0; i < WEAPON_MAX; i++)
 	{
 		//SAFE_DRAW(pWeapon[i]);
 		if (pWeapon[i] != NULL)
@@ -127,7 +129,7 @@ void WeaponManager::Draw(void)
 
 Weapon *WeaponManager::SetWeapon(WeaponManager::WeaponType eType)
 {
-	for (unsigned int i = 0; i < 4; i++)
+	for (unsigned int i = 0; i < WEAPON_MAX; i++)
 	{
 		if (pWeapon[i] == NULL)
 		{

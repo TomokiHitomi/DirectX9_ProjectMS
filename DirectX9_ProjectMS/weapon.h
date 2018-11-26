@@ -34,7 +34,6 @@
 #define WEAPON_REMOTE_MAX			(0.35f)		// 最大加算値
 
 
-
 //*****************************************************************************
 // 構造体定義
 //*****************************************************************************
@@ -55,6 +54,8 @@ private:
 	D3DXMATRIX		mtxWorld;			// ワールドマトリクス
 	int				nTime;				// 生存カウント
 	float			fRemote;
+	float			fSize;
+	float			fDamage;
 	bool			bRot;
 	bool			bUse;				// 使用フラグ
 
@@ -63,9 +64,21 @@ public:
 	virtual ~Weapon();
 	virtual void Update(void);
 	virtual void Draw(void);
+
+	virtual void SetStatus(float size, float damage,float scl,bool rot);
+
+
+	virtual void SetSize(float size) { fSize = size; }
+	virtual float GetSize(void) { return fSize; }
+
+	virtual void SetDamage(float damage) { fDamage = damage; }
+	virtual float GetDamage(void) { return fDamage; }
+
 	virtual void SetScl(float fScl);
 	virtual void SetRot(bool bUse);
 	virtual bool Set(D3DXVECTOR3 pos, D3DXVECTOR3 shot);
+
+
 	virtual void SetUse(bool use) { bUse = use; }
 	virtual bool GetUse(void) { return bUse; }
 	virtual void Remote(float remote);

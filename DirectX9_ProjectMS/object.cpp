@@ -253,15 +253,7 @@ void ObjectManager::UpdateAll(void)
 
 	while (pList != NULL)
 	{
-#ifdef _DEBUG
-		Debugtimer timer;
-#endif
 		pList->Update();
-#ifdef _DEBUG
-		PrintDebugProc("Update[ ID : %d  Pri : %d] \n",
-			pList->GetObjectId(), pList->GetPriority(UpdateRoot));
-		PrintDebugProc("ID : %d  TIME:%f\n",pList->GetObjectId(), timer.End());
-#endif
 		pList = pList->GetObjectNext(UpdateRoot);
 	}
 }
@@ -272,24 +264,12 @@ void ObjectManager::UpdateAll(void)
 void ObjectManager::DrawAll(void)
 {
 	ObjectManager *pList = ObjectManager::GetObjectRoot(DrawRoot);
-
 	
 	while (pList != NULL)
 	{
-#ifdef _DEBUG
-		Debugtimer timer;
-#endif
 		pList->Draw();
-#ifdef _DEBUG
-		PrintDebugProc(" Draw [ ID : %d  Pri : %d] \n",
-			pList->GetObjectId(), pList->GetPriority(DrawRoot));
-		PrintDebugProc("ID : %d  TIME:%f\n", pList->GetObjectId(), timer.End());
-#endif
 		pList = pList->GetObjectNext(DrawRoot);
 	}
-#ifdef _DEBUG
-	PrintDebugProc("\n");
-#endif
 }
 
 //=============================================================================
@@ -303,16 +283,7 @@ void ObjectManager::DrawNormalAll(void)
 	{
 		if (pList->GetObjectType() == NORMAL)
 		{
-#ifdef _DEBUG
-			Debugtimer timer;
-#endif
 			pList->Draw();
-#ifdef _DEBUG
-			PrintDebugProc(" Draw [ ID : %d  Pri : %d] \n",
-				pList->GetObjectId(), pList->GetPriority(DrawRoot));
-			PrintDebugProc("ID : %d  TIME:%f\n", pList->GetObjectId(), timer.End());
-#endif
-
 		}
 		pList = pList->GetObjectNext(DrawRoot);
 	}
@@ -329,15 +300,7 @@ void ObjectManager::DrawUiAll(void)
 	{
 		if (pList->GetObjectType() == UI)
 		{
-#ifdef _DEBUG
-			Debugtimer timer;
-#endif
 			pList->Draw();
-#ifdef _DEBUG
-			PrintDebugProc(" Draw [ ID : %d  Pri : %d] \n",
-				pList->GetObjectId(), pList->GetPriority(DrawRoot));
-			PrintDebugProc("ID : %d  TIME:%f\n", pList->GetObjectId(), timer.End());
-#endif
 		}
 		pList = pList->GetObjectNext(DrawRoot);
 	}

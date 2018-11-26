@@ -25,10 +25,10 @@
 // プロトタイプ宣言
 //*****************************************************************************
 
-
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
+bool	Resultselect::s_bUse = false;
 
 //=============================================================================
 // コンストラクタ
@@ -38,6 +38,7 @@ Resultselect::Resultselect()
 	// オブジェクトIDとプライオリティの設定処理
 	SetIdAndPriority(ObjectID::RESULTSELECT, Priority::Middle, Priority::Lowest);
 
+	s_bUse = false;
 	Init();
 }
 
@@ -139,7 +140,7 @@ void Resultselect::Update(void)
 	PrintDebugProc("ResultselectObj[1].Alfa:%d\n", ResultselectObj[1].Alfa);
 	PrintDebugProc("\n");
 #endif
-	if (BaseScene::bPause)
+	if (SceneManager::GetScene() != SceneManager::GAME || BaseScene::bPause)
 	{
 		for (int i = 0; i < NUM_RESULTSELECT; i++)
 		{
@@ -276,7 +277,7 @@ void Resultselect::Update(void)
 			SetTextureResultselect(i);
 		}
 
-		if (!BaseScene::bSceneChange)
+		if (!BaseScene::bSceneChange && s_bUse)
 		{
 			// Joyconの数だけ回す
 			for (unsigned int i = 0; i < GetJoyconSize(); i++)

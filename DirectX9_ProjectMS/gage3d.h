@@ -346,6 +346,7 @@ public:
 	void SkillAdd(float Damege, int player);
 	Gage3d();
 	~Gage3d();
+	void InitStatus(void);
 };
 
 

@@ -9,7 +9,9 @@
 #include "gage.h"
 #include "gage3d.h"
 #include "character.h"
+#include "scene.h"
 #include <math.h>
+
 // デバッグ用
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -284,9 +286,245 @@ HRESULT Gage::Init()
 
 		MakeVertexGage(i);
 	}
-	return S_OK;
 
+
+	for (unsigned int i = 10; i < 10 + 4; i++)
+	{
+		GageObj[i].Use = false;
+	}
+	int nTemp;
+	nTemp = SceneManager::GetSelectChar(0);
+	GageObj[10 + nTemp].Use = true;
+	nTemp = SceneManager::GetSelectChar(1);
+	GageObj[14 + nTemp].Use = true;
+
+	return S_OK;
 }
+
+//=============================================================================
+// HP・SPの初期化
+//=============================================================================
+void Gage::InitStatus(void)
+{
+	for (unsigned int i = 0; i < NUM_GAGE; i++)
+	{
+		if (i == 0)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION000_X, TEXTURE_GAGE_POSITION000_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE000_X, TEXTURE_GAGE_SIZE000_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 1)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION001_X, TEXTURE_GAGE_POSITION001_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE001_X, TEXTURE_GAGE_SIZE001_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
+		}
+		if (i == 2)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION002_X, TEXTURE_GAGE_POSITION002_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE002_X, TEXTURE_GAGE_SIZE002_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
+		}
+		if (i == 3)
+		{
+
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION003_X, TEXTURE_GAGE_POSITION003_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE003_X, TEXTURE_GAGE_SIZE003_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
+		}
+		if (i == 4)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION004_X, TEXTURE_GAGE_POSITION004_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE004_X, TEXTURE_GAGE_SIZE004_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
+		}
+		if (i == 5)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION005_X, TEXTURE_GAGE_POSITION005_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE005_X, TEXTURE_GAGE_SIZE005_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
+		}
+		if (i == 6)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION006_X, TEXTURE_GAGE_POSITION006_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE006_X, TEXTURE_GAGE_SIZE006_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
+		}
+		if (i == 7)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION007_X, TEXTURE_GAGE_POSITION007_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE007_X, TEXTURE_GAGE_SIZE007_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
+		}
+		if (i == 8)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION008_X, TEXTURE_GAGE_POSITION008_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE008_X, TEXTURE_GAGE_SIZE008_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
+		}
+		if (i == 9)
+		{
+
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION009_X, TEXTURE_GAGE_POSITION009_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE009_X, TEXTURE_GAGE_SIZE009_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
+		}
+		if (i == 10)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION010_X, TEXTURE_GAGE_POSITION010_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE010_X, TEXTURE_GAGE_SIZE010_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 11)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION011_X, TEXTURE_GAGE_POSITION011_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE011_X, TEXTURE_GAGE_SIZE011_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 12)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION012_X, TEXTURE_GAGE_POSITION012_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE012_X, TEXTURE_GAGE_SIZE012_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 13)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION013_X, TEXTURE_GAGE_POSITION013_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE013_X, TEXTURE_GAGE_SIZE013_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[i].pD3DTexture;
+		}
+		if (i == 14)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION014_X, TEXTURE_GAGE_POSITION014_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE014_X, TEXTURE_GAGE_SIZE014_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = true;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[10].pD3DTexture;
+		}
+		if (i == 15)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION015_X, TEXTURE_GAGE_POSITION015_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE015_X, TEXTURE_GAGE_SIZE015_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[11].pD3DTexture;
+		}
+		if (i == 16)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION016_X, TEXTURE_GAGE_POSITION016_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE016_X, TEXTURE_GAGE_SIZE016_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[12].pD3DTexture;
+		}
+		if (i == 17)
+		{
+			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION017_X, TEXTURE_GAGE_POSITION017_Y, 0.0f);
+			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE017_X, TEXTURE_GAGE_SIZE017_Y);
+			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
+			GageObj[i].Count = 0;
+			GageObj[i].Alfa = 255;
+			GageObj[i].Use = false;
+			GageObj[i].Damege = true;
+			GageObj[i].Texture = GageObj[13].pD3DTexture;
+		}
+		GageObj[i].Scale = D3DXVECTOR2(TEXTURE_GAGE_SCALE_X, TEXTURE_GAGE_SCALE_Y);
+		GageObj[i].Angle = TEXTURE_GAGE_ANGLE_X;
+		GageObj[i].NowHp = TEXTURE_GAGE3D_MAX_HP;
+		GageObj[i].NowSkill = 0.0f;
+	}
+
+	for (unsigned int i = 10; i < 10 + 4; i++)
+	{
+		GageObj[i].Use = false;
+	}
+	int nTemp;
+	nTemp = SceneManager::GetSelectChar(0);
+	GageObj[10 + nTemp].Use = true;
+	nTemp = SceneManager::GetSelectChar(1);
+	GageObj[14 + nTemp].Use = true;
+}
+
+
 
 //=============================================================================
 // 終了処理
@@ -769,22 +1007,23 @@ void Gage::DamegeReduce(float Damege,int player)
 
 		GageObj[2].Use = true;
 		GageObj[4].NowHp -= Damege;
+		if (GageObj[4].NowHp < 0.0f) GageObj[4].NowHp = 0.0f;
 		GageObj[4].TextureSize.x = TEXTURE_GAGE_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * GageObj[4].NowHp;
-		if (GageObj[4].TextureSize.x <= 0.0f)
-		{
-			GageObj[4].TextureSize.x = 0.0f;
-		}
-		
+		//if (GageObj[4].TextureSize.x <= 0.0f)
+		//{
+		//	GageObj[4].TextureSize.x = 0.0f;
+		//}	
 	}
 	if (player == 1)
 	{
 		GageObj[3].Use = true;
 		GageObj[5].NowHp -= Damege;
+		if (GageObj[5].NowHp < 0.0f) GageObj[5].NowHp = 0.0f;
 		GageObj[5].TextureSize.x = TEXTURE_GAGE_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * GageObj[5].NowHp;
-		if (GageObj[5].TextureSize.x <= 0.0f)
-		{
-			GageObj[5].TextureSize.x = 0.0f;
-		}
+		//if (GageObj[5].TextureSize.x <= 0.0f)
+		//{
+		//	GageObj[5].TextureSize.x = 0.0f;
+		//}
 	}
 }
 void Gage::DamegeAdd(float Damege, int player)
@@ -792,20 +1031,22 @@ void Gage::DamegeAdd(float Damege, int player)
 	if (player == 0)
 	{
 		GageObj[4].NowHp += Damege;
+		if (GageObj[4].NowHp > TEXTURE_GAGE3D_MAX_HP) GageObj[4].NowHp = TEXTURE_GAGE3D_MAX_HP;
 		GageObj[4].TextureSize.x = TEXTURE_GAGE_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * GageObj[4].NowHp;
-		if (GageObj[4].TextureSize.x <= TEXTURE_GAGE_SIZE004_X)
-		{
-			GageObj[4].TextureSize.x = TEXTURE_GAGE_SIZE004_X;
-		}
+		//if (GageObj[4].TextureSize.x <= TEXTURE_GAGE_SIZE004_X)
+		//{
+		//	GageObj[4].TextureSize.x = TEXTURE_GAGE_SIZE004_X;
+		//}
 	}
 	if (player == 1)
 	{
 		GageObj[5].NowHp += Damege;
+		if (GageObj[5].NowHp > TEXTURE_GAGE3D_MAX_HP) GageObj[5].NowHp = TEXTURE_GAGE3D_MAX_HP;
 		GageObj[5].TextureSize.x = TEXTURE_GAGE_SIZE005_X / TEXTURE_GAGE3D_MAX_HP *GageObj[5].NowHp;
-		if (GageObj[5].TextureSize.x <= TEXTURE_GAGE_SIZE005_X)
-		{
-			GageObj[5].TextureSize.x = TEXTURE_GAGE_SIZE005_X;
-		}
+		//if (GageObj[5].TextureSize.x <= TEXTURE_GAGE_SIZE005_X)
+		//{
+		//	GageObj[5].TextureSize.x = TEXTURE_GAGE_SIZE005_X;
+		//}
 	}
 }
 void Gage::SkillReduce(float Damege, int player)
@@ -813,20 +1054,22 @@ void Gage::SkillReduce(float Damege, int player)
 	if (player == 0)
 	{
 		GageObj[8].NowSkill -= Damege;
+		if (GageObj[8].NowSkill < 0.0f) GageObj[8].NowSkill = 0.0f;
 		GageObj[8].TextureSize.x = TEXTURE_GAGE_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * GageObj[8].NowSkill;
-		if (GageObj[8].TextureSize.x < 0.0f)
-		{
-			GageObj[8].TextureSize.x = 0.0f;
-		}
+		//if (GageObj[8].TextureSize.x < 0.0f)
+		//{
+		//	GageObj[8].TextureSize.x = 0.0f;
+		//}
 	}
 	if (player == 1)
 	{
 		GageObj[9].NowSkill -= Damege;
+		if (GageObj[9].NowSkill < 0.0f) GageObj[9].NowSkill = 0.0f;
 		GageObj[9].TextureSize.x = TEXTURE_GAGE_SIZE005_X / TEXTURE_GAGE3D_MAX_HP * GageObj[9].NowSkill;
-		if (GageObj[9].TextureSize.x < 0.0f)
-		{
-			GageObj[9].TextureSize.x = 0.0f;
-		}
+		//if (GageObj[9].TextureSize.x < 0.0f)
+		//{
+		//	GageObj[9].TextureSize.x = 0.0f;
+		//}
 	}
 }
 void Gage::SkillAdd(float Damege, int player)
@@ -834,19 +1077,21 @@ void Gage::SkillAdd(float Damege, int player)
 	if (player == 0)
 	{
 		GageObj[8].NowSkill += Damege;
+		if (GageObj[8].NowSkill > TEXTURE_GAGE3D_MAX_HP) GageObj[8].NowSkill = TEXTURE_GAGE3D_MAX_HP;
 		GageObj[8].TextureSize.x = TEXTURE_GAGE_SIZE004_X / TEXTURE_GAGE3D_MAX_HP * GageObj[8].NowSkill;
-		if (GageObj[8].TextureSize.x >= TEXTURE_GAGE_SIZE004_X)
-		{
-			GageObj[8].TextureSize.x = TEXTURE_GAGE_SIZE004_X;
-		}
+		//if (GageObj[8].TextureSize.x >= TEXTURE_GAGE_SIZE004_X)
+		//{
+		//	GageObj[8].TextureSize.x = TEXTURE_GAGE_SIZE004_X;
+		//}
 	}
 	if (player == 1)
 	{
 		GageObj[9].NowSkill += Damege;
+		if (GageObj[9].NowSkill > TEXTURE_GAGE3D_MAX_HP) GageObj[9].NowSkill = TEXTURE_GAGE3D_MAX_HP;
 		GageObj[9].TextureSize.x = TEXTURE_GAGE_SIZE005_X / TEXTURE_GAGE3D_MAX_HP * GageObj[9].NowSkill;
-		if (GageObj[9].TextureSize.x >= TEXTURE_GAGE_SIZE005_X)
-		{
-			GageObj[9].TextureSize.x = TEXTURE_GAGE_SIZE005_X;
-		}
+		//if (GageObj[9].TextureSize.x >= TEXTURE_GAGE_SIZE005_X)
+		//{
+		//	GageObj[9].TextureSize.x = TEXTURE_GAGE_SIZE005_X;
+		//}
 	}
 }

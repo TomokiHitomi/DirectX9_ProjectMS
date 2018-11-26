@@ -37,7 +37,7 @@ Weapon::Weapon(CXModel* XModel)
 	// モデルデータポインタをNULLで初期化
 	pXModel = NULL;
 
-	// モデルデータをインスタンス化
+	// モデルデータを接続
 	pXModel = XModel;
 
 	vPos = ZERO_D3DXVECTOR3;			// 座標情報
@@ -46,7 +46,8 @@ Weapon::Weapon(CXModel* XModel)
 	vMove = ZERO_D3DXVECTOR3;
 	vShot = ZERO_D3DXVECTOR3;
 	vRemote = ZERO_D3DXVECTOR3;
-
+	fSize = 0.0f;
+	fDamage = 0.0f;
 	fRemote = 0.0f;
 
 	// ワールド行列を初期化
@@ -130,6 +131,18 @@ void Weapon::Draw(void)
 		}
 	}
 }
+
+//=============================================================================
+// ステータス設定処理
+//=============================================================================
+void Weapon::SetStatus(float size, float damage, float scl, bool rot)
+{
+	fSize = size;
+	fDamage = damage;
+	bRot = rot;
+	vScl = D3DXVECTOR3(scl, scl, scl);
+}
+
 
 //=============================================================================
 // スケール設定処理

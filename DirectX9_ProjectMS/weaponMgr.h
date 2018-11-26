@@ -34,6 +34,13 @@
 #define	WEAPON_MODEL_HELMET				"helmet.X"	// 読み込むモデル名
 #define	WEAPON_MODEL_HELMET_SCL			(14.0f)
 
+#define	WEAPON_MODEL_FIREENGIN			"Fireengin.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_FIREENGIN_SCL		(7.0f)
+
+#define	WEAPON_MODEL_KARAAGE			"Karaage_Lemon.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_KARAAGE_SCL		(12.0f)
+
+#define WEAPON_MAX						(6)
 
 //*****************************************************************************
 // 構造体定義
@@ -53,10 +60,12 @@ public:
 		CDCASE,
 		EXTINGUISHER,
 		HELMET,
+		FIREENGIN,
+		KARAAGE,
 		MAX
 	};
 private:
-	static Weapon*		pWeapon[4];
+	static Weapon*		pWeapon[6];
 	static CXModel*		pXModel[WeaponType::MAX];			// モデル格納用
 	//static Weapon* pWeapon[WeaponType::MAX * 2];
 	//Weapon *pWeapon[1];

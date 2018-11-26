@@ -18,13 +18,15 @@
 
 
 
-#define TEXTURE_TITLECAMERA_SCOND						(3)																// テクスチャ頂点カラー変化前
+#define TEXTURE_TITLECAMERA_SCOND					(3)																// テクスチャ頂点カラー変化前
 #define TEXTURE_TITLECAMERA_SCOND_COUNT				(2)
-#define TEXTURE_TITLECAMERA_SCOND_COUNT_COLOR			(255.0f /TEXTURE_TITLECAMERA_SCOND_COUNT)
+#define TEXTURE_TITLECAMERA_SCOND_COUNT_COLOR		(255.0f /TEXTURE_TITLECAMERA_SCOND_COUNT)
 #define TEXTURE_TITLECAMERA_SCOND_TIME				(FRAME*TEXTURE_TITLECAMERA_SCOND)									//300
 #define TEXTURE_TITLECAMERA_SCOND_COLOR				(TEXTURE_TITLECAMERA_SCOND_COUNT_COLOR/TEXTURE_TITLECAMERA_SCOND_TIME)								//90
 #define TITLECAMERA_LENGTH							(125.0f)
 #define NUM_TITLECAMERA								(1)																// テクスチャの数
+#define TITLECAMERA_ROT_SPEED						(D3DX_PI/360/2)
+
 //=============================================================================
 //
 //SELECT構造体

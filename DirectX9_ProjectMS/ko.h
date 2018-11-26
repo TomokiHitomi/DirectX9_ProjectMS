@@ -101,8 +101,9 @@
 //=============================================================================
 class Ko : public ObjectManager
 {
+	static bool s_bUse;
 public:
-
+	static bool GetUse(void) { return s_bUse; }
 
 	struct KoParts
 	{
@@ -130,6 +131,8 @@ public:
 	void Draw(void);
 	Ko();
 	~Ko();
+	void Set(int win);
+	void Unset(void);
 };
 
 

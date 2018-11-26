@@ -122,6 +122,8 @@ public:
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
+	void Set(int nRound);
+	bool GetUse(void);
 	Roundlogo();
 	~Roundlogo();
 };

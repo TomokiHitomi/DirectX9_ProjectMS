@@ -16,9 +16,16 @@
 // マクロ定義
 //*****************************************************************************
 #define CHARACTER_FIREMAN			("Fireman.X")
+#define CHARACTER_FIREMAN_SCL		(0.29f)
+
 #define CHARACTER_PASTRY			("Idol.X")
+#define CHARACTER_PASTRY_SCL		(0.25f)
+
 #define CHARACTER_IDOL				("Idol.X")
+#define CHARACTER_IDOL_SCL			(0.25f)
+
 #define CHARACTER_DOCTOR			("Idol.X")
+#define CHARACTER_DOCTOR_SCL		(0.25f)
 
 //*****************************************************************************
 // 構造体定義

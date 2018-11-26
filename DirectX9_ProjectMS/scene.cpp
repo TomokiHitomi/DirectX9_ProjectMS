@@ -46,6 +46,7 @@ bool				 BaseScene::bPause = false;
 SceneManager::SCENE	SceneManager::m_eScene;
 
 int					SceneManager::m_nSelectChar[2];
+int					SceneManager::m_nWinPlayer = 0;
 int					SceneManager::m_nMulti;
 CharacterManager	*SceneManager::CharMgr = NULL;
 CameraManager		*SceneManager::CameraMgr = NULL;
@@ -259,19 +260,18 @@ void SceneManager::DebugScene(void)
 	if (GetKeyboardTrigger(DIK_F2))
 	{
 		SetFadeScene(TITLE);
-		SetSe(SE_TITLE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 		//ChangeScene(TITLE);
 	}
 	if (GetKeyboardTrigger(DIK_F3))
 	{
 		SetFadeScene(SELECT);
-		SetSe(SE_TITLE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		
 		//ChangeScene(RESULT);
 	}
 	if (GetKeyboardTrigger(DIK_F4))
 	{
 		SetFadeScene(GAME);
-		SetSe(SE_CHARA_SENNI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		
 		//ChangeScene(SELECT);
 	}
 	if (GetKeyboardTrigger(DIK_F5))
@@ -279,42 +279,48 @@ void SceneManager::DebugScene(void)
 		SetFadeScene(RESULT);
 		//ChangeScene(SELECT);
 	}
+
+
 	// SEテスト（sound.hをincludeして関数を呼ぶ）
 	if (GetKeyboardTrigger(DIK_1))
 	{	// 
-		SetSe(SE_MISS, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_TITLE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 	if (GetKeyboardTrigger(DIK_2))
 	{	// 
-		SetSe(SE_IDOL_CD, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_CHARA_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 	if (GetKeyboardTrigger(DIK_3))
 	{	// 
-		SetSe(SE_GAME_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_CANCEL, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 	if (GetKeyboardTrigger(DIK_4))
 	{	//		
-		SetSe(SE_RESULT_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_CHARA_SENNI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 	if (GetKeyboardTrigger(DIK_5))
 	{	// 
-		SetSe(SE_RESULT_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_JAN, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 	if (GetKeyboardTrigger(DIK_6))
 	{	// 
-		SetVoice(VOICE_3, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_ROLLOFDRAM, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 	if (GetKeyboardTrigger(DIK_7))
 	{	// 
-		SetVoice(VOICE_2, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_COLLIDE, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 	if (GetKeyboardTrigger(DIK_8))
 	{	// 
-		SetVoice(VOICE_START, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_SP_MAX, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 	if (GetKeyboardTrigger(DIK_9))
 	{	// 
-		SetVoice(VOICE_START, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_IDOL_CD, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+	}
+	if (GetKeyboardTrigger(DIK_0))
+	{	// 
+		SetSe(SE_PATISSIER_SP, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 
 	PrintDebugProc("\n");

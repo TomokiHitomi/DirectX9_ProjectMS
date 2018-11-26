@@ -83,7 +83,7 @@ void Titlecamera::Update(void)
 #ifdef _DEBUG
 
 #endif
-	TitlecameraObj[0].Angle += D3DX_PI/360;
+	TitlecameraObj[0].Angle += TITLECAMERA_ROT_SPEED;
 	TitlecameraObj[0].Pos.x = sinf(TitlecameraObj[0].Angle)*TITLECAMERA_LENGTH;
 	TitlecameraObj[0].Pos.z = cosf(TitlecameraObj[0].Angle)*TITLECAMERA_LENGTH;
 	// ƒJƒƒ‰‚ğAt‚ğƒ‚ƒfƒ‹‚Éİ’è

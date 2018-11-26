@@ -240,3 +240,14 @@ void Winnerlogo::Starttime(void)
 		}
 	}
 }
+
+//=============================================================================
+// ÉZÉbÉgèàóù
+//=============================================================================
+void Winnerlogo::Set(void)
+{
+	for (int i = 0; i < NUM_WINNERLOGO; i++)
+	{
+		WinnerlogoObj[i].Nowselect = true;
+	}
+}

@@ -173,8 +173,8 @@ void CXModel::Draw(D3DXMATRIX mtxWorld)
 			}
 		}
 
-		// 環境光初期化
-		pMat[i].MatD3D.Ambient = pMat[i].MatD3D.Diffuse;
+		//// 環境光初期化
+		//pMat[i].MatD3D.Ambient = pMat[i].MatD3D.Diffuse;
 
 		// マテリアルをセット
 		pEffect->SetValue("mat", &pMat[i].MatD3D, sizeof(D3DMATERIAL9));

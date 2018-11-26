@@ -16,6 +16,7 @@
 #include "calculate.h"
 #include "scene.h"
 #include "fade.h"
+#include "game.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -35,6 +36,7 @@ void ChackHit(void)
 {
 	Player* pPlayer;
 	Player* pTarget;
+	Weapon* pWeapon;
 
 	D3DXVECTOR3 vTarget;
 	for (unsigned int i = 0; i < PlayerManager::PLAYER_MAX; i++)
@@ -44,44 +46,52 @@ void ChackHit(void)
 		pTarget = PlayerManager::GetPlayer((PlayerManager::PLAYER)pPlayer->m_nTagNum);
 		for (unsigned int j = 0; j < Player::TYPE_MAX; j++)
 		{
-			if (pPlayer->pWeapon[(Player::WeaponLR)j]->GetUse())
+			pWeapon = pPlayer->GetWeapon((Player::WeaponLR)j);
+			if (pWeapon != NULL)
 			{
-				vTarget = pTarget->GetPos();
-				vTarget.y += PLAYER_HEIGHT_HIT;
-				if (CheckHitBC(pPlayer->GetPosWeapon((Player::WeaponLR)j), vTarget,
-					PLAYER_SIZE_HIT, PLAYER_SIZE_WEAPON))
+				if (pWeapon->GetUse())
 				{
-					bool bGuard = true;
-					// ガード中ならば
-					if (pTarget->m_stAction[Player::AC_GURAD_WU].bUse)
+					vTarget = pTarget->GetPos();
+					vTarget.y += PLAYER_HEIGHT_HIT;
+					if (CheckHitBC(pWeapon->GetPos(), vTarget,
+						PLAYER_SIZE_HIT, pWeapon->GetSize()))
 					{
-						bGuard = pTarget->SubHpGuard(PLAYER_DAMAGE_NORMAL);
-					}
-					// ガードHPがなかったらガード貫通
-					if(bGuard)
-					{
-						// ターゲットのゲージHPを減算
-						pTarget->pGage->DamegeReduce(PLAYER_DAMAGE_NORMAL, pTarget->m_nNum);
-						pTarget->pGage3d->DamegeReduce(PLAYER_DAMAGE_NORMAL, pTarget->m_nNum);
-						// ターゲットのダメージフラグを立てる
-						pTarget->SetDamage();
-						// ターゲットのHPを減算
-						if (pTarget->SubHp(PLAYER_DAMAGE_NORMAL))
+						bool bGuard = true;
+						// ガード中ならば
+						if (pTarget->m_stAction[Player::AC_GURAD_WU].bUse)
 						{
-							if (!BaseScene::bSceneChange) SetFadeScene(SceneManager::RESULT);
-							BaseScene::bSceneChange = true;
+							bGuard = pTarget->SubHpGuard(pWeapon->GetDamage());
 						}
+						// ガードHPがなかったらガード貫通
+						if (bGuard)
+						{
+							// ターゲットのダメージフラグを立てる
+							pTarget->SetDamage();
+							// ターゲットのHPを減算
+							if (pTarget->SubHp(pWeapon->GetDamage()))
+							{
+								// 勝利プレイヤーを設定
+								GameScene::SetRoundWin(pPlayer->m_nNum);
+								// アニメーションを設定
+								pPlayer->ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
+								pPlayer->ChangeAnim(Player::IDOL, PLAYER_ANIM_WEIGHT_DAMAGE);
+								pTarget->ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
+								pTarget->ChangeAnim(Player::IDOL, PLAYER_ANIM_WEIGHT_DAMAGE);
+								//if (!BaseScene::bSceneChange) SetFadeScene(SceneManager::RESULT);
+								//BaseScene::bSceneChange = true;
+							}
+						}
+						// プレイヤーのウェポンを false にする
+						pWeapon->SetUse(false);
 					}
-					// プレイヤーのウェポンを false にする
-					pPlayer->pWeapon[(Player::WeaponLR)j]->SetUse(false);
+					// マップサイズとウェポン座標の当たり判定
+					bool bHit = CheckHitBoxToPos(ZERO_D3DXVECTOR3,
+						pWeapon->GetPos(),
+						D3DXVECTOR2(PLANE_SIZE_X * PLANE_X_MAX + CHECK_HIT_MARGIN_BP,
+							PLANE_SIZE_Y * PLANE_Y_MAX + CHECK_HIT_MARGIN_BP));
+					// マップの外側なら false
+					if (!bHit)pWeapon->SetUse(false);
 				}
-				// マップサイズとウェポン座標の当たり判定
-				bool bHit = CheckHitBoxToPos(ZERO_D3DXVECTOR3,
-					pPlayer->pWeapon[(Player::WeaponLR)j]->GetPos(),
-					D3DXVECTOR2(PLANE_SIZE_X * PLANE_X_MAX + CHECK_HIT_MARGIN_BP,
-						PLANE_SIZE_Y * PLANE_Y_MAX + CHECK_HIT_MARGIN_BP));
-				// マップの外側なら false
-				if (!bHit)pPlayer->pWeapon[(Player::WeaponLR)j]->SetUse(false);
 			}
 		}
 	}

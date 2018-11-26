@@ -128,6 +128,7 @@ public:
 	void Starttime(void);
 	Winnerlogo();
 	~Winnerlogo();
+	void Set(void);
 };
 
 

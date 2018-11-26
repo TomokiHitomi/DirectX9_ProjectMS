@@ -44,7 +44,7 @@ LPDWORD pdwCurrentWriteCursorSE[SOUND_SE_MAX];
 // サウンドファイルのパス（sound.hの通しナンバーと順番を合わせること）
 const TCHAR* c_soundFilename[] = {
 	// BGM
-	_T("data/SOUND/BGM/おどれグロッケンシュピール.wav"),		// Title BGM / 曲調：アップテンポ・ベース、電子ピアノ、ギター主体、バックグラウンド タンバリン
+	_T("data/SOUND/BGM/おどれグロッケンシュピール（ループ部分）.wav"),		// Title BGM / 曲調：アップテンポ・ベース、電子ピアノ、ギター主体、バックグラウンド タンバリン
 	_T("data/SOUND/BGM/DESTINY.wav"),							// Select BGM / 曲調：エレクトロ調バックテンポ・エレキギターとのフロントバック交互
 	_T("data/SOUND/BGM/Half steps.wav"),						// Game BGM / 曲調：メタル・ドスの効いたベース・ブレイクビーツ独特のテンポ・エレクトリックピコピコ
 	_T("data/SOUND/BGM/Night Highway.wav"),						// Result BGM / 曲調：エレクトロアップテンポ・シンセサイザー・チェンジドボイス差し込み

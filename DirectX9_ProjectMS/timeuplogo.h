@@ -124,6 +124,7 @@ public:
 	void Draw(void);
 	Timeuplogo();
 	~Timeuplogo();
+	void Set(bool bUse);
 };
 
 

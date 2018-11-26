@@ -300,3 +300,20 @@ void Roundlogo::TexRoundlogo(int i,int flag)
 		RoundlogoObj[i].vertexWk[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 	}
 }
+
+//=============================================================================
+// ラウンドセット関数
+//=============================================================================
+void Roundlogo::Set(int nRound)
+{
+	RoundlogoObj[0].Use = true;
+	RoundlogoObj[0].Nowselect = nRound;
+}
+
+//=============================================================================
+// 使用フラグ取得関数
+//=============================================================================
+bool Roundlogo::GetUse(void)
+{
+	return RoundlogoObj[0].Use;
+}

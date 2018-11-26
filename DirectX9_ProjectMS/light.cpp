@@ -30,7 +30,7 @@ HRESULT LightManager::Init(void)
 	cLight[Main].type = Light::DIRECTIONAL;
 
 	// 拡散光の設定
-	cLight[Main].value.Diffuse = D3DXCOLOR(0.3f, 1.0f, 0.3f, 1.0f);
+	cLight[Main].value.Diffuse = D3DXCOLOR(0.5f, 1.0f, 0.5f, 1.0f);
 	// 環境光の設定
 	cLight[Main].value.Ambient = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	// 反射光の設定
