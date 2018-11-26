@@ -44,20 +44,21 @@ LPDWORD pdwCurrentWriteCursorSE[SOUND_SE_MAX];
 // サウンドファイルのパス（sound.hの通しナンバーと順番を合わせること）
 const TCHAR* c_soundFilename[] = {
 	// BGM
-	_T("data/SOUND/BGM/WhiteLily_WithoutV.wav"),
-	_T("data/SOUND/BGM/WhiteLily_Violin.wav"),
-	_T("data/SOUND/BGM/ED.wav"),
-	_T("data/SOUND/BGM/select.wav"),
+	_T("data/SOUND/BGM/おどれグロッケンシュピール.wav"),		// Title BGM / 曲調：アップテンポ・ベース、電子ピアノ、ギター主体、バックグラウンド タンバリン
+	_T("data/SOUND/BGM/DESTINY.wav"),							// Select BGM / 曲調：エレクトロ調バックテンポ・エレキギターとのフロントバック交互
+	_T("data/SOUND/BGM/Half steps.wav"),						// Game BGM / 曲調：メタル・ドスの効いたベース・ブレイクビーツ独特のテンポ・エレクトリックピコピコ
+	_T("data/SOUND/BGM/Night Highway.wav"),						// Result BGM / 曲調：エレクトロアップテンポ・シンセサイザー・チェンジドボイス差し込み
+	//_T("data/SOUND/BGM/月まで吹っ飛べ.wav"),					// Tutorial BGM
 	// SE
 	_T("data/SOUND/SE/decision26.wav"),
 	_T("data/SOUND/SE/decision15.wav"),
-	_T("data/SOUND/SE/punch-swing1.wav"),
+	_T("data/SOUND/SE/punch-swing1.wav"),						// 攻撃SEに使えそう
 	_T("data/SOUND/SE/bomb2.wav"),
 	_T("data/SOUND/SE/nyu3.wav"),
 	_T("data/SOUND/SE/robot-footstep2.wav"),
-	_T("data/SOUND/SE/ホイッスル・単発.wav"),
-	_T("data/SOUND/SE/ホイッスル・単発02.wav"),
-	_T("data/SOUND/SE/ホイッスル・連続.wav"),
+	_T("data/SOUND/SE/ホイッスル・単発.wav"),					// 終了合図に使えそう
+	_T("data/SOUND/SE/ホイッスル・単発02.wav"),					// 終了合図に使えそう
+	_T("data/SOUND/SE/ホイッスル・連続.wav"),					// 終了合図に使えそう
 	_T("data/SOUND/SE/fire.wav"),
 	_T("data/SOUND/SE/fire1.wav"),
 	_T("data/SOUND/SE/water_suck.wav"),
@@ -74,6 +75,19 @@ const TCHAR* c_soundFilename[] = {
 	_T("data/SOUND/SE/result_select.wav"),
 	_T("data/SOUND/SE/result_kettei.wav"),
 	_T("data/SOUND/SE/select_bubu.wav"),
+	// 追加SE
+	_T("data/SOUND/SE/システム決定音_6.wav"),					// タイトル遷移時音						SE_TITLE_KETTEI
+	_T("data/SOUND/SE/システム音.wav"),							// キャラ決定音							SE_CHARA_SELECT
+	_T("data/SOUND/SE/キャンセル音.wav"),						// キャンセル音							SE_CANCEL
+	_T("data/SOUND/SE/Big_Hits.wav"),							// キャラセレクトよりの遷移音			SE_CHARA_SENNI
+	_T("data/SOUND/SE/サプライズジャン.wav"),					// ジャンっ（リザルト結果）				SE_JAN
+	_T("data/SOUND/SE/結果発表.wav"),							// ドラムロール（リザルト結果）			SE_ROLLOFDRAM
+	_T("data/SOUND/SE/打撃・ビンタ音.wav"),						// 攻撃当たり							SE_COLLIDE
+	_T("data/SOUND/SE/ファイナルアーツ.wav"),					// 必殺技ゲージ満タン					SE_SP_MAX
+	_T("data/SOUND/SE/キラーンと星になる音.wav"),				// アイドルCD							SE_IDOL_CD
+	_T("data/SOUND/SE/泥・ぬかるみ.wav"),						// パティシエ必殺技						SE_PATISSIER_SP
+	_T("data/SOUND/SE/刀剣・投げナイフ.wav"),					// 医者メス投げ							SE_DOCTOR_THROW
+	_T("data/SOUND/SE/_滝壺の水音（環境音）.wav"),				// 消防士放水							SE_FIREMAN_WATER
 	// VOICE
 	_T("data/SOUND/VOICE/start_voice.wav"),
 	_T("data/SOUND/VOICE/1_voice.wav"),
