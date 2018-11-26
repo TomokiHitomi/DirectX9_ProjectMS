@@ -15,9 +15,9 @@
 // É}ÉNÉçíËã`
 //
 //=============================================================================
-#define TEXTURE_RESULTSELECT_000					"data/TEXTURE/retry020.png"												// gage hp
-#define TEXTURE_RESULTSELECT_001					"data/TEXTURE/charselect020.png"										// gage hp
-#define TEXTURE_RESULTSELECT_002					"data/TEXTURE/titleback020.png"											// gage hp
+#define TEXTURE_RESULTSELECT_000					"data/TEXTURE/retry120.png"												// gage hp
+#define TEXTURE_RESULTSELECT_001					"data/TEXTURE/charselect120.png"										// gage hp
+#define TEXTURE_RESULTSELECT_002					"data/TEXTURE/titleback120.png"											// gage hp
 
 
 

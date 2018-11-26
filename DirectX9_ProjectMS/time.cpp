@@ -5,6 +5,7 @@
 //=============================================================================
 #include "main.h"
 #include "time.h"
+#include "input.h"
 #include "fade.h"
 #include "sound.h"
 //*****************************************************************************
@@ -53,7 +54,8 @@ HRESULT Time::Init(void)
 
 	TimeObj[0].Pos = D3DXVECTOR3((float)TEXTURE_TIME_POSITION000_X, (float)TEXTURE_TIME_POSITION000_Y, 0.0f);
 	TimeObj[0].Timer = TEXTURE_TIME_SECOND * FRAME;
-
+	TimeObj[0].Start = false;
+	TimeObj[0].End = false;
 	// 頂点情報の作成
 	MakeVertexTime();
 
@@ -79,12 +81,19 @@ void Time::Uninit(void)
 void Time::Update(void)
 {
 	// 毎フレーム実行される処理を記述する
-
-	TimeObj[0].Timer--;
-	
-	if (TimeObj[0].Timer <0)
+	if (GetKeyboardTrigger(DIK_Q))
 	{
-		TimeObj[0].Timer=0;
+		SetStart(true);
+	}
+	if (TimeObj[0].Start == true)
+	{
+		TimeObj[0].Timer--;
+
+		if (TimeObj[0].Timer < 0)
+		{
+			TimeObj[0].End = true;
+			TimeObj[0].Timer = 0;
+		}
 	}
 	SetTextureTime();
 
@@ -99,24 +108,6 @@ void Time::Draw(void)
 	int i;
 
 
-	//// レンダーステートパラメータの設定
-	//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);				// 裏面をカリング
-	//pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);						// Zバッファを使用
-
-	//pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);				// αブレンドを行う
-	//pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// αソースカラーの指定
-	//pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// αデスティネーションカラーの指定
-
-	//// サンプラーステートパラメータの設定
-	//pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);	// テクスチャアドレッシング方法(U値)を設定
-	//pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);	// テクスチャアドレッシング方法(V値)を設定
-	//pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	// テクスチャ縮小フィルタモードを設定
-	//pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	// テクスチャ拡大フィルタモードを設定
-
-	//// テクスチャステージステートの設定
-	//pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);	// アルファブレンディング処理を設定
-	//pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);	// 最初のアルファ引数
-	//pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);	// ２番目のアルファ引数
 
 
 	// テクスチャの設定
@@ -204,17 +195,11 @@ void Time::SetTextureTime(void)
 // HPデータをセットする
 // 引数:add :追加する点数。マイナスも可能、初期化などに。
 //=============================================================================
-//void AddTime(int add)
-//{
-//	TimeObj[0].Time += add;
-//	if (g_nTime > TIME_MAX)
-//	{
-//		g_nTime = TIME_MAX;
-//	}
-//	else if (g_nTime < 0)
-//	{
-//
-//		g_nTime = 0;
-//	}
-//
-//}
+bool Time::GetEnd(void)
+{
+	return TimeObj[0].End;
+}
+void Time::SetStart(bool flag)
+{
+	TimeObj[0].Start = flag;
+}

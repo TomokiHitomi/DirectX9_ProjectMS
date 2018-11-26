@@ -15,8 +15,8 @@
 // É}ÉNÉçíËã`
 //
 //=============================================================================
-#define TEXTURE_WINNERLOGO_000					"data/TEXTURE/winner001.png"											// gage hp
-#define TEXTURE_WINNERLOGO_001					"data/TEXTURE/winner001.png"											// gage hp
+#define TEXTURE_WINNERLOGO_000					"data/TEXTURE/winner002.png"											// gage hp
+#define TEXTURE_WINNERLOGO_001					"data/TEXTURE/winner002.png"											// gage hp
 
 
 

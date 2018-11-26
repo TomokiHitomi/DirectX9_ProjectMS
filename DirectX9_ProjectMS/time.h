@@ -39,7 +39,7 @@
 
 
 #define TEXTURE_TIME_POSITION000_X			(TEXTURE_TIME_OFFSET_POSITION000_X+SCREEN_WIDTH/2)					// ポジション
-#define TEXTURE_TIME_POSITION000_Y			(TEXTURE_TIME_OFFSET_POSITION000_Y+0)	// ポジション
+#define TEXTURE_TIME_POSITION000_Y			(TEXTURE_TIME_OFFSET_POSITION000_Y+SCREEN_HEIGHT*0.005)	// ポジション
 #define TEXTURE_TIME_ANGLE_X				(0.0)																		// ポジション
 
 
@@ -88,13 +88,16 @@ public:
 		int						Timer;
 		float					Color;
 		bool					Use;									// true:使用  false:未使用
+		bool					Start;
+		bool					End;
 		LPDIRECT3DTEXTURE9		pD3DTexture;							// テクスチャへのポリゴン (*33)
 		int 					Nowselect;
 	};
 	TimeParts TimeObj[NUM_TIME];
 	void SetVertexTime(int CreateCount);
 	void SetTextureTime(void);
-	void TexTime(int i, int flag);
+	bool GetEnd(void);
+	void SetStart(bool flag);
 	HRESULT MakeVertexTime(void);
 	HRESULT Init(void);
 	void Uninit(void);
