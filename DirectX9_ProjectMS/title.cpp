@@ -86,16 +86,20 @@ void TitleScene::SceneChange(void)
 {
 	if (!bSceneChange)
 	{
-		// Joyconの数だけ回す
-		for (unsigned int i = 0; i < GetJoyconSize(); i++)
+		if (GetKeyboardTrigger(DIK_RETURN)) bSceneChange = true;
+		else
 		{
-			// 決定になりえるボタンが押されている場合、遷移フラグを true
-			if (JcTriggered(i, JC_L_BUTTON_L | JC_L_BUTTON_ZL
-				| JC_R_BUTTON_R | JC_R_BUTTON_ZR | JC_R_BUTTON_A) 
-				|| GetKeyboardTrigger(DIK_RETURN))
+			// Joyconの数だけ回す
+			for (unsigned int i = 0; i < GetJoyconSize(); i++)
+			{
+				// 決定になりえるボタンが押されている場合、遷移フラグを true
+				if (JcTriggered(i, JC_L_BUTTON_L | JC_L_BUTTON_ZL
+					| JC_R_BUTTON_R | JC_R_BUTTON_ZR | JC_R_BUTTON_A)
+					|| GetKeyboardTrigger(DIK_RETURN))
 					bSceneChange = true;
-		}
+			}
 
+		}
 		// 遷移フラグが true なら遷移開始
 		if (bSceneChange) SetFadeScene(SceneManager::SELECT);
 	}

@@ -31,6 +31,8 @@ private:
 	bool	GameStop(void);			// ゲーム停止メソッド
 	int		m_nStopCount;			// ゲーム停止カウント
 	bool	m_bGameStart;			// ゲーム開始フラグ
+
+	void Pause(void);
 };
 
 //*****************************************************************************

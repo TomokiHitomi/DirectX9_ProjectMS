@@ -27,6 +27,8 @@
 #include "gray.h"
 #include "weaponMgr.h"
 #include "collision.h"
+#include "resultselect.h"
+#include "joycon.h"
 
 /* デバッグ */
 #ifdef _DEBUG
@@ -54,14 +56,33 @@ void GameScene::Update(void)
 #ifdef _DEBUG
 	Debugtimer timer;
 #endif
+	// リザルトセレクトのポインタを取得
+	Resultselect* pResultselect = ObjectManager::GetObjectPointer<Resultselect>(ObjectManager::RESULTSELECT);
+
+	// グレーのポインタを取得
+	//Gray* pGray = ObjectManager::GetObjectPointer<Gray>(ObjectManager::RESULTSELECT);
+
+	// ポーズフラグが false ならば
 	if (!bPause)
 	{
+		// 全てUpdateする
 		ObjectManager::UpdateAll();
 	}
 	else
 	{
-		//ObjectManager::GetObjectPointer<>
+		// リザルトセレクトだけUpdateする
+		pResultselect->Update();
 	}
+
+	// ポーズ情報を取得
+	Pause();
+
+	// リザルトセレクトの使用フラグをポーズフラグと同期
+	for (int i = 0; i < NUM_RESULTSELECT; i++)
+	{
+		pResultselect->ResultselectObj[i].Use = bPause;
+	}
+
 #ifdef _DEBUG
 	PrintDebugProc("【 UpdateALL 】\n");
 	PrintDebugProc("TIME:%f\n", timer.End());
@@ -120,11 +141,12 @@ GameScene::GameScene(void)
 	ObjectManager::CreateObject<EffectManager>();
 	ObjectManager::CreateObject<Roundlogo>();
 	ObjectManager::CreateObject<Rightleft>();
-	ObjectManager::CreateObject<Ko>();
 	ObjectManager::CreateObject<Gage>();
 	ObjectManager::CreateObject<Gage3d>();
 	ObjectManager::CreateObject<Gray>();
+	ObjectManager::CreateObject<Ko>();
 	ObjectManager::CreateObject<Time>();
+	ObjectManager::CreateObject<Resultselect>();
 	//new Player;
 	//new Skydome;
 	//new Cube;
@@ -150,3 +172,46 @@ bool GameScene::GameStop(void)
 {
 	return 0;
 }
+
+//=============================================================================
+// の確認
+//=============================================================================
+void GameScene::Pause(void)
+{
+	// 決定になりえるボタンが押されている場合、遷移フラグを true
+	if (GetKeyboardTrigger(DIK_ESCAPE))
+		bPause = bPause ? false : true;
+	else
+	{
+		// Joyconの数だけ回す
+		for (unsigned int i = 0; i < GetJoyconSize(); i++)
+		{
+			// 決定になりえるボタンが押されている場合、遷移フラグを true
+			if (JcTriggered(i, JC_L_BUTTON_MINUS | JC_R_BUTTON_PLUS)
+				|| GetKeyboardTrigger(DIK_ESCAPE))
+				bPause = bPause ? false : true;;
+		}
+	}
+}
+
+////=============================================================================
+//// シーンチェンジの確認
+////=============================================================================
+//void GameScene::SceneChange(void)
+//{
+//	if (!bSceneChange)
+//	{
+//		// Joyconの数だけ回す
+//		for (unsigned int i = 0; i < GetJoyconSize(); i++)
+//		{
+//			// 決定になりえるボタンが押されている場合、遷移フラグを true
+//			if (JcTriggered(i, JC_L_BUTTON_L | JC_L_BUTTON_ZL
+//				| JC_R_BUTTON_R | JC_R_BUTTON_ZR | JC_R_BUTTON_A)
+//				|| GetKeyboardTrigger(DIK_RETURN))
+//				bSceneChange = true;
+//		}
+//
+//		// 遷移フラグが true なら遷移開始
+//		if (bSceneChange) SetFadeScene(SceneManager::SELECT);
+//	}
+//}
