@@ -83,6 +83,7 @@ void Time::Update(void)
 	// 毎フレーム実行される処理を記述する
 	if (GetKeyboardTrigger(DIK_Q))
 	{
+		Reset();
 		SetStart(true);
 	}
 	if (TimeObj[0].Start == true)
@@ -92,7 +93,9 @@ void Time::Update(void)
 		if (TimeObj[0].Timer < 0)
 		{
 			TimeObj[0].End = true;
+			TimeObj[0].Start = false;
 			TimeObj[0].Timer = 0;
+			
 		}
 	}
 	SetTextureTime();
@@ -202,4 +205,8 @@ bool Time::GetEnd(void)
 void Time::SetStart(bool flag)
 {
 	TimeObj[0].Start = flag;
+}
+void Time::Reset(void)
+{
+	TimeObj[0].Timer = TEXTURE_TIME_SECOND * FRAME;
 }
