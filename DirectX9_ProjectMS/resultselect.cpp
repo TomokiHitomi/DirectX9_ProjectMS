@@ -139,135 +139,142 @@ void Resultselect::Update(void)
 	PrintDebugProc("ResultselectObj[1].Alfa:%d\n", ResultselectObj[1].Alfa);
 	PrintDebugProc("\n");
 #endif
-	for (int i = 0; i< NUM_RESULTSELECT; i++)
+	if (BaseScene::bPause)
 	{
-		if (GetKeyboardTrigger(DIK_U))
+		for (int i = 0; i < NUM_RESULTSELECT; i++)
 		{
-			ResultselectObj[i].Use = true;
+			if (GetKeyboardTrigger(DIK_U))
+			{
+				ResultselectObj[i].Use = true;
+			}
+			if (ResultselectObj[0].Nowselect == true && ResultselectObj[0].Count < FRAME * 2)
+			{
+				ResultselectObj[0].Count++;
+				ResultselectObj[1].Count = 0;
+				ResultselectObj[2].Count = 0;
+
+				ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
+				ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
+
+				ResultselectObj[1].Nowselect = false;
+				ResultselectObj[2].Nowselect = false;
+				ResultselectObj[0].TextureSize.x += TEXTURE_RESULTSELECT_SIZE000_X / 1000;
+				ResultselectObj[0].TextureSize.y += TEXTURE_RESULTSELECT_SIZE000_Y / 1000;
+			}
+			if (ResultselectObj[0].Nowselect == true && ResultselectObj[0].Count <= FRAME * 4 && ResultselectObj[0].Count >= FRAME * 2)
+			{
+				ResultselectObj[0].Count++;
+				ResultselectObj[1].Count = 0;
+				ResultselectObj[2].Count = 0;
+
+				ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
+				ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
+
+				ResultselectObj[1].Nowselect = false;
+				ResultselectObj[2].Nowselect = false;
+				ResultselectObj[0].TextureSize.x -= TEXTURE_RESULTSELECT_SIZE000_X / 1000;
+				ResultselectObj[0].TextureSize.y -= TEXTURE_RESULTSELECT_SIZE000_Y / 1000;
+			}
+			if (ResultselectObj[0].Nowselect == true && ResultselectObj[0].Count == FRAME * 4)
+			{
+				ResultselectObj[0].Count = 0;
+				ResultselectObj[1].Count = 0;
+				ResultselectObj[2].Count = 0;
+
+				ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
+				ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
+
+				ResultselectObj[1].Nowselect = false;
+				ResultselectObj[2].Nowselect = false;
+			}
+			//1
+			if (ResultselectObj[1].Nowselect == true && ResultselectObj[1].Count < FRAME * 2)
+			{
+				ResultselectObj[0].Count = 0;
+				ResultselectObj[1].Count++;
+				ResultselectObj[2].Count = 0;
+
+				ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
+				ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
+
+				ResultselectObj[0].Nowselect = false;
+				ResultselectObj[2].Nowselect = false;
+				ResultselectObj[1].TextureSize.x += TEXTURE_RESULTSELECT_SIZE001_X / 1000;
+				ResultselectObj[1].TextureSize.y += TEXTURE_RESULTSELECT_SIZE001_Y / 1000;
+			}
+			if (ResultselectObj[1].Nowselect == true && ResultselectObj[1].Count <= FRAME * 4 && ResultselectObj[1].Count >= FRAME * 2)
+			{
+				ResultselectObj[0].Count = 0;
+				ResultselectObj[1].Count++;
+				ResultselectObj[2].Count = 0;
+
+				ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
+				ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
+
+				ResultselectObj[0].Nowselect = false;
+				ResultselectObj[2].Nowselect = false;
+				ResultselectObj[1].TextureSize.x -= TEXTURE_RESULTSELECT_SIZE001_X / 1000;
+				ResultselectObj[1].TextureSize.y -= TEXTURE_RESULTSELECT_SIZE001_Y / 1000;
+			}
+			if (ResultselectObj[1].Nowselect == true && ResultselectObj[1].Count == FRAME * 4)
+			{
+				ResultselectObj[0].Count = 0;
+				ResultselectObj[1].Count = 0;
+				ResultselectObj[2].Count = 0;
+
+				ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
+				ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
+
+				ResultselectObj[0].Nowselect = false;
+				ResultselectObj[2].Nowselect = false;
+			}
+			//2
+			if (ResultselectObj[2].Nowselect == true && ResultselectObj[2].Count < FRAME * 2)
+			{
+				ResultselectObj[0].Count = 0;
+				ResultselectObj[1].Count = 0;
+				ResultselectObj[2].Count++;
+
+				ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
+				ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
+
+				ResultselectObj[0].Nowselect = false;
+				ResultselectObj[1].Nowselect = false;
+				ResultselectObj[2].TextureSize.x += TEXTURE_RESULTSELECT_SIZE002_X / 1000;
+				ResultselectObj[2].TextureSize.y += TEXTURE_RESULTSELECT_SIZE002_Y / 1000;
+			}
+			if (ResultselectObj[2].Nowselect == true && ResultselectObj[2].Count <= FRAME * 4 && ResultselectObj[2].Count >= FRAME * 2)
+			{
+				ResultselectObj[0].Count = 0;
+				ResultselectObj[1].Count = 0;
+				ResultselectObj[2].Count++;
+
+				ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
+				ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
+
+				ResultselectObj[0].Nowselect = false;
+				ResultselectObj[1].Nowselect = false;
+				ResultselectObj[2].TextureSize.x -= TEXTURE_RESULTSELECT_SIZE002_X / 1000;
+				ResultselectObj[2].TextureSize.y -= TEXTURE_RESULTSELECT_SIZE002_Y / 1000;
+			}
+			if (ResultselectObj[2].Nowselect == true && ResultselectObj[2].Count == FRAME * 4)
+			{
+				ResultselectObj[0].Count = 0;
+				ResultselectObj[1].Count = 0;
+				ResultselectObj[2].Count = 0;
+
+				ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
+				ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
+
+				ResultselectObj[0].Nowselect = false;
+				ResultselectObj[1].Nowselect = false;
+			}
+
+			//	頂点カラーの設定
+			SetVertexResultselect(i);
+			// テクスチャ座標を設定
+			SetTextureResultselect(i);
 		}
-		if (ResultselectObj[0].Nowselect == true&& ResultselectObj[0].Count <FRAME*2)
-		{
-			ResultselectObj[0].Count++;
-			ResultselectObj[1].Count = 0;
-			ResultselectObj[2].Count = 0;
-
-			ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
-			ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
-
-			ResultselectObj[1].Nowselect = false;
-			ResultselectObj[2].Nowselect = false;
-			ResultselectObj[0].TextureSize.x += TEXTURE_RESULTSELECT_SIZE000_X/1000;
-			ResultselectObj[0].TextureSize.y += TEXTURE_RESULTSELECT_SIZE000_Y/1000;
-		}
-		if (ResultselectObj[0].Nowselect == true && ResultselectObj[0].Count <=FRAME*4&& ResultselectObj[0].Count >=FRAME * 2)
-		{
-			ResultselectObj[0].Count++;
-			ResultselectObj[1].Count = 0;
-			ResultselectObj[2].Count = 0;
-
-			ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
-			ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
-
-			ResultselectObj[1].Nowselect = false;
-			ResultselectObj[2].Nowselect = false;
-			ResultselectObj[0].TextureSize.x -= TEXTURE_RESULTSELECT_SIZE000_X/1000;
-			ResultselectObj[0].TextureSize.y -= TEXTURE_RESULTSELECT_SIZE000_Y/1000;
-		}
-		if (ResultselectObj[0].Nowselect == true && ResultselectObj[0].Count ==FRAME*4)
-		{
-			ResultselectObj[0].Count = 0;
-			ResultselectObj[1].Count = 0;
-			ResultselectObj[2].Count = 0;
-
-			ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
-			ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
-
-			ResultselectObj[1].Nowselect = false;
-			ResultselectObj[2].Nowselect = false;
-		}
-		//1
-		if (ResultselectObj[1].Nowselect == true && ResultselectObj[1].Count <FRAME * 2)
-		{
-			ResultselectObj[0].Count = 0;
-			ResultselectObj[1].Count++;
-			ResultselectObj[2].Count = 0;
-
-			ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
-			ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
-
-			ResultselectObj[0].Nowselect = false;
-			ResultselectObj[2].Nowselect = false;
-			ResultselectObj[1].TextureSize.x += TEXTURE_RESULTSELECT_SIZE001_X / 1000;
-			ResultselectObj[1].TextureSize.y += TEXTURE_RESULTSELECT_SIZE001_Y / 1000;
-		}
-		if (ResultselectObj[1].Nowselect == true && ResultselectObj[1].Count <= FRAME * 4 && ResultselectObj[1].Count >= FRAME * 2)
-		{
-			ResultselectObj[0].Count = 0;
-			ResultselectObj[1].Count ++;
-			ResultselectObj[2].Count = 0;
-
-			ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
-			ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
-
-			ResultselectObj[0].Nowselect = false;
-			ResultselectObj[2].Nowselect = false;
-			ResultselectObj[1].TextureSize.x -= TEXTURE_RESULTSELECT_SIZE001_X / 1000;
-			ResultselectObj[1].TextureSize.y -= TEXTURE_RESULTSELECT_SIZE001_Y / 1000;
-		}
-		if (ResultselectObj[1].Nowselect == true && ResultselectObj[1].Count == FRAME * 4)
-		{
-			ResultselectObj[0].Count = 0;
-			ResultselectObj[1].Count = 0;
-			ResultselectObj[2].Count = 0;
-
-			ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
-			ResultselectObj[2].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE002_X, TEXTURE_RESULTSELECT_SIZE002_Y);
-
-			ResultselectObj[0].Nowselect = false;
-			ResultselectObj[2].Nowselect = false;
-		}
-		//2
-		if (ResultselectObj[2].Nowselect == true && ResultselectObj[2].Count <FRAME * 2)
-		{
-			ResultselectObj[0].Count = 0;
-			ResultselectObj[1].Count = 0;
-			ResultselectObj[2].Count ++;
-
-			ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
-			ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
-
-			ResultselectObj[0].Nowselect = false;
-			ResultselectObj[1].Nowselect = false;
-			ResultselectObj[2].TextureSize.x += TEXTURE_RESULTSELECT_SIZE002_X / 1000;
-			ResultselectObj[2].TextureSize.y += TEXTURE_RESULTSELECT_SIZE002_Y / 1000;
-		}
-		if (ResultselectObj[2].Nowselect == true && ResultselectObj[2].Count <= FRAME * 4 && ResultselectObj[2].Count >= FRAME * 2)
-		{
-			ResultselectObj[0].Count = 0;
-			ResultselectObj[1].Count = 0;
-			ResultselectObj[2].Count ++;
-
-			ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
-			ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
-
-			ResultselectObj[0].Nowselect = false;
-			ResultselectObj[1].Nowselect = false;
-			ResultselectObj[2].TextureSize.x -= TEXTURE_RESULTSELECT_SIZE002_X / 1000;
-			ResultselectObj[2].TextureSize.y -= TEXTURE_RESULTSELECT_SIZE002_Y / 1000;
-		}
-		if (ResultselectObj[2].Nowselect == true && ResultselectObj[2].Count == FRAME * 4)
-		{
-			ResultselectObj[0].Count = 0;
-			ResultselectObj[1].Count = 0;
-			ResultselectObj[2].Count = 0;
-
-			ResultselectObj[0].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE000_X, TEXTURE_RESULTSELECT_SIZE000_Y);
-			ResultselectObj[1].TextureSize = D3DXVECTOR2(TEXTURE_RESULTSELECT_SIZE001_X, TEXTURE_RESULTSELECT_SIZE001_Y);
-
-			ResultselectObj[0].Nowselect = false;
-			ResultselectObj[1].Nowselect = false;
-		}
-
 
 		if (!BaseScene::bSceneChange)
 		{
@@ -278,8 +285,9 @@ void Resultselect::Update(void)
 				if (JcTriggered(i, JC_L_BUTTON_UP | JC_L_STICK_UP | JC_R_STICK_UP)
 					|| GetKeyboardTrigger(DIK_UP))
 				{
-					// セレクトを加算
-					nSelect++;
+					// セレクトを減算
+					nSelect--;
+					if (nSelect < 0) nSelect = 2;
 					break;
 				}
 
@@ -287,8 +295,8 @@ void Resultselect::Update(void)
 				else if (JcTriggered(i, JC_L_BUTTON_DOWN | JC_L_STICK_DOWN | JC_R_STICK_DOWN)
 					|| GetKeyboardTrigger(DIK_DOWN))
 				{
-					nSelect--;
-					if (nSelect < 0) nSelect = 2;
+					// セレクトを加算
+					nSelect++;
 					break;
 				}
 
@@ -299,6 +307,13 @@ void Resultselect::Update(void)
 				{
 					// 遷移フラグを true 
 					BaseScene::bSceneChange = true;
+					break;
+				}
+				// 決定になりえるボタンが押されている場合、遷移フラグを true
+				else if (JcTriggered(i, JC_R_BUTTON_B))
+				{
+					// 遷移フラグを false
+					BaseScene::bPause = false;
 					break;
 				}
 			}
@@ -360,11 +375,6 @@ void Resultselect::Update(void)
 			ResultselectObj[1].Nowselect = false;
 			ResultselectObj[2].Nowselect = true;
 		}
-
-		//	頂点カラーの設定
-		SetVertexResultselect(i);
-		// テクスチャ座標を設定
-		SetTextureResultselect(i);
 	}
 }
 

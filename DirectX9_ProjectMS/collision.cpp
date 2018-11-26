@@ -14,6 +14,8 @@
 #include "gage.h"
 #include "plane.h"
 #include "calculate.h"
+#include "scene.h"
+#include "fade.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -37,6 +39,7 @@ void ChackHit(void)
 	D3DXVECTOR3 vTarget;
 	for (unsigned int i = 0; i < PlayerManager::PLAYER_MAX; i++)
 	{
+		// プレイヤーとターゲットのポインタを取得
 		pPlayer = PlayerManager::GetPlayer((PlayerManager::PLAYER)i);
 		pTarget = PlayerManager::GetPlayer((PlayerManager::PLAYER)pPlayer->m_nTagNum);
 		for (unsigned int j = 0; j < Player::TYPE_MAX; j++)
@@ -48,13 +51,27 @@ void ChackHit(void)
 				if (CheckHitBC(pPlayer->GetPosWeapon((Player::WeaponLR)j), vTarget,
 					PLAYER_SIZE_HIT, PLAYER_SIZE_WEAPON))
 				{
-					// ターゲットのゲージHPを減算
-					ObjectManager::GetObjectPointer<Gage3d>(ObjectManager::GAGE3D)->DamegeReduce(PLAYER_DAMAGE_NORMAL, pTarget->m_nNum);
-					ObjectManager::GetObjectPointer<Gage>(ObjectManager::GAGE)->DamegeReduce(PLAYER_DAMAGE_NORMAL, pTarget->m_nNum);
-					// ターゲットのダメージフラグを立てる
-					pTarget->SetDamage();
-					// ターゲットのHPを減算
-					pTarget->SubHp(PLAYER_DAMAGE_NORMAL);
+					bool bGuard = true;
+					// ガード中ならば
+					if (pTarget->m_stAction[Player::AC_GURAD_WU].bUse)
+					{
+						bGuard = pTarget->SubHpGuard(PLAYER_DAMAGE_NORMAL);
+					}
+					// ガードHPがなかったらガード貫通
+					if(bGuard)
+					{
+						// ターゲットのゲージHPを減算
+						pTarget->pGage->DamegeReduce(PLAYER_DAMAGE_NORMAL, pTarget->m_nNum);
+						pTarget->pGage3d->DamegeReduce(PLAYER_DAMAGE_NORMAL, pTarget->m_nNum);
+						// ターゲットのダメージフラグを立てる
+						pTarget->SetDamage();
+						// ターゲットのHPを減算
+						if (pTarget->SubHp(PLAYER_DAMAGE_NORMAL))
+						{
+							if (!BaseScene::bSceneChange) SetFadeScene(SceneManager::RESULT);
+							BaseScene::bSceneChange = true;
+						}
+					}
 					// プレイヤーのウェポンを false にする
 					pPlayer->pWeapon[(Player::WeaponLR)j]->SetUse(false);
 				}

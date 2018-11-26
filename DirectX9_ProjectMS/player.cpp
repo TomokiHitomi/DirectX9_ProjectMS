@@ -53,8 +53,8 @@ PlayerManager::PlayerManager(void)
 		m_pPlayer[i] = NULL;
 	}
 
-	Set<Idol>(PLAYER_1P, CharacterManager::IDOL);
-	Set<Pastry>(PLAYER_2P, CharacterManager::PASTRY);
+	Set<Fireman>(PLAYER_1P, CharacterManager::FIREMAN);
+	Set<Idol>(PLAYER_2P, CharacterManager::IDOL);
 }
 
 //=============================================================================
@@ -176,9 +176,9 @@ Player::Player(void)
 	// 各フラグとウォームアップ・クールダウンの初期化
 	for (unsigned int i = 0; i < AC_MAX; i++)
 	{
-		m_stAcCD[i].nCnt = 0;
-		m_stAcCD[i].bFlag = false;
-		m_stAcCD[i].bUse = false;
+		m_stAction[i].nCnt = 0;
+		m_stAction[i].bFlag = false;
+		m_stAction[i].bUse = false;
 	}
 
 	// ジャンプ
@@ -191,16 +191,24 @@ Player::Player(void)
 	nDashCount = 0;
 	bDash = false;
 
+	// ガード
+	m_fGuardHp = PLAYER_GUARD_HP_MAX;	// 耐久値を設定
+
 	m_fMoveSpeed = PLAYER_MOVE_SPEED;
 	m_fRiseSpeed = 0.0f;
 	m_bUse = true;
 
 	m_CSkinMesh = NULL;
 
+	// ウェポンの数だけ NULL に初期化
 	for (unsigned int i = 0; i < 2; i++)
 	{
 		pWeapon[i] = NULL;
 	}
+
+	// ゲージのポインタを初期化
+	pGage = NULL;
+	pGage3d = NULL;
 }
 
 //=============================================================================
@@ -222,11 +230,17 @@ Player::~Player(void)
 void Player::Update(void)
 {
 #ifdef _DEBUG
-	PrintDebugProc("Player[%d]  Hp[%f]\n", m_nNum, m_fHp);
+	PrintDebugProc("Player[%d]  Hp[%f]  GHp[%f]\n", m_nNum, m_fHp, m_fGuardHp);
 #endif
 
 	if (m_bUse)
 	{
+		// ゲージのポインタが NUUL なら取得
+		if (pGage == NULL)
+			pGage = ObjectManager::GetObjectPointer<Gage>(ObjectManager::GAGE);
+		if (pGage3d == NULL)
+			pGage3d = ObjectManager::GetObjectPointer<Gage3d>(ObjectManager::GAGE3D);
+
 		// 行動処理
 		Action();
 
@@ -235,10 +249,6 @@ void Player::Update(void)
 
 		// 移動処理
 		Move();
-
-		//#ifdef _DEBUG
-		//		PrintDebugProc("Pos [%f,%f,%f]\n", m_vPos.x, m_vPos.y, m_vPos.z);
-		//#endif
 
 		// アニメーションを設定
 		SetAnim();
@@ -272,7 +282,7 @@ void Player::LateUpdate(void)
 
 
 		// アタックフラグが立っていなかったら
-		if (!m_stAcCD[AC_ATTACK].bFlag)
+		if (!m_stAction[AC_ATTACK].bFlag)
 		{
 			// 回転処理
 			RotFunc(m_vTag);
@@ -391,50 +401,38 @@ void Player::Action(void)
 			}
 
 			// アタックフラグが立っていればアニメーションビットを立てる
-			if (m_stAcCD[AC_ATTACK_LEFT].bFlag) m_dwAnim |= PLAYER_ANIM_ATK_LEFT;
-			else if (m_stAcCD[AC_ATTACK_RIGHT].bFlag)m_dwAnim |= PLAYER_ANIM_ATK_RIGHT;
+			if (m_stAction[AC_ATTACK_LEFT].bFlag) m_dwAnim |= PLAYER_ANIM_ATK_LEFT;
+			else if (m_stAction[AC_ATTACK_RIGHT].bFlag)m_dwAnim |= PLAYER_ANIM_ATK_RIGHT;
 
 			// ガード中でなければ
-			if (!m_stAcCD[AC_GURAD].bFlag)
+			if (!m_stAction[AC_GURAD_WU].bFlag)
 			{
 				// ウェポンを遠隔操作
 				pWeapon[TYPE_LEFT]->Remote(jcL.z);
 				pWeapon[TYPE_RIGHT]->Remote(jcR.z);
 			}
 
-			if (!m_stAcCD[AC_ATTACK].bFlag)
+			if (!m_stAction[AC_ATTACK].bFlag)
 			{
 				// ガード処理
 				if (jcL.z < -PLAYER_MARGIN_GUARD && jcR.z > PLAYER_MARGIN_GUARD)
 				{
-					// ガードフラグとカウントフラグが false ならば
-					if (!m_stAcCD[AC_GURAD].bUse && !m_stAcCD[AC_GURAD].bFlag)
-					{
-						// カウント開始
-						m_stAcCD[AC_GURAD].bFlag = true;
-						// カウント値を設定
-						m_stAcCD[AC_GURAD].nCnt = PLAYER_GUARD_COUNT;
-					}
-					// 使用フラグが true ならば
-					if (m_stAcCD[AC_GURAD].bUse)
-					{
-						// ガードアニメーションをセット
-						m_dwAnim |= PLAYER_ANIM_GUARD;
-						// ダッシュをキャンセル
-						DashCancel();
-					}
+					Guard();
 				}
 				else
 				{
 					// ガードフラグを false
-					m_stAcCD[AC_GURAD].bUse = false;
+					m_stAction[AC_GURAD_WU].bUse = false;
 				}
 			}
 
-
 			// アタック・ガード中でなければ
-			if(!m_stAcCD[AC_GURAD].bUse && !m_stAcCD[AC_ATTACK].bFlag)
+			if(!m_stAction[AC_GURAD_WU].bUse && !m_stAction[AC_GURAD_CD].bFlag && !m_stAction[AC_ATTACK].bFlag)
 			{
+				// ガードの耐久値回復
+				m_fGuardHp += PLAYER_GUARD_HP_RECOVER;
+				if (m_fGuardHp > PLAYER_GUARD_HP_MAX) m_fGuardHp = PLAYER_GUARD_HP_MAX;
+
 				// 移動
 				bool bMove = false;
 				float fMoveAccel = 0.0f;
@@ -568,17 +566,17 @@ void Player::ActionCD(void)
 	for (unsigned int i = 0; i < AC_MAX; i++)
 	{
 		// フラグが true ならば
-		if (m_stAcCD[i].bFlag)
+		if (m_stAction[i].bFlag)
 		{
 			// クールダウンを減算
-			m_stAcCD[i].nCnt--;
+			m_stAction[i].nCnt--;
 			// 0を下回ったら
-			if(m_stAcCD[i].nCnt < 0)
+			if(m_stAction[i].nCnt < 0)
 			{
 				// フラグを false
-				m_stAcCD[i].bFlag = false;
+				m_stAction[i].bFlag = false;
 				// 使用フラグを true
-				m_stAcCD[i].bUse = true;
+				m_stAction[i].bUse = true;
 			}
 		}
 	}
@@ -590,7 +588,7 @@ void Player::ActionCD(void)
 void Player::Damage(void)
 {
 	// ダメージフラグが true ならば
-	if (m_stAcCD[AC_DAMAGE].bFlag)
+	if (m_stAction[AC_DAMAGE].bFlag)
 	{
 		// ダメージ１のアニメーションフラグを立てる
 		m_dwAnim |= PLAYER_ANIM_DAMAGE_1;
@@ -608,26 +606,26 @@ void Player::Attack(WeaponLR eLR)
 		if (eLR == TYPE_LEFT)
 		{
 			// RIGHT のフラグが立っていたら false にする
-			if (m_stAcCD[AC_ATTACK_RIGHT].bFlag)m_stAcCD[AC_ATTACK_RIGHT].bFlag = false;
+			if (m_stAction[AC_ATTACK_RIGHT].bFlag)m_stAction[AC_ATTACK_RIGHT].bFlag = false;
 			// フラグを立てる
-			m_stAcCD[AC_ATTACK_LEFT].bFlag = true;
+			m_stAction[AC_ATTACK_LEFT].bFlag = true;
 			// クールダウン値を代入
-			m_stAcCD[AC_ATTACK_LEFT].nCnt = PLAYER_ATTACK_CD_ANIM;
+			m_stAction[AC_ATTACK_LEFT].nCnt = PLAYER_ATTACK_CD_ANIM;
 		}
 		else if (eLR == TYPE_RIGHT)
 		{
 			// LEFT のフラグが立っていたら false にする
-			if (m_stAcCD[AC_ATTACK_LEFT].bFlag)m_stAcCD[AC_ATTACK_LEFT].bFlag = false;
+			if (m_stAction[AC_ATTACK_LEFT].bFlag)m_stAction[AC_ATTACK_LEFT].bFlag = false;
 			// フラグを立てる
-			m_stAcCD[AC_ATTACK_RIGHT].bFlag = true;
+			m_stAction[AC_ATTACK_RIGHT].bFlag = true;
 			// クールダウン値を代入
-			m_stAcCD[AC_ATTACK_RIGHT].nCnt = PLAYER_ATTACK_CD_ANIM;
+			m_stAction[AC_ATTACK_RIGHT].nCnt = PLAYER_ATTACK_CD_ANIM;
 		}
 
 		// フラグを立てる
-		m_stAcCD[AC_ATTACK].bFlag = true;
+		m_stAction[AC_ATTACK].bFlag = true;
 		// クールダウン値を代入
-		m_stAcCD[AC_ATTACK].nCnt = PLAYER_ATTACK_CD;
+		m_stAction[AC_ATTACK].nCnt = PLAYER_ATTACK_CD;
 
 		// 設置座標の算出
 		D3DXVECTOR3 posTmp = D3DXVECTOR3(m_mtxWorld._11, m_mtxWorld._12, m_mtxWorld._13);
@@ -655,6 +653,36 @@ void Player::Attack(WeaponLR eLR)
 		return;
 	}
 }
+
+//=============================================================================
+// ガード処理関数
+//=============================================================================
+void Player::Guard(void)
+{
+	// ガードフラグとカウントフラグが false ならば
+	if (!m_stAction[AC_GURAD_WU].bUse && !m_stAction[AC_GURAD_WU].bFlag)
+	{
+		// カウント開始
+		m_stAction[AC_GURAD_WU].bFlag = true;
+		// カウント値を設定
+		m_stAction[AC_GURAD_WU].nCnt = PLAYER_GUARD_COUNT;
+	}
+
+	// 使用フラグが true ならば
+	if (m_stAction[AC_GURAD_WU].bUse)
+	{
+		// ガードアニメーションをセット
+		m_dwAnim |= PLAYER_ANIM_GUARD;
+		// ダッシュをキャンセル
+		DashCancel();
+
+		// フラグを立てる
+		m_stAction[AC_GURAD_CD].bFlag = true;
+		// クールダウン値を代入
+		m_stAction[AC_GURAD_CD].nCnt = PLAYER_GUARD_CD;
+	}
+}
+
 
 //=============================================================================
 // ジャンプ処理関数

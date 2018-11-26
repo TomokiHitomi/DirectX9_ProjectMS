@@ -1066,7 +1066,7 @@ void Selectface::SetChar(void)
 		if (!SelectScene::bSceneChange)
 		{
 			// シーン遷移開始
-			SetFadeScene(SceneManager::TITLE);
+			SetFadeScene(SceneManager::GAME);
 			// シーン遷移フラグを立てる
 			SelectScene::bSceneChange = true;
 		}

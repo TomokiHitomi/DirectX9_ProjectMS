@@ -15,7 +15,7 @@
 //*****************************************************************************
 // É}ÉNÉçíËã`
 //*****************************************************************************
-#define CHARACTER_FIREMAN			("Idol.X")
+#define CHARACTER_FIREMAN			("Fireman.X")
 #define CHARACTER_PASTRY			("Idol.X")
 #define CHARACTER_IDOL				("Idol.X")
 #define CHARACTER_DOCTOR			("Idol.X")

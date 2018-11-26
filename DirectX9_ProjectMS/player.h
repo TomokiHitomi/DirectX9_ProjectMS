@@ -18,6 +18,8 @@
 #include "scene.h"
 #include "weapon.h"
 #include "weaponMgr.h"
+#include "gage.h"
+#include "gage3d.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -64,8 +66,10 @@
 #define PLAYER_ATTACK_CD_ANIM		(19)		// クールダウン
 
 // ガード
-#define PLAYER_GUARD_CD				(30)
-#define PLAYER_GUARD_COUNT			(5)		// ガードスタートカウント
+#define PLAYER_GUARD_CD				(5)			// クールダウン
+#define PLAYER_GUARD_COUNT			(5)			// ガードスタートカウント
+#define PLAYER_GUARD_HP_MAX			(15.0f)		// ガードの耐久値
+#define PLAYER_GUARD_HP_RECOVER		(0.2f)		// ガードの耐久回復値
 
 // ジャンプ
 #define PLAYER_GRAVITY				(0.3f)
@@ -100,8 +104,8 @@
 //#define PLAYER_ANIM_				0x00008000
 
 // アニメーションスピード
-#define PLAYER_ANIM_SPEED_DEF		(60.0f / 3000.0f)
-#define PLAYER_ANIM_SPEED_DASH		(60.0f / 1000.0f)
+#define PLAYER_ANIM_SPEED_DEF		(60.0f / 3500.0f)
+#define PLAYER_ANIM_SPEED_DASH		(60.0f / 1500.0f)
 
 #define PLAYER_ANIM_WEIGHT_DEF		(0.1f)
 #define PLAYER_ANIM_WEIGHT_ATTACK	(0.3f)
@@ -128,7 +132,10 @@ public:
 		TYPE_RIGHT,
 		TYPE_MAX
 	};
-	Weapon*			pWeapon[WeaponLR::TYPE_MAX];
+	Weapon*		pWeapon[WeaponLR::TYPE_MAX];
+
+	Gage*		pGage;
+	Gage3d*		pGage3d;
 
 	// コンストラクタ（初期化処理）
 	Player(void);
@@ -144,7 +151,7 @@ public:
 	int				m_nNum;				// プレイヤーナンバー
 	int				m_nTagNum;
 	bool			m_bUse;				// 使用フラグ
-private:
+
 	typedef struct
 	{
 		int		nCnt;
@@ -157,15 +164,17 @@ private:
 		AC_ATTACK_LEFT,
 		AC_ATTACK_RIGHT,
 		AC_ATTACK,
-		AC_GURAD,
+		AC_GURAD_WU,
+		AC_GURAD_CD,
 		AC_DAMAGE,
 		//AC_DASH,
 		//AC_JUMP,
 		AC_MAX
 	};
 
-	ACTION			m_stAcCD[AC_MAX];
+	ACTION			m_stAction[AC_MAX];
 
+private:
 	D3DXVECTOR3		m_vPos;				// 座標情報
 	D3DXVECTOR3		m_vRot;				// 回転情報
 	D3DXVECTOR3		m_vScl;				// 拡縮情報
@@ -191,6 +200,7 @@ private:
 
 	// ステータス
 	float				m_fHp;
+	float				m_fGuardHp;
 
 	// ジャンプ
 	float	fVelocity;				// 加速度
@@ -210,7 +220,7 @@ private:
 	void	Damage(void);
 	void	Dash(void);
 	void	DashCancel(void);
-	//void	Guard(void);
+	void	Guard(void);
 	void	Attack(WeaponLR eLR);
 	void	Jump(void);
 	void	MoveFunc(float);
@@ -227,15 +237,25 @@ public:
 	bool SubHp(float fDamage) 
 	{
 		m_fHp -= fDamage;
-		if (m_fHp < 0.0f) return true;
+		if (m_fHp <= 0.0f) return true;
+		return false;
+	}
+	bool SubHpGuard(float fDamage)
+	{
+		m_fGuardHp -= fDamage;
+		if (m_fGuardHp < 0.0f)
+		{
+			m_fGuardHp = 0.0f;
+			return true;
+		}
 		return false;
 	}
 	void SetTag(D3DXVECTOR3 vTag) { m_vTag = vTag; }
 	void SetPos(D3DXVECTOR3 pos) { m_vPos = pos; }
 	void SetDamage(void)
 	{ 
-		m_stAcCD[AC_DAMAGE].bFlag = true;
-		m_stAcCD[AC_DAMAGE].nCnt = PLAYER_DAMAGE_CD;
+		m_stAction[AC_DAMAGE].bFlag = true;
+		m_stAction[AC_DAMAGE].nCnt = PLAYER_DAMAGE_CD;
 	}
 	void InitPos(void);
 	D3DXVECTOR3 GetPos(void) { return m_vPos; }
@@ -246,6 +266,7 @@ public:
 	enum PLAYER_ANIME
 	{	// アニメーション
 		JUMP_END,
+		JUMP,
 		JUMP_START,
 		DAMAGE_2,
 		DAMAGE_1,
@@ -314,9 +335,16 @@ class Fireman : public Player
 public:
 	Fireman() : Player()
 	{
-		// モデルの初期化
-		//m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN, 0.05f);
-		//m_CSkinMesh->ChangeAnim(PLAYER_ANIME_RUN);
+		// ウェポンをセット
+		pWeapon[Player::TYPE_LEFT] =
+			WeaponManager::SetWeapon(WeaponManager::BEATER);
+		pWeapon[Player::TYPE_LEFT]->SetRot(true);
+		pWeapon[Player::TYPE_LEFT]->SetScl(WEAPON_MODEL_BEATER_SCL);
+
+		pWeapon[Player::TYPE_RIGHT] =
+			WeaponManager::SetWeapon(WeaponManager::BOWL);
+		pWeapon[Player::TYPE_RIGHT]->SetRot(true);
+		pWeapon[Player::TYPE_RIGHT]->SetScl(WEAPON_MODEL_BOWL_SCL);
 	}
 	~Fireman();
 
