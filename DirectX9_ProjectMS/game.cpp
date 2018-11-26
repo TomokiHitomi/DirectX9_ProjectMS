@@ -60,7 +60,7 @@ void GameScene::Update(void)
 	Resultselect* pResultselect = ObjectManager::GetObjectPointer<Resultselect>(ObjectManager::RESULTSELECT);
 
 	// グレーのポインタを取得
-	//Gray* pGray = ObjectManager::GetObjectPointer<Gray>(ObjectManager::RESULTSELECT);
+	Gray* pGray = ObjectManager::GetObjectPointer<Gray>(ObjectManager::GRAY);
 
 	// ポーズフラグが false ならば
 	if (!bPause)
@@ -80,6 +80,7 @@ void GameScene::Update(void)
 	// リザルトセレクトの使用フラグをポーズフラグと同期
 	for (int i = 0; i < NUM_RESULTSELECT; i++)
 	{
+		pGray->GrayObj[0].Use = bPause;
 		pResultselect->ResultselectObj[i].Use = bPause;
 	}
 
