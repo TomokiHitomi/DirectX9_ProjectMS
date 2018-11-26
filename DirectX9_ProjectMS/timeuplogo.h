@@ -15,7 +15,7 @@
 // É}ÉNÉçíËã`
 //
 //=============================================================================
-#define TEXTURE_TIMEUPLOGO_000					"data/TEXTURE/timeup000.png"											// gage hp
+#define TEXTURE_TIMEUPLOGO_000					"data/TEXTURE/timeup001.png"											// gage hp
 
 
 

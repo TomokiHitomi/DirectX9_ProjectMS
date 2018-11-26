@@ -68,34 +68,6 @@ HRESULT Gray::Init()
 			GrayObj[i].Nowselect = true;
 			GrayObj[i].Texture = GrayObj[i].pD3DTexture;
 		}
-		if (i == 1)
-		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GRAY_000, &GrayObj[i].pD3DTexture);
-			}
-			GrayObj[i].Pos = D3DXVECTOR3(TEXTURE_GRAY_POSITION001_X, TEXTURE_GRAY_POSITION001_Y, 0.0f);
-			GrayObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE001_X, TEXTURE_GRAY_SIZE001_Y);
-			GrayObj[i].Count = 0;
-			GrayObj[i].Alfa = 255;
-			GrayObj[i].Use = false;
-			GrayObj[i].Nowselect = true;
-			GrayObj[i].Texture = GrayObj[i].pD3DTexture;
-		}
-		if (i == 2)
-		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GRAY_000, &GrayObj[i].pD3DTexture);
-			}
-			GrayObj[i].Pos = D3DXVECTOR3(TEXTURE_GRAY_POSITION002_X, TEXTURE_GRAY_POSITION002_Y, 0.0f);
-			GrayObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GRAY_SIZE002_X, TEXTURE_GRAY_SIZE002_Y);
-			GrayObj[i].Count = 0;
-			GrayObj[i].Alfa = 255;
-			GrayObj[i].Use = false;
-			GrayObj[i].Nowselect = true;
-			GrayObj[i].Texture = GrayObj[i].pD3DTexture;
-		}
 
 		GrayObj[i].Scale = D3DXVECTOR2(TEXTURE_GRAY_SCALE_X, TEXTURE_GRAY_SCALE_Y);
 		GrayObj[i].Angle = TEXTURE_GRAY_ANGLE_X;
@@ -128,32 +100,28 @@ void Gray::Update(void)
 {
 	//CharacterManager::FIREMAN;
 #ifdef _DEBUG
-	PrintDebugProc("GrayObj[0].Alfa:%d\n", GrayObj[0].Alfa);
-	PrintDebugProc("\n");
 
-	PrintDebugProc("GrayObj[1].Alfa:%d\n", GrayObj[1].Alfa);
-	PrintDebugProc("\n");
 #endif
 	for (int i = 0; i< NUM_GRAY; i++)
 	{
 		if (GetKeyboardTrigger(DIK_U))
 		{
 			GrayObj[0].Use = true;
-			GrayObj[1].Use = false;
-			GrayObj[2].Use = false;
+			//GrayObj[1].Use = false;
+			//GrayObj[2].Use = false;
 		}
-		if (GetKeyboardTrigger(DIK_Y))
-		{
-			GrayObj[1].Use = true;
-			GrayObj[1].Pos = D3DXVECTOR3(TEXTURE_GRAY_POSITION001_X, TEXTURE_GRAY_POSITION001_Y, 0.0f);
-			GrayObj[2].Use = false;
-		}
-		if (GetKeyboardTrigger(DIK_T))
-		{
-			GrayObj[1].Use = false;
-			GrayObj[2].Use = true;
-			GrayObj[2].Pos = D3DXVECTOR3(TEXTURE_GRAY_POSITION002_X, TEXTURE_GRAY_POSITION002_Y, 0.0f);
-		}
+		//if (GetKeyboardTrigger(DIK_Y))
+		//{
+		//	GrayObj[1].Use = true;
+		//	GrayObj[1].Pos = D3DXVECTOR3(TEXTURE_GRAY_POSITION001_X, TEXTURE_GRAY_POSITION001_Y, 0.0f);
+		//	GrayObj[2].Use = false;
+		//}
+		//if (GetKeyboardTrigger(DIK_T))
+		//{
+		//	GrayObj[1].Use = false;
+		//	GrayObj[2].Use = true;
+		//	GrayObj[2].Pos = D3DXVECTOR3(TEXTURE_GRAY_POSITION002_X, TEXTURE_GRAY_POSITION002_Y, 0.0f);
+		//}
 		//	頂点カラーの設定
 		SetVertexGray(i);
 		// テクスチャ座標を設定

@@ -57,6 +57,7 @@ public:
 		GAGE3D,
 		RESULTSELECT,
 		GRAY,
+		GRAYKO,
 		PARTICLE,
 		RIGHTLEFT,
 		KO,

@@ -62,7 +62,7 @@
 #define TEXTURE_GRAY_COLOR_CHANGE_G			(204)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GRAY_COLOR_CHANGE_B			(224)																// テクスチャ頂点カラー変化前
 #define TEXTURE_GRAY_COLOR_CHANGE_A			(255)																// テクスチャ頂点カラー変化前
-#define NUM_GRAY							(3)																// テクスチャの数
+#define NUM_GRAY							(1)																// テクスチャの数
 //=============================================================================
 //
 //SELECT構造体
