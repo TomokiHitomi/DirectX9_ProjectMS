@@ -48,7 +48,6 @@ const TCHAR* c_soundFilename[] = {
 	_T("data/SOUND/BGM/WhiteLily_Violin.wav"),
 	_T("data/SOUND/BGM/ED.wav"),
 	_T("data/SOUND/BGM/select.wav"),
-	_T("data/SOUND/BGM/result_BGM.wav"),
 	// SE
 	_T("data/SOUND/SE/decision26.wav"),
 	_T("data/SOUND/SE/decision15.wav"),
@@ -258,27 +257,34 @@ void UpdateSoundBgm(void)
 	switch (g_nBgmFlag)
 	{
 	case SOUND_BGM_NON:
-		SetBgmVol(BGM_WHITELILY_V_NON, false);
-		SetBgmVol(BGM_WHITELILY_V, false);
+		SetBgmVol(BGM_TITLE, false);
+		SetBgmVol(BGM_SELECT, false);
+		SetBgmVol(BGM_GAME, false);
+		SetBgmVol(BGM_RESULT, false);
 		break;
 	case SOUND_BGM_TITLE:
-
+		SetBgmVol(BGM_TITLE, true);
+		SetBgmVol(BGM_SELECT, false);
+		SetBgmVol(BGM_GAME, false);
+		SetBgmVol(BGM_RESULT, false);
 		break;
 	case SOUND_BGM_SELECT:
-
+		SetBgmVol(BGM_TITLE, false);
+		SetBgmVol(BGM_SELECT, true);
+		SetBgmVol(BGM_GAME, false);
+		SetBgmVol(BGM_RESULT, false);
 		break;
 	case SOUND_BGM_GAME:
+		SetBgmVol(BGM_TITLE, false);
+		SetBgmVol(BGM_SELECT, false);
+		SetBgmVol(BGM_GAME, true);
+		SetBgmVol(BGM_RESULT, false);
 		break;
 	case SOUND_BGM_RESULT:
-
-		break;
-	case SOUND_BGM_TEST1:
-		SetBgmVol(BGM_WHITELILY_V_NON, true);
-		SetBgmVol(BGM_WHITELILY_V, false);
-		break;
-	case SOUND_BGM_TEST2:
-		SetBgmVol(BGM_WHITELILY_V_NON, true);
-		SetBgmVol(BGM_WHITELILY_V, true);
+		SetBgmVol(BGM_TITLE, false);
+		SetBgmVol(BGM_SELECT, false);
+		SetBgmVol(BGM_GAME, false);
+		SetBgmVol(BGM_RESULT, true);
 		break;
 	}
 }

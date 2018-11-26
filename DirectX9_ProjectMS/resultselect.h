@@ -109,6 +109,8 @@ public:
 		bool					Nowselect;
 	};
 	ResultselectParts ResultselectObj[NUM_RESULTSELECT];
+
+	int nSelect;
 	void SetVertexResultselect(int CreateCount);
 	void SetTextureResultselect(int i);
 	HRESULT MakeVertexResultselect(int i);

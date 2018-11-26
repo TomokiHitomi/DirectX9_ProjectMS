@@ -71,18 +71,19 @@ void SceneManager::ChangeScene(SCENE scene)
 	switch (scene)
 	{	//引数のシーン
 	case SCENE::TITLE:
-		SetSoundBgm(SOUND_BGM_NON);
+		SetSoundBgm(SOUND_BGM_TITLE);
 		m_pScene = new TitleScene();	// タイトルシーンを現在のシーンにする
 		break;
 	case SCENE::SELECT:
+		SetSoundBgm(SOUND_BGM_SELECT);
 		m_pScene = new SelectScene();	// セレクトシーンを現在のシーンにする
 		break;
 	case SCENE::GAME:
-		SetSoundBgm(SOUND_BGM_NON);
+		SetSoundBgm(SOUND_BGM_GAME);
 		m_pScene = new GameScene();		// ゲームシーンを現在のシーンにする
 		break;
 	case SCENE::RESULT:
-		SetSoundBgm(SOUND_BGM_NON);
+		SetSoundBgm(SOUND_BGM_RESULT);
 		m_pScene = new ResultScene();	// リザルトシーンを現在のシーンにする
 		break;
 	default:
@@ -276,38 +277,42 @@ void SceneManager::DebugScene(void)
 		//ChangeScene(SELECT);
 	}
 	// SEテスト（sound.hをincludeして関数を呼ぶ）
-	//if (GetKeyboardTrigger(DIK_1))
-	//{	// 
-	//	SetSe(SE_SELECT_ERROR, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-	//}
-	//if (GetKeyboardTrigger(DIK_2))
-	//{	// 
-	//	SetSe(SE_GAME_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-	//}
-	//if (GetKeyboardTrigger(DIK_3))
-	//{	// 
-	//	SetSe(SE_GAME_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-	//}
-	//if (GetKeyboardTrigger(DIK_4))
-	//{	//		
-	//	SetSe(SE_RESULT_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-	//}
-	//if (GetKeyboardTrigger(DIK_5))
-	//{	// 
-	//	SetSe(SE_RESULT_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-	//}
-	//if (GetKeyboardTrigger(DIK_6))
-	//{	// 
-	//	SetVoice(VOICE_3, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-	//}
-	//if (GetKeyboardTrigger(DIK_7))
-	//{	// 
-	//	SetVoice(VOICE_2, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-	//}
-	//if (GetKeyboardTrigger(DIK_8))
-	//{	// 
-	//	SetVoice(VOICE_START, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-	//}
+	if (GetKeyboardTrigger(DIK_1))
+	{	// 
+		SetSe(SE_SELECT_ERROR, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+	}
+	if (GetKeyboardTrigger(DIK_2))
+	{	// 
+		SetSe(SE_GAME_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+	}
+	if (GetKeyboardTrigger(DIK_3))
+	{	// 
+		SetSe(SE_GAME_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+	}
+	if (GetKeyboardTrigger(DIK_4))
+	{	//		
+		SetSe(SE_RESULT_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+	}
+	if (GetKeyboardTrigger(DIK_5))
+	{	// 
+		SetSe(SE_RESULT_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+	}
+	if (GetKeyboardTrigger(DIK_6))
+	{	// 
+		SetVoice(VOICE_3, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+	}
+	if (GetKeyboardTrigger(DIK_7))
+	{	// 
+		SetVoice(VOICE_2, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+	}
+	if (GetKeyboardTrigger(DIK_8))
+	{	// 
+		SetVoice(VOICE_START, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+	}
+	if (GetKeyboardTrigger(DIK_9))
+	{	// 
+		SetVoice(VOICE_START, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+	}
 
 	PrintDebugProc("\n");
 }

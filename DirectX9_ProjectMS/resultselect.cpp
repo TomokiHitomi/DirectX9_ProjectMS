@@ -8,7 +8,11 @@
 #include "input.h"
 #include "resultselect.h"
 #include "character.h"
+#include "joycon.h"
+#include "scene.h"
+#include "fade.h"
 #include <math.h>
+
 // デバッグ用
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -51,6 +55,7 @@ Resultselect::~Resultselect()
 HRESULT Resultselect::Init()
 {
 	int type = 0;
+	nSelect = 0;
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	for (int i = 0; i < NUM_RESULTSELECT; i++)
 	{
@@ -262,6 +267,81 @@ void Resultselect::Update(void)
 			ResultselectObj[0].Nowselect = false;
 			ResultselectObj[1].Nowselect = false;
 		}
+
+
+		if (!BaseScene::bSceneChange)
+		{
+			// Joyconの数だけ回す
+			for (unsigned int i = 0; i < GetJoyconSize(); i++)
+			{
+				// 上ボタン・キーが入力されていた場合
+				if (JcTriggered(i, JC_L_BUTTON_UP | JC_L_STICK_UP | JC_R_STICK_UP)
+					|| GetKeyboardTrigger(DIK_UP))
+				{
+					// セレクトを加算
+					nSelect++;
+					break;
+				}
+
+				// 上ボタン・キーが入力されていた場合
+				else if (JcTriggered(i, JC_L_BUTTON_DOWN | JC_L_STICK_DOWN | JC_R_STICK_DOWN)
+					|| GetKeyboardTrigger(DIK_DOWN))
+				{
+					nSelect--;
+					if (nSelect < 0) nSelect = 2;
+					break;
+				}
+
+				// 決定になりえるボタンが押されている場合、遷移フラグを true
+				else if (JcTriggered(i, JC_L_BUTTON_L | JC_L_BUTTON_ZL
+					| JC_R_BUTTON_R | JC_R_BUTTON_ZR | JC_R_BUTTON_A)
+					|| GetKeyboardTrigger(DIK_RETURN))
+				{
+					// 遷移フラグを true 
+					BaseScene::bSceneChange = true;
+					break;
+				}
+			}
+
+			// セレクトされている項目のフラグを立てる
+			switch (nSelect % 3)
+			{
+			case 0:
+				ResultselectObj[0].Nowselect = true;
+				ResultselectObj[1].Nowselect = false;
+				ResultselectObj[2].Nowselect = false;
+				break;
+			case 1:
+				ResultselectObj[0].Nowselect = false;
+				ResultselectObj[1].Nowselect = true;
+				ResultselectObj[2].Nowselect = false;
+				break;
+			case 2:
+				ResultselectObj[0].Nowselect = false;
+				ResultselectObj[1].Nowselect = false;
+				ResultselectObj[2].Nowselect = true;
+				break;
+			}
+
+			// 遷移フラグが true なら遷移開始
+			if (BaseScene::bSceneChange)
+			{
+				switch (nSelect % 3)
+				{
+				case 0:
+					SetFadeScene(SceneManager::GAME);
+					break;
+				case 1:
+					SetFadeScene(SceneManager::SELECT);
+					break;
+				case 2:
+					SetFadeScene(SceneManager::TITLE);
+					break;
+				}
+			}
+		}
+
+		// デバッグ用
 		if (GetKeyboardPress(DIK_Z))
 		{
 			ResultselectObj[0].Nowselect = true;
