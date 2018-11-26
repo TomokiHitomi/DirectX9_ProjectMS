@@ -73,7 +73,14 @@ HRESULT Selectface::Init()
 	}
 
 	int type = 0;
-
+	SelectMovePlayer000[0] = 1;
+	SelectMovePlayer001[0] = 1;
+	SelectMovePlayer000[1] = 0;
+	SelectMovePlayer001[1] = 0;
+	SelectMovePlayer000[2] = 0;
+	SelectMovePlayer001[2] = 0;
+	SelectMovePlayer000[3] = 0;
+	SelectMovePlayer001[3] = 0;
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	for (int CreateSelectCount = 0; CreateSelectCount < NUM_SELECT; CreateSelectCount++)
 	{
