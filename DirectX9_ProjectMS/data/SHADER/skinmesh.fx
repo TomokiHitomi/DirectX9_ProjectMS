@@ -125,18 +125,24 @@ VS_OUT VSOutline(VS_IN In, uniform int NumBones)
 		LastWeight = LastWeight + BlendWeightsArray[iBone];
 
 		Pos += mul(In.Pos , mul(mWorldMatrixArray[IndexArray[iBone]], mView)) * BlendWeightsArray[iBone];
+		Out.Normal += mul(In.Normal, (float3x3)mWorldMatrixArray[IndexArray[iBone]]) * BlendWeightsArray[iBone];
 	}
 	LastWeight = 1.0f - LastWeight;
 
 	// Now that we have the calculated weight, add in the final influence
 	Pos += (mul(In.Pos, mul(mWorldMatrixArray[IndexArray[NumBones - 1]], mView)) * LastWeight);
+	Out.Normal += (mul(In.Normal, (float3x3)mWorldMatrixArray[IndexArray[NumBones - 1]]) * LastWeight);
+
+	Out.Normal = normalize(Out.Normal);
+
+	Out.Pos.xyz = Out.Pos.xyz + (Out.Normal.xyz * 3.0f);
 
 	// transform position from world space into view and then projection space
 	Out.Pos = mul(float4(Pos.xyz, 1.0f), mViewProj);
 
-	//Out.Pos.x += 1.0f;
+	Out.Pos.z += 0.1f;
 
-	Out.Color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	Out.Color = float4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	return Out;
 }
@@ -254,14 +260,21 @@ technique t0
 {
 	//pass p0
 	//{
+	//	// —¼–Ê•`‰æ
+	//	CullMode = None;
 	//	VertexShader = compile vs_3_0 VSOutline(2);
 	//	PixelShader = compile ps_3_0 ps_Outline();
+
 	//}
 
 	pass p0
 	{
+		// —¼–Ê•`‰æ
+		CullMode = None;
 		VertexShader = (vsArray[CurNumBones]);
 		PixelShader = compile ps_3_0 ps_nomal();
+		// — –ÊƒJƒŠƒ“ƒO
+		CullMode = CCW;
 	}
 }
 

@@ -15,14 +15,14 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-#define	WEAPON_SCL					(18.0f)
+#define	WEAPON_SCL					(10.0f)
 #define	WEAPON_SCL_VEC3				(D3DXVECTOR3(WEAPON_SCL,WEAPON_SCL,WEAPON_SCL))			// 読み込むモデル名
 
 // 残存時間
 #define WEAPON_TIME_MAX				(300)
 
 // 移動スピード
-#define WEAPON_MOVE_SPEED			(2.0f)
+#define WEAPON_MOVE_SPEED			(2.5f)
 
 // 回転スピード
 #define WEAPON_ROT_SPEED			(0.1f)

@@ -338,25 +338,11 @@ void Player::Draw(void)
 		// ワールド変換
 		WorldConvertXYZ(&m_mtxWorld, m_vPos, m_vRot, m_vScl);
 
-		//// αテストを有効に
-		//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-		//pDevice->SetRenderState(D3DRS_ALPHAREF, PLAYER_ALPHA_TEST);
-		//pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-
-		// 両面描画する
-		pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-
 		if (m_CSkinMesh != NULL)
 		{
 			// モデルを描画
 			m_CSkinMesh->Draw(pDevice, m_mtxWorld);
 		}
-
-		// 裏面をカリングに戻す
-		pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
-		// αテストを無効に
-		//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	}
 }
 
