@@ -71,10 +71,6 @@ HRESULT Gage::Init()
 		}
 		if (i == 1)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_001, &GageObj[i].pD3DTexture);
-			}
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION001_X, TEXTURE_GAGE_POSITION001_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE001_X, TEXTURE_GAGE_SIZE001_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -82,14 +78,10 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = true;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
 		}
 		if (i == 2)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_002, &GageObj[i].pD3DTexture);
-			}
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION002_X, TEXTURE_GAGE_POSITION002_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE002_X, TEXTURE_GAGE_SIZE002_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -97,14 +89,11 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = false;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
 		}
 		if (i == 3)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_003, &GageObj[i].pD3DTexture);
-			}
+
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION003_X, TEXTURE_GAGE_POSITION003_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE003_X, TEXTURE_GAGE_SIZE003_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -112,14 +101,10 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = false;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
 		}
 		if (i == 4)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_004, &GageObj[i].pD3DTexture);
-			}
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION004_X, TEXTURE_GAGE_POSITION004_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE004_X, TEXTURE_GAGE_SIZE004_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -127,14 +112,10 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = true;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
 		}
 		if (i == 5)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_005, &GageObj[i].pD3DTexture);
-			}
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION005_X, TEXTURE_GAGE_POSITION005_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE005_X, TEXTURE_GAGE_SIZE005_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -142,14 +123,10 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = true;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
 		}
 		if (i == 6)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_006, &GageObj[i].pD3DTexture);
-			}
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION006_X, TEXTURE_GAGE_POSITION006_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE006_X, TEXTURE_GAGE_SIZE006_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -157,14 +134,10 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = true;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
 		}
 		if (i == 7)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_007, &GageObj[i].pD3DTexture);
-			}
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION007_X, TEXTURE_GAGE_POSITION007_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE007_X, TEXTURE_GAGE_SIZE007_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -172,14 +145,10 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = true;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
 		}
 		if (i == 8)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_008, &GageObj[i].pD3DTexture);
-			}
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION008_X, TEXTURE_GAGE_POSITION008_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE008_X, TEXTURE_GAGE_SIZE008_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -187,14 +156,11 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = true;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
 		}
 		if (i == 9)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_009, &GageObj[i].pD3DTexture);
-			}
+
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION009_X, TEXTURE_GAGE_POSITION009_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE009_X, TEXTURE_GAGE_SIZE009_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -202,7 +168,7 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = true;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[0].pD3DTexture;
 		}
 		if (i == 10)
 		{
@@ -266,10 +232,6 @@ HRESULT Gage::Init()
 		}
 		if (i == 14)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_014, &GageObj[i].pD3DTexture);
-			}
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION014_X, TEXTURE_GAGE_POSITION014_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE014_X, TEXTURE_GAGE_SIZE014_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -277,14 +239,10 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = true;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[10].pD3DTexture;
 		}
 		if (i == 15)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_015, &GageObj[i].pD3DTexture);
-			}
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION015_X, TEXTURE_GAGE_POSITION015_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE015_X, TEXTURE_GAGE_SIZE015_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -292,14 +250,10 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = false;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[11].pD3DTexture;
 		}
 		if (i == 16)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_016, &GageObj[i].pD3DTexture);
-			}
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION016_X, TEXTURE_GAGE_POSITION016_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE016_X, TEXTURE_GAGE_SIZE016_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -307,14 +261,10 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = false;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[12].pD3DTexture;
 		}
 		if (i == 17)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE_017, &GageObj[i].pD3DTexture);
-			}
 			GageObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE_POSITION017_X, TEXTURE_GAGE_POSITION017_Y, 0.0f);
 			GageObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE_SIZE017_X, TEXTURE_GAGE_SIZE017_Y);
 			GageObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE_SIZEADD_X, TEXTURE_GAGE_SIZEADD_Y);
@@ -322,7 +272,7 @@ HRESULT Gage::Init()
 			GageObj[i].Alfa = 255;
 			GageObj[i].Use = false;
 			GageObj[i].Damege = true;
-			GageObj[i].Texture = GageObj[i].pD3DTexture;
+			GageObj[i].Texture = GageObj[13].pD3DTexture;
 		}
 		GageObj[i].Scale = D3DXVECTOR2(TEXTURE_GAGE_SCALE_X, TEXTURE_GAGE_SCALE_Y);
 		GageObj[i].Angle = TEXTURE_GAGE_ANGLE_X;
@@ -345,13 +295,46 @@ void Gage::Uninit(void)
 {
 	for (int i = 0; i < NUM_GAGE; i++)
 	{
-		if (GageObj[i].pD3DTexture != NULL)	// (*31)
-		{	// テクスチャの開放
-			GageObj[i].pD3DTexture->Release();
-			GageObj[i].pD3DTexture = NULL;
+		if (i < 10)
+		{
+			if (GageObj[0].pD3DTexture != NULL)	// (*31)
+			{	// テクスチャの開放
+				GageObj[0].pD3DTexture->Release();
+				GageObj[0].pD3DTexture = NULL;
+			}
 		}
-
-
+		if (i == 10||i==14)
+		{
+			if (GageObj[10].pD3DTexture != NULL)	// (*31)
+			{	// テクスチャの開放
+				GageObj[10].pD3DTexture->Release();
+				GageObj[10].pD3DTexture = NULL;
+			}
+		}
+		if (i == 11 || i == 15)
+		{
+			if (GageObj[11].pD3DTexture != NULL)	// (*31)
+			{	// テクスチャの開放
+				GageObj[11].pD3DTexture->Release();
+				GageObj[11].pD3DTexture = NULL;
+			}
+		}
+		if (i == 12 || i == 16)
+		{
+			if (GageObj[12].pD3DTexture != NULL)	// (*31)
+			{	// テクスチャの開放
+				GageObj[12].pD3DTexture->Release();
+				GageObj[12].pD3DTexture = NULL;
+			}
+		}
+		if (i == 13 || i == 17)
+		{
+			if (GageObj[13].pD3DTexture != NULL)	// (*31)
+			{	// テクスチャの開放
+				GageObj[13].pD3DTexture->Release();
+				GageObj[13].pD3DTexture = NULL;
+			}
+		}
 		//if (GageObj[i].pD3DXBuffMat != NULL)
 		//{// マテリアルの開放
 		//	GageObj[i].pD3DXBuffMat->Release();
@@ -527,8 +510,24 @@ void Gage::Draw(void)
 			//// 頂点バッファをデバイスのデータストリームにバインド
 			//pDevice->SetStreamSource(0, GageObj[i].vertexWk, 0, sizeof(VERTEX_2D));
 
-			pDevice->SetTexture(0, GageObj[i].pD3DTexture);
-
+			if (i == 0) { pDevice->SetTexture(0, GageObj[0].pD3DTexture); }
+			if (i == 1) { pDevice->SetTexture(0, GageObj[0].pD3DTexture); }
+			if (i == 2) { pDevice->SetTexture(0, GageObj[0].pD3DTexture); }
+			if (i == 3) { pDevice->SetTexture(0, GageObj[0].pD3DTexture); }
+			if (i == 4) { pDevice->SetTexture(0, GageObj[0].pD3DTexture); }
+			if (i == 5) { pDevice->SetTexture(0, GageObj[0].pD3DTexture); }
+			if (i == 6) { pDevice->SetTexture(0, GageObj[0].pD3DTexture); }
+			if (i == 7) { pDevice->SetTexture(0, GageObj[0].pD3DTexture); }
+			if (i == 8) { pDevice->SetTexture(0, GageObj[0].pD3DTexture); }
+			if (i == 9) { pDevice->SetTexture(0, GageObj[0].pD3DTexture); }
+			if (i == 10) { pDevice->SetTexture(0, GageObj[10].pD3DTexture); }
+			if (i == 11) { pDevice->SetTexture(0, GageObj[11].pD3DTexture); }
+			if (i == 12) { pDevice->SetTexture(0, GageObj[12].pD3DTexture); }
+			if (i == 13) { pDevice->SetTexture(0, GageObj[13].pD3DTexture); }
+			if (i == 14) { pDevice->SetTexture(0, GageObj[10].pD3DTexture); }
+			if (i == 15) { pDevice->SetTexture(0, GageObj[11].pD3DTexture); }
+			if (i == 16) { pDevice->SetTexture(0, GageObj[12].pD3DTexture); }
+			if (i == 17) { pDevice->SetTexture(0, GageObj[13].pD3DTexture); }
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, GageObj[i].vertexWk, sizeof(VERTEX_2D));
