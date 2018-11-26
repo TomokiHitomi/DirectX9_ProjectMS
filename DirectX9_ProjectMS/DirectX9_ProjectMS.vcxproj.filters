@@ -267,6 +267,9 @@
     <ClInclude Include="player.h">
       <Filter>ソース ファイル\Object\Character</Filter>
     </ClInclude>
+    <ClInclude Include="timeuplogo.h">
+      <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -418,6 +421,9 @@
     </ClCompile>
     <ClCompile Include="player.cpp">
       <Filter>ソース ファイル\Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="timeuplogo.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

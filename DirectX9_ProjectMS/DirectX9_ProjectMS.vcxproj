@@ -236,6 +236,7 @@
     <ClInclude Include="plane.h" />
     <ClInclude Include="stagevirtual.h" />
     <ClInclude Include="time.h" />
+    <ClInclude Include="timeuplogo.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="titlelogo.h" />
     <ClInclude Include="titlemesh.h" />
@@ -288,6 +289,7 @@
     <ClCompile Include="plane.cpp" />
     <ClCompile Include="stagevirtual.cpp" />
     <ClCompile Include="time.cpp" />
+    <ClCompile Include="timeuplogo.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="titlelogo.cpp" />
     <ClCompile Include="titlemesh.cpp" />

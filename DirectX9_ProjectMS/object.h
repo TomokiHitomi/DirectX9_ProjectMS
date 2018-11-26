@@ -63,6 +63,7 @@ public:
 		WINNERLOGO,
 		ROUNDLOGO,
 		TIME,
+		TIMEUPLOGO,
 		WEAPON
 	};
 
