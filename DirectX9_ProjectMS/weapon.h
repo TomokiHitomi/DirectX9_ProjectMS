@@ -25,7 +25,7 @@
 #define WEAPON_MOVE_SPEED			(2.5f)
 
 // 回転スピード
-#define WEAPON_ROT_SPEED			(0.1f)
+#define WEAPON_ROT_SPEED			(0.2f)
 
 // リモート
 #define WEAPON_REMOTE_TIME			(5)		// リモート開始時間

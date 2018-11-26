@@ -54,11 +54,14 @@ WeaponManager::WeaponManager(void)
 		pXModel[i] = new CXModel;
 		pXModel[i]->SetLight(true);
 	}
+
 	// モデルデータを初期化
 	pXModel[BEATER]->Init(pDevice, WEAPON_MODEL_BEATER, NULL);
 	pXModel[BOWL]->Init(pDevice, WEAPON_MODEL_BOWL, NULL);
 	pXModel[MIC]->Init(pDevice, WEAPON_MODEL_MIC, NULL);
 	pXModel[CDCASE]->Init(pDevice, WEAPON_MODEL_CDCASE, NULL);
+	pXModel[EXTINGUISHER]->Init(pDevice, WEAPON_MODEL_EXTINGUISHER, NULL);
+	pXModel[HELMET]->Init(pDevice, WEAPON_MODEL_HELMET, NULL);
 }
 
 //=============================================================================

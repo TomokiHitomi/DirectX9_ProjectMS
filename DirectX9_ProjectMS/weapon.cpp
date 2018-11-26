@@ -85,8 +85,8 @@ void Weapon::Update(void)
 			if (bRot)
 			{
 				// âÒì]Ç†ÇËÇÃèÍçáÇÕ vRot Ç…âÒì]ó Çâ¡éZ
-				vRot.x += WEAPON_ROT_SPEED;
-				vRot.z += WEAPON_ROT_SPEED * 0.1f;
+				vRot.x -= WEAPON_ROT_SPEED;
+				vRot.z -= WEAPON_ROT_SPEED * 0.1f;
 				WorldConvert(&mtxWorld, vPos, vRot, vScl);
 			}
 			else WorldConvertAxis(&mtxWorld, vPos, vMove, UP_D3DXVECTOR3, vScl);

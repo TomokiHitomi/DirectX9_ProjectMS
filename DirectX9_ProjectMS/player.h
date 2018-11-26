@@ -72,12 +72,13 @@
 #define PLAYER_GUARD_HP_RECOVER		(0.2f)		// ガードの耐久回復値
 
 // ジャンプ
-#define PLAYER_GRAVITY				(0.3f)
-#define PLAYER_VELOCITY				(5.0f)
+#define PLAYER_GRAVITY				(0.2f)
+#define PLAYER_VELOCITY				(3.0f)
+#define PLAYER_JUMP_CD				(10)			// クールダウン
 
 // ダッシュ
 #define PLAYER_DASH_CD				(10)
-#define PLAYER_DASH_SPEED			(1.5f)
+#define PLAYER_DASH_SPEED			(1.8f)
 #define PLAYER_DASH_TIME			(10)
 
 // 当たり判定
@@ -98,8 +99,8 @@
 #define PLAYER_ANIM_DAMAGE_1		0x00000080
 #define PLAYER_ANIM_DAMAGE_2		0x00000100
 #define PLAYER_ANIM_JUMP_START		0x00000200
-#define PLAYER_ANIM_JUMP_END		0x00001000
-//#define PLAYER_ANIM_				0x00002000
+#define PLAYER_ANIM_JUMP			0x00001000
+#define PLAYER_ANIM_JUMP_END		0x00002000
 //#define PLAYER_ANIM_				0x00004000
 //#define PLAYER_ANIM_				0x00008000
 
@@ -111,6 +112,7 @@
 #define PLAYER_ANIM_WEIGHT_ATTACK	(0.3f)
 #define PLAYER_ANIM_WEIGHT_GUARD	(0.3f)
 #define PLAYER_ANIM_WEIGHT_DAMAGE	(1.0f)
+#define PLAYER_ANIM_WEIGHT_JUMP		(0.5f)
 
 /***** UI *****/
 #define PLAYER_GAGE_HEIGHT			(-13.0f)
@@ -168,7 +170,8 @@ public:
 		AC_GURAD_CD,
 		AC_DAMAGE,
 		//AC_DASH,
-		//AC_JUMP,
+		AC_JUMP_CD,
+		AC_JUMP_END_CD,
 		AC_MAX
 	};
 
@@ -252,6 +255,7 @@ public:
 	}
 	void SetTag(D3DXVECTOR3 vTag) { m_vTag = vTag; }
 	void SetPos(D3DXVECTOR3 pos) { m_vPos = pos; }
+	void SetScl(D3DXVECTOR3 scl) { m_vScl = scl; }
 	void SetDamage(void)
 	{ 
 		m_stAction[AC_DAMAGE].bFlag = true;
@@ -337,14 +341,15 @@ public:
 	{
 		// ウェポンをセット
 		pWeapon[Player::TYPE_LEFT] =
-			WeaponManager::SetWeapon(WeaponManager::BEATER);
+			WeaponManager::SetWeapon(WeaponManager::EXTINGUISHER);
 		pWeapon[Player::TYPE_LEFT]->SetRot(true);
-		pWeapon[Player::TYPE_LEFT]->SetScl(WEAPON_MODEL_BEATER_SCL);
+		pWeapon[Player::TYPE_LEFT]->SetScl(WEAPON_MODEL_EXTINGUISHER_SCL);
 
 		pWeapon[Player::TYPE_RIGHT] =
-			WeaponManager::SetWeapon(WeaponManager::BOWL);
+			WeaponManager::SetWeapon(WeaponManager::HELMET);
 		pWeapon[Player::TYPE_RIGHT]->SetRot(true);
-		pWeapon[Player::TYPE_RIGHT]->SetScl(WEAPON_MODEL_BOWL_SCL);
+		pWeapon[Player::TYPE_RIGHT]->SetScl(WEAPON_MODEL_HELMET_SCL);
+
 	}
 	~Fireman();
 

@@ -16,17 +16,23 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-#define	WEAPON_MODEL_BEATER	"data/MODEL/Weapon/泡立て器.x"	// 読み込むモデル名
-#define	WEAPON_MODEL_BEATER_SCL		(21.0f)
+#define	WEAPON_MODEL_BEATER				"data/MODEL/Weapon/泡立て器.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_BEATER_SCL			(25.0f)
 
-#define	WEAPON_MODEL_BOWL	"data/MODEL/Weapon/ボウル.x"	// 読み込むモデル名
-#define	WEAPON_MODEL_BOWL_SCL		(18.0f)
+#define	WEAPON_MODEL_BOWL				"data/MODEL/Weapon/ボウル.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_BOWL_SCL			(20.0f)
 
-#define	WEAPON_MODEL_MIC	"mic.x"	// 読み込むモデル名
-#define	WEAPON_MODEL_MIC_SCL		(1.8f)
+#define	WEAPON_MODEL_MIC				"mic.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_MIC_SCL			(2.0f)
 
-#define	WEAPON_MODEL_CDCASE	"CDCase.x"	// 読み込むモデル名
-#define	WEAPON_MODEL_CDCASE_SCL		(15.0f)
+#define	WEAPON_MODEL_CDCASE				"CDCase.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_CDCASE_SCL			(18.0f)
+
+#define	WEAPON_MODEL_EXTINGUISHER		"extinguisher.x"	// 読み込むモデル名
+#define	WEAPON_MODEL_EXTINGUISHER_SCL	(2.0f)
+
+#define	WEAPON_MODEL_HELMET				"helmet.X"	// 読み込むモデル名
+#define	WEAPON_MODEL_HELMET_SCL			(14.0f)
 
 
 //*****************************************************************************
@@ -45,6 +51,8 @@ public:
 		BOWL,
 		MIC,
 		CDCASE,
+		EXTINGUISHER,
+		HELMET,
 		MAX
 	};
 private:
