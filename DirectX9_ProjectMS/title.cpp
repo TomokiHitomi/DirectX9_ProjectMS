@@ -19,6 +19,7 @@
 #include "cube.h"
 #include "stage.h"
 #include "titlelogo.h"
+#include "titlecamera.h"
 #include "particle.h"
 #include "joycon.h"
 #include "fade.h"
@@ -67,6 +68,7 @@ TitleScene::TitleScene(void)
 	ObjectManager::CreateObject<ParticleManager>();
 	ObjectManager::CreateObject<StageManager>();
 	ObjectManager::CreateObject<Titlelogo>();
+	ObjectManager::CreateObject<Titlecamera>();
 
 	
 }

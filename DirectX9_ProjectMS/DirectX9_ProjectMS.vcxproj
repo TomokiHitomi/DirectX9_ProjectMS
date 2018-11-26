@@ -187,6 +187,7 @@
     <ClInclude Include="gage3d.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gray.h" />
+    <ClInclude Include="grayko.h" />
     <ClInclude Include="include\Effekseer\Effekseer.h" />
     <ClInclude Include="include\Effekseer\EffekseerRendererDX11.h" />
     <ClInclude Include="include\Effekseer\EffekseerRendererDX9.h" />
@@ -238,6 +239,7 @@
     <ClInclude Include="time.h" />
     <ClInclude Include="timeuplogo.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="titlecamera.h" />
     <ClInclude Include="titlelogo.h" />
     <ClInclude Include="titlemesh.h" />
     <ClInclude Include="weapon.h" />
@@ -260,6 +262,7 @@
     <ClCompile Include="gage3d.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gray.cpp" />
+    <ClCompile Include="grayko.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
@@ -291,6 +294,7 @@
     <ClCompile Include="time.cpp" />
     <ClCompile Include="timeuplogo.cpp" />
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="titlecamera.cpp" />
     <ClCompile Include="titlelogo.cpp" />
     <ClCompile Include="titlemesh.cpp" />
     <ClCompile Include="weapon.cpp" />

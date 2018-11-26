@@ -22,9 +22,11 @@
 #include "rightleft.h"
 #include "ko.h"
 #include "roundlogo.h"
+#include "timeuplogo.h"
 #include "gage.h"
 #include "gage3d.h"
 #include "gray.h"
+#include "grayko.h"
 #include "weaponMgr.h"
 #include "collision.h"
 #include "resultselect.h"
@@ -145,6 +147,8 @@ GameScene::GameScene(void)
 	ObjectManager::CreateObject<Gage>();
 	ObjectManager::CreateObject<Gage3d>();
 	ObjectManager::CreateObject<Gray>();
+	ObjectManager::CreateObject<Grayko>();
+	ObjectManager::CreateObject<Timeuplogo>();
 	ObjectManager::CreateObject<Ko>();
 	ObjectManager::CreateObject<Time>();
 	ObjectManager::CreateObject<Resultselect>();

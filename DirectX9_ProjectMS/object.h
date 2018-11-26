@@ -57,6 +57,7 @@ public:
 		GAGE3D,
 		RESULTSELECT,
 		GRAY,
+		GRAYKO,
 		PARTICLE,
 		RIGHTLEFT,
 		KO,
@@ -64,6 +65,7 @@ public:
 		ROUNDLOGO,
 		TIME,
 		TIMEUPLOGO,
+		TITLECAMERA,
 		WEAPON
 	};
 
