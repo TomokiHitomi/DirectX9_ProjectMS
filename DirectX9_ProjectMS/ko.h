@@ -15,8 +15,8 @@
 // É}ÉNÉçíËã`
 //
 //=============================================================================
-#define TEXTURE_KO_000					"data/TEXTURE/ko002.png"												// gage hp
-#define TEXTURE_KO_001					"data/TEXTURE/ko002.png"										// gage hp
+#define TEXTURE_KO_000					"data/TEXTURE/ko003.png"												// gage hp
+#define TEXTURE_KO_001					"data/TEXTURE/ko003.png"										// gage hp
 
 
 
