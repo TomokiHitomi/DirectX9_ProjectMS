@@ -70,8 +70,10 @@ void GameScene::Update(void)
 				{
 					ObjectManager::GetObjectPointer<Ko>(ObjectManager::KO)->Unset();
 				}
+				Time* pTime = ObjectManager::GetObjectPointer<Time>(ObjectManager::TIME);
+				pTime->Reset();
+				pTime->SetStart(false);
 
-				ObjectManager::GetObjectPointer<Time>(ObjectManager::TIME)->Reset();
 				PlayerManager::Reset();
 
 				Roundlogo* pRoundlogo = ObjectManager::GetObjectPointer<Roundlogo>(ObjectManager::ROUNDLOGO);
@@ -230,6 +232,7 @@ GameScene::~GameScene(void)
 //=============================================================================
 void GameScene::SetRoundWin(int num)
 {
+	ObjectManager::GetObjectPointer<Time>(ObjectManager::TIME)->SetStart(false);
 	ObjectManager::GetObjectPointer<Ko>(ObjectManager::KO)->Set(num);
 	m_nRoundWin += num;
 	if (m_nGameRound == 1)

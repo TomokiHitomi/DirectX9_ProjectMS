@@ -227,6 +227,7 @@
     <ClInclude Include="roundlogo.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="select.h" />
+    <ClInclude Include="selectcharacter.h" />
     <ClInclude Include="selectface.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="SkinAssimp.h" />
@@ -282,6 +283,7 @@
     <ClCompile Include="roundlogo.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="select.cpp" />
+    <ClCompile Include="selectcharacter.cpp" />
     <ClCompile Include="selectface.h.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="SkinAssimp.cpp" />

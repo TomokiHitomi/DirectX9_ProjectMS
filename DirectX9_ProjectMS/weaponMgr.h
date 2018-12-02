@@ -23,10 +23,10 @@
 #define	WEAPON_MODEL_BOWL_SCL			(20.0f)
 
 #define	WEAPON_MODEL_MIC				"mic.x"	// ì«Ç›çûÇﬁÉÇÉfÉãñº
-#define	WEAPON_MODEL_MIC_SCL			(2.0f)
+#define	WEAPON_MODEL_MIC_SCL			(2.7f)
 
 #define	WEAPON_MODEL_CDCASE				"CDCase.x"	// ì«Ç›çûÇﬁÉÇÉfÉãñº
-#define	WEAPON_MODEL_CDCASE_SCL			(18.0f)
+#define	WEAPON_MODEL_CDCASE_SCL			(21.0f)
 
 #define	WEAPON_MODEL_EXTINGUISHER		"extinguisher.x"	// ì«Ç›çûÇﬁÉÇÉfÉãñº
 #define	WEAPON_MODEL_EXTINGUISHER_SCL	(2.0f)

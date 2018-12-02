@@ -276,6 +276,9 @@
     <ClInclude Include="titlecamera.h">
       <Filter>ソース ファイル\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="selectcharacter.h">
+      <Filter>ソース ファイル\Object\Character</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -436,6 +439,9 @@
     </ClCompile>
     <ClCompile Include="titlecamera.cpp">
       <Filter>ソース ファイル\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="selectcharacter.cpp">
+      <Filter>ソース ファイル\Object\Character</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

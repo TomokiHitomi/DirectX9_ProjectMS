@@ -66,7 +66,8 @@ public:
 		TIME,
 		TIMEUPLOGO,
 		TITLECAMERA,
-		WEAPON
+		WEAPON,
+		SELECTCHARACTER
 	};
 
 	// オブジェクトタイプ
