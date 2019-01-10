@@ -68,6 +68,7 @@ HRESULT ShaderManager::Load(void)
 {
 	pShader[BILLBOARD] = new Shader(SHADER_FILE_BILLBOARD);
 	pShader[XMODEL] = new Shader(SHADER_FILE_XMODEL);
+	pShader[SKINPMX] = new Shader(SHADER_FILE_SKINPMX);
 	pShader[SKINASSIMP] = new Shader(SHADER_FILE_SKINASSIMP);
 	pShader[SKINMESH] = new Shader(SHADER_FILE_SKINMESH);
 	pShader[PLANE] = new Shader(SHADER_FILE_PLANE);

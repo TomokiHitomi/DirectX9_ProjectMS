@@ -279,6 +279,15 @@
     <ClInclude Include="selectcharacter.h">
       <Filter>ソース ファイル\Object\Character</Filter>
     </ClInclude>
+    <ClInclude Include="ModelLoaderPMX.h">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseFunc.h">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinPmx.h">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -443,6 +452,15 @@
     <ClCompile Include="selectcharacter.cpp">
       <Filter>ソース ファイル\Object\Character</Filter>
     </ClCompile>
+    <ClCompile Include="ModelLoaderPMX.cpp">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseFunc.cpp">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinPmx.cpp">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="data\SHADER\sprite.fx">
@@ -464,6 +482,9 @@
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
     <FxCompile Include="data\SHADER\skinassimp.fx">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="data\SHADER\skinpmx.fx">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>

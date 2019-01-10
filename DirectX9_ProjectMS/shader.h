@@ -14,6 +14,7 @@
 //*****************************************************************************
 #define SHADER_FILE_BILLBOARD	"data/SHADER/billboard.fx"
 #define SHADER_FILE_XMODEL		"data/SHADER/xmodel.fx"
+#define SHADER_FILE_SKINPMX		"data/SHADER/skinpmx.fx"
 #define SHADER_FILE_SKINASSIMP	"data/SHADER/skinassimp.fx"
 #define SHADER_FILE_SKINMESH	"data/SHADER/skinmesh.fx"
 #define SHADER_FILE_PLANE		"data/SHADER/plane.fx"
@@ -47,6 +48,7 @@ public:
 		BILLBOARD,
 		XMODEL,
 		SKINASSIMP,
+		SKINPMX,
 		SKINMESH,
 		PLANE,
 		BOX,

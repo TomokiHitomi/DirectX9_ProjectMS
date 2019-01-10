@@ -25,6 +25,8 @@
 #include "fade.h"
 #include "scene.h"
 
+#include "SkinPmx.h"
+
 /* Debug */
 #ifdef _DEBUG
 #include "debugproc.h"
@@ -33,6 +35,7 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
+#define TEST_SCL	(5.0f)
 
 //*****************************************************************************
 // プロトタイプ宣言
@@ -41,6 +44,8 @@
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
+CSkinPmx *pPmx;
+
 
 //=============================================================================
 // 更新処理
@@ -56,8 +61,17 @@ void TitleScene::Update(void)
 //=============================================================================
 void TitleScene::Draw(void)
 {
+
+	D3DXMATRIX mtxWorld, mtxScl;
+	D3DXMatrixIdentity(&mtxWorld);
+	D3DXMatrixScaling(&mtxScl, TEST_SCL, TEST_SCL, TEST_SCL);
+	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScl);
+	pPmx->Draw(mtxWorld);
+
 	CameraManager::Set(CameraManager::SINGLE);
 	ObjectManager::DrawAll();
+
+
 }
 
 //=============================================================================
@@ -70,7 +84,8 @@ TitleScene::TitleScene(void)
 	ObjectManager::CreateObject<Titlelogo>();
 	ObjectManager::CreateObject<Titlecamera>();
 
-	
+	pPmx = new CSkinPmx;
+	pPmx->Init();
 }
 //=============================================================================
 // デストラクタ処理（終了）
@@ -78,7 +93,7 @@ TitleScene::TitleScene(void)
 TitleScene::~TitleScene(void)
 {
 	ObjectManager::ReleaseAll();
-
+	SAFE_DELETE(pPmx);
 }
 
 //=============================================================================

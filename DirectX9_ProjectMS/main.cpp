@@ -11,6 +11,7 @@
 #include "scene.h"
 #include "input.h"
 #include "joycon.h"
+#include "ModelLoaderPMX.h"
 //#include <imgui\imgui.h>
 //#include <imgui\imgui_impl_dx9.h>
 //
@@ -47,7 +48,17 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 #ifdef _DEBUG
 	// メモリリーク検出
 	::_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	if (!AttachConsole(ATTACH_PARENT_PROCESS)) {
+		// エクスプローラから起動した場合は新規にコンソールを割り当てる
+		AllocConsole();
+	}
+
+	freopen("CONIN$", "r", stdin);  // "CONIN$", "CONOUT$", "CON" の違いがよく分かっていない
+	freopen("CONOUT$", "w", stdout);
+	freopen("CONOUT$", "w", stderr);
 #endif
+
 	UNREFERENCED_PARAMETER(hPrevInstance);	// 無くても良いけど、警告が出る（未使用宣言）
 	UNREFERENCED_PARAMETER(lpCmdLine);		// 無くても良いけど、警告が出る（未使用宣言）
 
@@ -202,6 +213,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	timeEndPeriod(1);				// 分解能を戻す
 
+#ifdef _DEBUG
+	//getchar();
+	// コンソールを解放
+	FreeConsole();
+#endif
+
 	//_CrtDumpMemoryLeaks();
 	return (int)msg.wParam;
 }
@@ -331,6 +348,8 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	// Joycon認識開始
 	start();
+
+	LoadPmx();
 
 	// シーンの初期化処理
 	SceneManager::Init(hInstance, hWnd);
