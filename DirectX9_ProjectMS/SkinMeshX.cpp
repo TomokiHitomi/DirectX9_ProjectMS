@@ -14,6 +14,7 @@
 #include "SkinMeshX.h"
 #include "camera.h"
 #include "light.h"
+#include "scene.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -414,25 +415,31 @@ CSkinMesh::CSkinMesh()
 	m_MaterialFlg = FALSE;
 	//マテリアルデータ
 	ZeroMemory(&m_Material, sizeof(D3DMATERIAL9));
-	//単位行列化
-	D3DXMatrixIdentity(&(this->m_World));
-	//アニメーション時間初期化
-	m_AnimeTime = 0;
-	//アニメーションスピード初期化
-	m_AnimSpeed = SKIN_ANIME_SPEED; //固定
-	//現在のアニメーショントラック初期化
-	m_CurrentTrack = 0;
-	//アニメーションデータトラック初期化
-	//有効にする
-	m_CurrentTrackDesc.Enable = TRUE;
-	//影響度100%
-	m_CurrentTrackDesc.Weight = 1;
-	//開始位置初期化
-	m_CurrentTrackDesc.Position = 0;
-	//速度
-	m_CurrentTrackDesc.Speed = 1;
-	// 次のアニメーションへシフトするのにかかる時間
-	m_fShiftTime = SKIN_ANIME_WEIGHT;
+	// アニメーションセットのクローン
+	for (DWORD i = 0; i < ANIMATION_CONTROLLER_MAX; i++)
+	{
+		//単位行列化
+		D3DXMatrixIdentity(&(this->m_World[i]));
+		//アニメーション時間初期化
+		m_AnimeTime[i] = 0;
+		//アニメーションスピード初期化
+		m_AnimSpeed[i] = SKIN_ANIME_SPEED; //固定
+		//現在のアニメーショントラック初期化
+		m_CurrentTrack[i] = 0;
+		//アニメーションデータトラック初期化
+		//有効にする
+		m_CurrentTrackDesc[i].Enable = TRUE;
+		//影響度100%
+		m_CurrentTrackDesc[i].Weight = 1;
+		//開始位置初期化
+		m_CurrentTrackDesc[i].Position = 0;
+		//速度
+		m_CurrentTrackDesc[i].Speed = 1;
+		// 次のアニメーションへシフトするのにかかる時間
+		m_fShiftTime[i] = SKIN_ANIME_WEIGHT;
+	}
+
+	m_bAnim = true;
 
 	// シェーダを初期化
 	pEffect = NULL;
@@ -450,22 +457,26 @@ VOID CSkinMesh::Release()
 		m_cHierarchy.DestroyFrame(m_pFrameRoot);
 		m_pFrameRoot = NULL;
 	}
-	for (DWORD i = 0; i<m_pAnimController->GetNumAnimationSets(); i++)
+	for (DWORD i = 0; i < m_pAnimController[0]->GetNumAnimationSets(); i++)
 	{
 		//アニメーションセットの解放
 		SAFE_RELEASE(m_pAnimSet[i]);
 	}
-	//アニメーションコントローラー解放
-	SAFE_RELEASE(m_pAnimController);
+
+	for (DWORD i = 0; i < ANIMATION_CONTROLLER_MAX; i++)
+	{
+		//アニメーションコントローラー解放
+		SAFE_RELEASE(m_pAnimController[i]);
+	}
 	//すべてのフレーム参照変数の要素を削除
 	m_FrameArray.clear();
 	//メッシュコンテナありのフレーム参照変数の要素を削除
 	m_IntoMeshFrameArray.clear();
 
 	// シェーダの解放
-	SAFE_RELEASE(pEffect);
+	//SAFE_RELEASE(pEffect);
 }
-	
+
 //=============================================================================
 // ボーン行列取得関数
 //=============================================================================
@@ -488,7 +499,7 @@ HRESULT CSkinMesh::AllocateBoneMatrix(LPD3DXFRAME pFrameRoot, LPD3DXMESHCONTAINE
 	SAFE_DELETE(pMeshContainer->ppBoneMatrixPtrs);
 	pMeshContainer->ppBoneMatrixPtrs = new D3DXMATRIX*[dwBoneNum];
 	//ボーンの数だけループ
-	for (DWORD i = 0; i<dwBoneNum; i++)
+	for (DWORD i = 0; i < dwBoneNum; i++)
 	{
 		//子フレーム(ボーン)のアドレスを検索してpFrameに格納
 		pFrame = (D3DXFRAME_DERIVED*)D3DXFrameFind(pFrameRoot, pMeshContainer->pSkinInfo->GetBoneName(i));
@@ -609,14 +620,27 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, D3DXMESHCONTAINER
 			if (pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId])
 			{
 				// テクニック t0 を使用
-				pEffect->SetTechnique("t0");
+				if (FAILED(pEffect->SetTechnique("t0")))
+				{
+					// エラー
+					MessageBox(NULL, "テクニックのセットに失敗しました。", "t0", MB_OK);
+				}
+
 				// テクスチャをセット
-				pEffect->SetTexture("tex", pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId]);
+				if (FAILED(pEffect->SetTexture("tex", pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId])))
+				{
+					// エラー
+					MessageBox(NULL, "テクスチャのセットに失敗しました。", "tex", MB_OK);
+				}
 			}
 			else
 			{
 				// テクニック t1 を使用
-				pEffect->SetTechnique("t1");
+				if (FAILED(pEffect->SetTechnique("t1")))
+				{
+					// エラー
+					MessageBox(NULL, "テクニックのセットに失敗しました。", "t1", MB_OK);
+				}
 			}
 
 			{	// ライトON
@@ -696,76 +720,76 @@ VOID CSkinMesh::RenderMeshContainer(LPDIRECT3DDEVICE9 pDevice, D3DXMESHCONTAINER
 	}
 
 
-////#ifdef _DEBUG
-////		PrintDebugProc("Container  [%d]\n", m_dwContainerCount);
-////#endif
-//		//ボーンテーブルからバッファの先頭アドレスを取得
-//		pBoneCombination = reinterpret_cast<LPD3DXBONECOMBINATION>(pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
-//		//dwPrevBoneIDにUINT_MAXの値(0xffffffff)を格納
-//		dwPrevBoneID = UINT_MAX;
-//		//スキニング計算
-//		for (i = 0; i < pMeshContainer->NumAttributeGroups; i++)
-//		{
-//			dwBlendMatrixNum = 0;
-//			//影響している行列数取得
-//			for (k = 0; k< pMeshContainer->NumInfl; k++)
-//			{
-//				//UINT_MAX(-1)
-//				if (pBoneCombination[i].BoneId[k] != UINT_MAX)
-//				{
-//					//現在影響を受けているボーンの数
-//					dwBlendMatrixNum = k;
-//				}
-//			}
-//			//ジオメトリブレンディングを使用するために行列の個数を指定
-//			pDevice->SetRenderState(D3DRS_VERTEXBLEND, dwBlendMatrixNum);
-//			//影響している行列の検索
-//			for (k = 0; k < pMeshContainer->NumInfl; k++)
-//			{
-//				//iMatrixIndexに1度の呼び出しで描画出来る各ボーンを識別する値を格納
-//				//( このBoneID配列の長さはメッシュの種類によって異なる
-//				//( インデックスなしであれば　=　頂点ごとの重み であり
-//				// インデックスありであれば　=　ボーン行列パレットのエントリ数)
-//				//現在のボーン(i番目)からみてk番目のボーンid
-//				iMatrixIndex = pBoneCombination[i].BoneId[k];
-//				//行列の情報があれば
-//				if (iMatrixIndex != UINT_MAX)
-//				{
-//					//mStackにオフセット行列*ボーン行列を格納
-//					mStack = pMeshContainer->pBoneOffsetMatrices[iMatrixIndex] * (*pMeshContainer->ppBoneMatrixPtrs[iMatrixIndex]);
-//					//行列スタックに格納
-//					pDevice->SetTransform(D3DTS_WORLDMATRIX(k), &mStack);
-//				}
-//			}
-//
-//
-//
-//			D3DMATERIAL9 TmpMat = pMeshContainer->pMaterials[pBoneCombination[i].AttribId].MatD3D;
-//			TmpMat.Emissive.a = TmpMat.Diffuse.a = TmpMat.Ambient.a = 1.0f;
-//			pDevice->SetMaterial(&TmpMat);
-//			pDevice->SetTexture(0, pMeshContainer->ppTextures[pBoneCombination[i].AttribId]);
-//			//dwPrevBoneIDに属性テーブルの識別子を格納
-//			dwPrevBoneID = pBoneCombination[i].AttribId;
-//			//メッシュの描画
-//			//pMeshContainer->MeshData.pMesh->DrawSubset(i);
-//			if (FAILED(pMeshContainer->MeshData.pMesh->DrawSubset(i)))
-//			{
-//				MessageBox(NULL, "描画に失敗しました。", "SkinMeshX", MB_OK);
-//			}
-//
-////#ifdef _DEBUG
-//			//PrintDebugProc("Bone  [Con:%d  ID:%d  Name:%s]\n", 
-//			//	m_dwContainerCount,
-//			//	m_dwBoneCount,
-//			//	pMeshContainer->pSkinInfo->GetBoneName(i));
-////#endif
-//			m_dwBoneCount++;
-//		}
-////#ifdef _DEBUG
-////		PrintDebugProc("BoneMax  [%d]\n", m_dwBoneCount);
-////#endif
-	//}
-	//通常メッシュの場合
+	////#ifdef _DEBUG
+	////		PrintDebugProc("Container  [%d]\n", m_dwContainerCount);
+	////#endif
+	//		//ボーンテーブルからバッファの先頭アドレスを取得
+	//		pBoneCombination = reinterpret_cast<LPD3DXBONECOMBINATION>(pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
+	//		//dwPrevBoneIDにUINT_MAXの値(0xffffffff)を格納
+	//		dwPrevBoneID = UINT_MAX;
+	//		//スキニング計算
+	//		for (i = 0; i < pMeshContainer->NumAttributeGroups; i++)
+	//		{
+	//			dwBlendMatrixNum = 0;
+	//			//影響している行列数取得
+	//			for (k = 0; k< pMeshContainer->NumInfl; k++)
+	//			{
+	//				//UINT_MAX(-1)
+	//				if (pBoneCombination[i].BoneId[k] != UINT_MAX)
+	//				{
+	//					//現在影響を受けているボーンの数
+	//					dwBlendMatrixNum = k;
+	//				}
+	//			}
+	//			//ジオメトリブレンディングを使用するために行列の個数を指定
+	//			pDevice->SetRenderState(D3DRS_VERTEXBLEND, dwBlendMatrixNum);
+	//			//影響している行列の検索
+	//			for (k = 0; k < pMeshContainer->NumInfl; k++)
+	//			{
+	//				//iMatrixIndexに1度の呼び出しで描画出来る各ボーンを識別する値を格納
+	//				//( このBoneID配列の長さはメッシュの種類によって異なる
+	//				//( インデックスなしであれば　=　頂点ごとの重み であり
+	//				// インデックスありであれば　=　ボーン行列パレットのエントリ数)
+	//				//現在のボーン(i番目)からみてk番目のボーンid
+	//				iMatrixIndex = pBoneCombination[i].BoneId[k];
+	//				//行列の情報があれば
+	//				if (iMatrixIndex != UINT_MAX)
+	//				{
+	//					//mStackにオフセット行列*ボーン行列を格納
+	//					mStack = pMeshContainer->pBoneOffsetMatrices[iMatrixIndex] * (*pMeshContainer->ppBoneMatrixPtrs[iMatrixIndex]);
+	//					//行列スタックに格納
+	//					pDevice->SetTransform(D3DTS_WORLDMATRIX(k), &mStack);
+	//				}
+	//			}
+	//
+	//
+	//
+	//			D3DMATERIAL9 TmpMat = pMeshContainer->pMaterials[pBoneCombination[i].AttribId].MatD3D;
+	//			TmpMat.Emissive.a = TmpMat.Diffuse.a = TmpMat.Ambient.a = 1.0f;
+	//			pDevice->SetMaterial(&TmpMat);
+	//			pDevice->SetTexture(0, pMeshContainer->ppTextures[pBoneCombination[i].AttribId]);
+	//			//dwPrevBoneIDに属性テーブルの識別子を格納
+	//			dwPrevBoneID = pBoneCombination[i].AttribId;
+	//			//メッシュの描画
+	//			//pMeshContainer->MeshData.pMesh->DrawSubset(i);
+	//			if (FAILED(pMeshContainer->MeshData.pMesh->DrawSubset(i)))
+	//			{
+	//				MessageBox(NULL, "描画に失敗しました。", "SkinMeshX", MB_OK);
+	//			}
+	//
+	////#ifdef _DEBUG
+	//			//PrintDebugProc("Bone  [Con:%d  ID:%d  Name:%s]\n", 
+	//			//	m_dwContainerCount,
+	//			//	m_dwBoneCount,
+	//			//	pMeshContainer->pSkinInfo->GetBoneName(i));
+	////#endif
+	//			m_dwBoneCount++;
+	//		}
+	////#ifdef _DEBUG
+	////		PrintDebugProc("BoneMax  [%d]\n", m_dwBoneCount);
+	////#endif
+		//}
+		//通常メッシュの場合
 	else
 	{
 		MessageBox(NULL, "スキンメッシュXファイルの描画に失敗しました。", NULL, MB_OK);
@@ -896,32 +920,42 @@ HRESULT CSkinMesh::Init(LPDIRECT3DDEVICE9 lpD3DDevice, LPSTR pMeshPass) {
 	// Xファイルからアニメーションメッシュを読み込み作成する
 	if (FAILED(
 		D3DXLoadMeshHierarchyFromX(
-			TmpMeshPass, 
-			D3DXMESH_MANAGED, 
-			lpD3DDevice, 
+			TmpMeshPass,
+			D3DXMESH_MANAGED,
+			lpD3DDevice,
 			&m_cHierarchy,
 			NULL,
 			&m_pFrameRoot,
-			&m_pAnimController)))
+			&m_pAnimController[0])))
 	{
 		MessageBox(NULL, "アニメーションXファイルの読み込みに失敗しました", TmpMeshPass, MB_OK);
 		return E_FAIL;
 	}
 
-	//// シェーダのアドレスを取得
-	//pEffect = ShaderManager::GetEffect(ShaderManager::SKINMESH);
-
 	// シェーダのアドレスを取得
-	ShaderManager::CreateEffect(&pEffect, ShaderManager::SKINMESH);
+	pEffect = ShaderManager::GetEffect(ShaderManager::SKINMESH);
+
+	//// シェーダのアドレスを取得
+	//ShaderManager::CreateEffect(&pEffect, ShaderManager::SKINMESH);
 
 
 	//ボーン行列初期化
 	AllocateAllBoneMatrices(m_pFrameRoot, m_pFrameRoot);
 	//アニメーショントラックの取得
-	for (DWORD i = 0; i<m_pAnimController->GetNumAnimationSets(); i++)
+	for (DWORD i = 0; i < m_pAnimController[0]->GetNumAnimationSets(); i++)
 	{
 		//アニメーション取得
-		m_pAnimController->GetAnimationSet(i, &(m_pAnimSet[i]));
+		m_pAnimController[0]->GetAnimationSet(i, &(m_pAnimSet[i]));
+		// アニメーションセットのクローン
+		for (DWORD j = 0; j < ANIMATION_CONTROLLER_MAX; j++)
+			m_bLoopFlag[j][i] = true;
+	}
+
+	// アニメーションセットのクローン
+	for (DWORD i = 0; i < ANIMATION_CONTROLLER_MAX; i++)
+	{
+		m_fAnimeTime[i] = 0.0f;
+		m_fLoopTime[i] = m_pAnimSet[m_CurrentTrack[i]]->GetPeriod();
 	}
 	//すべてのフレーム参照変数の生成
 	m_FrameArray.clear();
@@ -932,13 +966,13 @@ HRESULT CSkinMesh::Init(LPDIRECT3DDEVICE9 lpD3DDevice, LPSTR pMeshPass) {
 
 
 	//フレーム配列にオフセット情報作成
-	for (DWORD i = 0; i<m_IntoMeshFrameArray.size(); i++) {
+	for (DWORD i = 0; i < m_IntoMeshFrameArray.size(); i++) {
 		D3DXMESHCONTAINER_DERIVED* pMyMeshContainer = (D3DXMESHCONTAINER_DERIVED*)m_IntoMeshFrameArray[i]->pMeshContainer;
 		while (pMyMeshContainer) {
 			//スキン情報
 			if (pMyMeshContainer->pSkinInfo) {
 				DWORD cBones = pMyMeshContainer->pSkinInfo->GetNumBones();
-				for (DWORD iBone = 0; iBone<cBones; iBone++) 
+				for (DWORD iBone = 0; iBone < cBones; iBone++)
 				{
 					pFrame = (D3DXFRAME_DERIVED*)D3DXFrameFind(m_pFrameRoot, pMyMeshContainer->pSkinInfo->GetBoneName(iBone));
 					if (pFrame == NULL)
@@ -963,6 +997,17 @@ HRESULT CSkinMesh::Init(LPDIRECT3DDEVICE9 lpD3DDevice, LPSTR pMeshPass) {
 			//次へ
 			pMyMeshContainer = (D3DXMESHCONTAINER_DERIVED *)pMyMeshContainer->pNextMeshContainer;
 		}
+	}
+
+	// アニメーションセットのクローン
+	for (DWORD i = 1; i < ANIMATION_CONTROLLER_MAX; i++)
+	{
+		m_pAnimController[0]->CloneAnimationController(
+			m_pAnimController[0]->GetMaxNumAnimationOutputs(),
+			m_pAnimController[0]->GetMaxNumAnimationSets(),
+			m_pAnimController[0]->GetMaxNumTracks(),
+			m_pAnimController[0]->GetMaxNumEvents(),
+			&m_pAnimController[i]);
 	}
 	return S_OK;
 }
@@ -992,118 +1037,129 @@ VOID CSkinMesh::CreateFrameArray(LPD3DXFRAME _pFrame) {
 //=============================================================================
 // 更新処理
 //=============================================================================
-VOID CSkinMesh::Update(void) {
-	//押しっぱなしによる連続切り替え防止
-	//static bool PushFlg = false; //ここでは仮でフラグを使用するが、本来はメンバ変数などにする
-	//							 //アニメーション変更チェック
-	//if ((GetAsyncKeyState(VK_LEFT) & 0x8000) || (GetAsyncKeyState(VK_RIGHT) & 0x8000)) {
-	//	if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
-	//		if (PushFlg == false) {
-	//			int Num = GetAnimTrack() - 1;
-	//			if (Num < 0)Num = 0;
-	//			
-	//			(Num, m_fShiftTime);
-	//		}
-	//	}
-	//	if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
-	//		if (PushFlg == false) {
-	//			int Num = GetAnimTrack() + 1;
-	//			if ((DWORD)Num > m_pAnimController->GetNumAnimationSets())Num = m_pAnimController->GetNumAnimationSets();
-	//			ChangeAnim(Num, m_fShiftTime);
-	//		}
-	//	}
-	//	PushFlg = true;
-	//}
-	//else {
-	//	PushFlg = false;
-	//}
+VOID CSkinMesh::Update(int nAC)
+{
+	if (nAC >= ANIMATION_CONTROLLER_MAX) return;
 
 	// モーションブレンド確認
-	m_fCurWeight += m_fShiftTime;
-	if (m_fCurWeight <= 1.0f)
+	m_fCurWeight[nAC] += m_fShiftTime[nAC];
+
+	if (m_fCurWeight[nAC] <= 1.0f)
 	{
 		// ブレンド中
-		m_pAnimController->SetTrackWeight(0, m_fCurWeight);			// 現在のアニメーション
-		m_pAnimController->SetTrackWeight(1, 1.0f - m_fCurWeight);	// 前のアニメーション
+		m_pAnimController[nAC]->SetTrackWeight(0, m_fCurWeight[nAC]);			// 現在のアニメーション
+		m_pAnimController[nAC]->SetTrackWeight(1, 1.0f - m_fCurWeight[nAC]);	// 前のアニメーション
 	}
 	else
 	{
 		// ブレンド終了。通常アニメーションをするTrack0のウェイトを最大値に固定
-		m_pAnimController->SetTrackWeight(0, 1.0f);					// 現在のアニメーション
-		m_pAnimController->SetTrackEnable(1, false);				// 前のアニメーションを無効にする
+		m_pAnimController[nAC]->SetTrackWeight(0, 1.0f);					// 現在のアニメーション
+		m_pAnimController[nAC]->SetTrackEnable(1, false);				// 前のアニメーションを無効にする
 	}
 
 	//現在のアニメーション番号を適応
-	m_pAnimController->SetTrackAnimationSet(0, m_pAnimSet[m_CurrentTrack]);
+	m_pAnimController[nAC]->SetTrackAnimationSet(0, m_pAnimSet[m_CurrentTrack[nAC]]);
 	//0(再生中の)トラックからトラックデスクをセットする
-	m_pAnimController->SetTrackDesc(0, &(m_CurrentTrackDesc));
-	//アニメーション時間データの更新
-	m_pAnimController->AdvanceTime(m_AnimSpeed, NULL);
+	m_pAnimController[nAC]->SetTrackDesc(0, &(m_CurrentTrackDesc[nAC]));
+
+	//// ループフラグが true の場合はアニメーション時間データの更新
+	//if (m_bLoopFlag[m_CurrentTrack[nAC]])
+	//	m_pAnimController[nAC]->AdvanceTime(m_AnimSpeed[nAC], NULL);
+	//// false の場合は1ループ目まで更新
+	//else
+	//{
+	//	// アニメーション時間を加算
+	//	m_fAnimeTime[nAC] += m_AnimSpeed[nAC];
+	//	// 1ループの時間を上回るまで更新
+	//	if (m_fLoopTime[nAC] > m_fAnimeTime[nAC])
+	//		m_pAnimController[nAC]->AdvanceTime(m_AnimSpeed[nAC], NULL);
+	//}
 
 	//アニメーション時間を更新
-	m_AnimeTime++;
+	//m_AnimeTime++;
 }
 
 //=============================================================================
 // スキンメッシュ描画関数
 //=============================================================================
-VOID CSkinMesh::Draw(LPDIRECT3DDEVICE9 lpD3DDevice, D3DXMATRIX _World)
+VOID CSkinMesh::Draw(LPDIRECT3DDEVICE9 lpD3DDevice, D3DXMATRIX _World, int nAC)
 {
-//#ifdef _DEBUG
-//	PrintDebugProc("【 SkinMesh 】\n");
-//#endif
 	//マトリックス行列反映
-	m_World = _World;
+	m_World[nAC] = _World;
 	// メッシュコンテナカウンタを初期化
 	m_dwContainerCount = 0;
 
+	FLOAT fAnimeSpeedTemp = m_AnimSpeed[nAC];
+
+	//if (CameraManager::GetType() == CameraManager::MULTI2 || BaseScene::bPause)
+	if (!m_bAnim || BaseScene::bPause)
+		m_AnimSpeed[nAC] = 0.0f;
+
+	// ループフラグが true の場合はアニメーション時間データの更新
+	if (m_bLoopFlag[m_CurrentTrack[nAC]])
+		m_pAnimController[nAC]->AdvanceTime(m_AnimSpeed[nAC], NULL);
+	// false の場合は1ループ目まで更新
+	else
+	{
+		// アニメーション時間を加算
+		m_fAnimeTime[nAC] += m_AnimSpeed[nAC];
+		// 1ループの時間を上回るまで更新
+		if (m_fLoopTime[nAC] > m_fAnimeTime[nAC])
+			m_pAnimController[nAC]->AdvanceTime(m_AnimSpeed[nAC], NULL);
+	}
+
+	m_AnimSpeed[nAC] = fAnimeSpeedTemp;
+
 	//アニメーションデータを更新
-	UpdateFrameMatrices(m_pFrameRoot, &m_World);
+	UpdateFrameMatrices(m_pFrameRoot, &m_World[nAC]);
 	//アニメーション描画
 	DrawFrame(lpD3DDevice, m_pFrameRoot);
 	//0(再生中の)トラックから更新したトラックデスクを取得する
-	m_pAnimController->GetTrackDesc(0, &m_CurrentTrackDesc);
+	m_pAnimController[nAC]->GetTrackDesc(0, &m_CurrentTrackDesc[nAC]);
+
 }
 
 //=============================================================================
 // アニメーション変更関数
 //=============================================================================
 //オブジェクトのアニメーション変更( 変更するアニメーション番号 )
-VOID CSkinMesh::ChangeAnim(DWORD _NewAnimNum, FLOAT fShift)
+VOID CSkinMesh::ChangeAnim(DWORD _NewAnimNum, FLOAT fShift, int nAC)
 {
-	if (m_CurrentTrack == _NewAnimNum)
+	if (m_CurrentTrack[nAC] == _NewAnimNum)
 	{	// 異なるアニメーションであるかチェック
 		return;
 	}
 
 	// 現在のアニメーションセットの設定値を取得
 	D3DXTRACK_DESC TD;   // トラックの能力
-	m_pAnimController->GetTrackDesc(0, &TD);
+	m_pAnimController[nAC]->GetTrackDesc(0, &TD);
 	// 現在のアニメーションをトラック1へ移行
-	m_pAnimController->SetTrackAnimationSet(1, m_pAnimSet[m_CurrentTrack]);
-	m_pAnimController->SetTrackDesc(1, &TD);
-
+	m_pAnimController[nAC]->SetTrackAnimationSet(1, m_pAnimSet[m_CurrentTrack[nAC]]);
+	m_pAnimController[nAC]->SetTrackDesc(1, &TD);
 
 	// 現在のアニメーションを保管
-	m_OldTrack = m_CurrentTrack;
+	m_OldTrack[nAC] = m_CurrentTrack[nAC];
 	// 新規アニメーションに変更
-	m_CurrentTrack = _NewAnimNum;
+	m_CurrentTrack[nAC] = _NewAnimNum;
 
 	//アニメーションタイムを初期化
-	m_AnimeTime = 0;
+	m_AnimeTime[nAC] = 0;
 	// アニメーションを最初の位置から再生させる
-	m_pAnimController->GetTrackDesc(0, &m_CurrentTrackDesc);
-	m_CurrentTrackDesc.Position = 0;
-	m_pAnimController->SetTrackDesc(0, &m_CurrentTrackDesc);
+	m_pAnimController[nAC]->GetTrackDesc(0, &m_CurrentTrackDesc[nAC]);
+	m_CurrentTrackDesc[nAC].Position = 0;
+	m_pAnimController[nAC]->SetTrackDesc(0, &m_CurrentTrackDesc[nAC]);
 
 	// ウェイトタイムを初期化
-	m_fCurWeight = 0.0f;
+	m_fCurWeight[nAC] = 0.0f;
 	// 次のアニメーションへシフトするのにかかる時間を設定
-	m_fShiftTime = fShift;
+	m_fShiftTime[nAC] = fShift;
 
 	// トラックの合成を許可
-	m_pAnimController->SetTrackEnable(0, true);
-	m_pAnimController->SetTrackEnable(1, true);
+	m_pAnimController[nAC]->SetTrackEnable(0, true);
+	m_pAnimController[nAC]->SetTrackEnable(1, true);
+
+	m_fAnimeTime[nAC] = 0.0f;
+	m_fLoopTime[nAC] = m_pAnimSet[m_CurrentTrack[nAC]]->GetPeriod();
 }
 
 //=============================================================================
@@ -1134,10 +1190,66 @@ D3DXFRAME_DERIVED* CSkinMesh::SearchBoneFrame(LPSTR _BoneName, D3DXFRAME* _pFram
 	return NULL;
 }
 
+////=============================================================================
+//// ボーン数検索関数
+////=============================================================================
+//D3DXFRAME_DERIVED* CSkinMesh::SearchBoneFrameNum(int* _BoneNum, D3DXFRAME* _pFrame)
+//{
+//	D3DXFRAME_DERIVED* pFrame = (D3DXFRAME_DERIVED*)_pFrame;
+//
+//	// ボーンの数をカウントアップ
+//	*_BoneNum += 1;
+//
+//	if (_pFrame->pFrameSibling != NULL)
+//	{
+//		pFrame = SearchBoneFrameNum(_BoneNum, _pFrame->pFrameSibling);
+//		if (pFrame != NULL) {
+//			return pFrame;
+//		}
+//	}
+//	if (_pFrame->pFrameFirstChild != NULL)
+//	{
+//		pFrame = SearchBoneFrameNum(_BoneNum, _pFrame->pFrameFirstChild);
+//		if (pFrame != NULL) {
+//			return pFrame;
+//		}
+//	}
+//	return NULL;
+//}
+//
+////=============================================================================
+//// 全ボーンのマトリクスポインタの取得関数
+////=============================================================================
+//D3DXFRAME_DERIVED* CSkinMesh::SearchBoneFrameAllAdr(int* _BoneNum, D3DXMATRIX* _pMtxBoneArray, D3DXFRAME* _pFrame)
+//{
+//	D3DXFRAME_DERIVED* pFrame = (D3DXFRAME_DERIVED*)_pFrame;
+//
+//	// ボーンの数をカウントアップ
+//	_pMtxBoneArray[*_BoneNum] = pFrame->CombinedTransformationMatrix;
+//	*_BoneNum += 1;
+//
+//	if (_pFrame->pFrameSibling != NULL)
+//	{
+//		pFrame = SearchBoneFrameAllAdr(_BoneNum, _pMtxBoneArray,_pFrame->pFrameSibling);
+//		if (pFrame != NULL) {
+//			return pFrame;
+//		}
+//	}
+//	if (_pFrame->pFrameFirstChild != NULL)
+//	{
+//		pFrame = SearchBoneFrameAllAdr(_BoneNum, _pMtxBoneArray, _pFrame->pFrameFirstChild);
+//		if (pFrame != NULL) {
+//			return pFrame;
+//		}
+//	}
+//	return NULL;
+//}
+
 //=============================================================================
 // ボーンのマトリクス取得関数
 //=============================================================================
-D3DXMATRIX CSkinMesh::GetBoneMatrix(LPSTR _BoneName) {
+D3DXMATRIX CSkinMesh::GetBoneMatrix(LPSTR _BoneName)
+{
 	D3DXFRAME_DERIVED* pFrame = SearchBoneFrame(_BoneName, m_pFrameRoot);
 	//ボーンが見つかれば
 	if (pFrame != NULL) {
@@ -1156,7 +1268,8 @@ D3DXMATRIX CSkinMesh::GetBoneMatrix(LPSTR _BoneName) {
 //=============================================================================
 // ボーンのマトリクスポインタ取得関数
 //=============================================================================
-D3DXMATRIX* CSkinMesh::GetpBoneMatrix(LPSTR _BoneName) {
+D3DXMATRIX* CSkinMesh::GetBoneMatrixAdr(LPSTR _BoneName)
+{
 	/////////////////////////////////////
 	//注意）RokDeBone用に設定(対象ボーンの一つ先の行列をとってくる)
 	D3DXFRAME_DERIVED* pFrame = SearchBoneFrame(_BoneName, m_pFrameRoot);
@@ -1170,6 +1283,21 @@ D3DXMATRIX* CSkinMesh::GetpBoneMatrix(LPSTR _BoneName) {
 		return NULL;
 	}
 }
+
+////=============================================================================
+//// ボーンのマトリクスポインタ取得関数
+////=============================================================================
+//VOID CSkinMesh::GetBoneMtxAll(D3DXMATRIX** pMtxBoneArray)
+//{
+//	int nBoneNum = 0;
+//	SearchBoneFrameNum(&nBoneNum, m_pFrameRoot);
+//
+//	*pMtxBoneArray = new D3DXMATRIX[nBoneNum];
+//
+//	nBoneNum = 0;
+//
+//	SearchBoneFrameAllAdr(&nBoneNum, *pMtxBoneArray, m_pFrameRoot);
+//}
 
 //--------------------------------------------------------------------------------------
 // Called either by CreateMeshContainer when loading a skin mesh, or when 

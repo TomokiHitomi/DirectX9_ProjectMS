@@ -6,8 +6,12 @@
 //=============================================================================
 #include "main.h"
 #include "selectcharacter.h"
+#include "selectface.h"
 #include "scene.h"
 #include "calculate.h"
+#include "player.h"
+#include "camera.h"
+#include "input.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -45,14 +49,19 @@ SelectCharacterManager::SelectCharacterManager(void)
 	{
 		m_CSkinMesh[i] = NULL;
 		vPos[i] = ZERO_D3DXVECTOR3;
-		vPos[i].x = i * SELECTCHARCTER_POS_MARGIN - SELECTCHARCTER_POS_MARGIN * 2;
+		vPos[i].x = (i * SELECTCHARCTER_POS_MARGIN) - ((CharacterManager::TYPE_MAX - 1) * SELECTCHARCTER_POS_MARGIN / 2);
 
-		vRot[i] = ZERO_D3DXVECTOR3;
+		vRot[i] = D3DXVECTOR3(0.0f, -0.35f, 0.0f);
 
 		if (CharacterManager::m_bUse)
 		{
 			m_CSkinMesh[i] =
 				SceneManager::GetCharMgr()->GetCharData((CharacterManager::TYPE)i);
+			if (m_CSkinMesh[i])
+			{
+				m_CSkinMesh[i]->ChangeAnim(Player::IDOL, 1.0f, 0);
+				m_CSkinMesh[i]->ChangeAnim(Player::IDOL, 1.0f, 1);
+			}
 		}
 	}
 	Init();
@@ -86,6 +95,15 @@ void SelectCharacterManager::Init(void)
 	{
 		WorldConvert(&mtxWorld[i], vPos[i], vRot[i], vScl[i]);
 	}
+
+	// カメラ慣性を設定
+	Camera* pCamera;
+	for (unsigned int i = 0; i < CameraManager::MULTI_MAX; i++)
+	{
+		pCamera = CameraManager::GetCamera((CameraManager::CameraType)i);
+		pCamera->SetAtIner(0.3f);
+		pCamera->SetEyeIner(0.1f);
+	}
 }
 
 //=============================================================================
@@ -93,13 +111,58 @@ void SelectCharacterManager::Init(void)
 //=============================================================================
 void SelectCharacterManager::Update(void)
 {
+#ifdef _DEBUG
+	PrintDebugProc("【　SelectCharacter　】\n");
+#endif
+
+
+
 	for (unsigned int i = 0; i < CharacterManager::TYPE_MAX; i++)
 	{
-		if (m_CSkinMesh[i] != NULL)
-		{
-			m_CSkinMesh[i]->Update();
-		}
+
+		if (GetKeyboardTrigger(DIK_LEFT))vRot[i].y += 0.1f;
+		if (GetKeyboardTrigger(DIK_RIGHT))vRot[i].y -= 0.1f;
+		WorldConvert(&mtxWorld[i], vPos[i], vRot[i], vScl[i]);
+#ifdef _DEBUG
+		PrintDebugProc("rot[%f] \n", vRot[i].y);
+#endif
+
 	}
+
+	int nSelectChar;
+	for (unsigned int i = 0; i < PlayerManager::PLAYER_MAX; i++)
+	{
+		nSelectChar = SearchCharSelect(i);
+
+		for (unsigned int j = 0; j < CharacterManager::TYPE_MAX; j++)
+		{
+			if (m_CSkinMesh[j] != NULL) m_CSkinMesh[j]->Update(i);
+		}
+
+		// カメラをAtをセット
+		CameraManager::pCamera[i]->SetAt(vPos[nSelectChar] + SELECTCHARCTER_CAMERA_EYE);
+
+		// カメラEyeをセット
+		if		(i == 0) CameraManager::pCamera[i]->SetEye(vPos[nSelectChar] + SELECTCHARCTER_CAMERA_AT1);
+		else if	(i == 1) CameraManager::pCamera[i]->SetEye(vPos[nSelectChar] + SELECTCHARCTER_CAMERA_AT2);
+
+
+#ifdef _DEBUG
+		PrintDebugProc("Player%d:[%d] \n",i, nSelectChar);
+#endif
+	}
+
+
+
+	//for (unsigned int j = 0; j < CharacterManager::TYPE_MAX; j++)
+	//{
+
+
+
+	//}
+#ifdef _DEBUG
+	PrintDebugProc("\n");
+#endif
 }
 
 //=============================================================================
@@ -111,7 +174,8 @@ void SelectCharacterManager::Draw(void)
 
 	for (unsigned int i = 0; i < CharacterManager::TYPE_MAX; i++)
 	{
-		m_CSkinMesh[i]->Draw(pDevice, mtxWorld[i]);
+		if (m_CSkinMesh[i] != NULL)
+		m_CSkinMesh[i]->Draw(pDevice, mtxWorld[i], (int)CameraManager::GetType());
 	}
 }
 

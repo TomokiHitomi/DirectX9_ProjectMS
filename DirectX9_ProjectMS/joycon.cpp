@@ -999,6 +999,12 @@ D3DXVECTOR3 GetJoyconGyro(int jcNo)
 	return vecTemp;
 }
 
+int GetJoyconBattery(int jcNo)
+{
+	Joycon *jc = &joycons[jcNo];
+	return (int)(unsigned int)jc->battery;
+}
+
 bool CheckJoyconSize(int nSize)
 {
 	if (nSize == joycons.size())
@@ -1079,6 +1085,7 @@ void JoyconUpdate(void)
 				jc->btns.minus, jc->btns.capture, (jc->stick.CalX), (jc->stick.CalY), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
 			PrintDebugProc("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
 			PrintDebugProc("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
+			PrintDebugProc("Battery [%d]\n", (UCHAR)jc->battery);
 #endif
 		}
 
@@ -1127,9 +1134,9 @@ void JoyconUpdate(void)
 				jc->btns.plus, jc->btns.home, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
 			PrintDebugProc("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
 			PrintDebugProc("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
+			PrintDebugProc("Battery [%d]\n", (UCHAR)jc->battery);
 #endif
 		}
-
 		// Triggerİ’è
 		g_dwJcTrigger[i] = ((lastJcState ^ g_dwJcState[i])	// ‘O‰ñ‚Æˆá‚Á‚Ä‚¢‚Ä
 			& g_dwJcState[i]);					// ‚µ‚©‚à¡ON‚Ì‚â‚Â

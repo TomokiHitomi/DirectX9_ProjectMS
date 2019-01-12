@@ -20,21 +20,18 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-//#define SKIN_ANIME_SPEED	(60.0f / 4800.0f)
-#define SKIN_ANIME_SPEED	(60.0f / 3000.0f)
-#define SKIN_ANIME_WEIGHT	(0.05f)
+//#define SKIN_ANIME_SPEED			(60.0f / 4800.0f)	// 60フレーム / 1秒としたアニメーションスピード
 
-#define ANIMATION_SET_MAX	(25)
+//#define SKIN_ANIME_SPEED			(60.0f / 4800.0f)
+#define SKIN_ANIME_SPEED			(60.0f / 3500.0f)
+#define SKIN_ANIME_WEIGHT			(0.05f)
+
+#define ANIMATION_SET_MAX			(25)
+#define ANIMATION_CONTROLLER_MAX	(2)
 
 //*****************************************************************************
 // 構造体定義
 //*****************************************************************************
-typedef struct
-{
-	D3DXVECTOR3 pos;
-	D3DXVECTOR3 rot;
-	D3DXVECTOR3 scl;
-}PRS;// Pos Rot Scl
 
 //struct MYFRAME : public D3DXFRAME
 //{
@@ -93,7 +90,7 @@ struct D3DXMESHCONTAINER_DERIVED : public D3DXMESHCONTAINER
 	DWORD NumPaletteEntries;
 	bool UseSoftwareVP;
 	DWORD iAttributeSW;     // used to denote the split between SW and HW if necessary for non-indexed skinning
-	
+
 	D3DXMESHCONTAINER_DERIVED()
 	{
 		ppBoneMatrixPtrs = NULL;
@@ -144,29 +141,40 @@ public:
 	//解放処理
 	VOID Release();
 	//更新処理
-	VOID Update(void);
+	VOID Update(int nAC);
 	//描画処理
-	VOID Draw(LPDIRECT3DDEVICE9 lpD3DDevice, D3DXMATRIX _World);
+	VOID Draw(LPDIRECT3DDEVICE9 lpD3DDevice, D3DXMATRIX _World, int nAC);
 	//オブジェクトのアニメーション変更( メッシュオブジェクトの操作用番号, 変更するアニメーション番号 )
-	VOID CSkinMesh::ChangeAnim(DWORD _NewAnimNum, FLOAT fShift);
+	VOID CSkinMesh::ChangeAnim(DWORD _NewAnimNum, FLOAT fShift, int nAC);
 	//現在のアニメーション番号取得
-	DWORD GetAnimTrack() { return m_CurrentTrack; }
+	DWORD GetAnimTrack(int nAC) { return m_CurrentTrack[nAC]; }
 	//現在のアニメーションタイム(アニメーション開始からの時間)を取得
-	DWORD GetAnimTime() { return m_AnimeTime; }
+	DWORD GetAnimTime(int nAC) { return m_AnimeTime[nAC]; }
 	//アニメーション速度を取得
-	FLOAT GetAnimSpeed() { return m_AnimSpeed; }
+	FLOAT GetAnimSpeed(int nAC) { return m_AnimSpeed[nAC]; }
+	// アニメーション再生
+	VOID PlayAnim(VOID) { m_bAnim = true; }
+	// アニメーション停止
+	VOID StopAnim(VOID) { m_bAnim = false; }
 	//アニメーション速度を設定
-	VOID SetAnimSpeed(FLOAT _AnimSpeed) { m_AnimSpeed = _AnimSpeed; }
+	VOID SetAnimSpeed(FLOAT _AnimSpeed, int nAC) { m_AnimSpeed[nAC] = _AnimSpeed; }
 	//アニメーションタイムを設定
-	VOID SetAnimTime(DWORD _AnimeTime) { m_AnimeTime = _AnimeTime; }
+	VOID SetAnimTime(DWORD _AnimeTime, int nAC) { m_AnimeTime[nAC] = _AnimeTime; }
+	// アニメーションのループフラグ設定処理（標準はtrue）
+	VOID LoopAnim(DWORD dwTrack, BOOL bFlag, int nAC) { m_bLoopFlag[nAC][dwTrack] = bFlag; }
 private:
 	//対象のボーンを検索
 	D3DXFRAME_DERIVED* SearchBoneFrame(LPSTR _BoneName, D3DXFRAME* _pFrame);
+	//// ボーン数検索関数
+	//D3DXFRAME_DERIVED* SearchBoneFrameNum(int* _BoneNum, D3DXFRAME* _pFrame);
+	//// 全ボーンのマトリクスポインタの取得関数
+	//D3DXFRAME_DERIVED* CSkinMesh::SearchBoneFrameAllAdr(int* _BoneNum, D3DXMATRIX* pMtxBoneArray, D3DXFRAME* _pFrame);
 public:
 	//ボーンのマトリックス取得( ボーンの名前 )
 	D3DXMATRIX GetBoneMatrix(LPSTR _BoneName);
 	//ボーンのマトリックスポインタ取得( ボーンの名前 )
-	D3DXMATRIX* GetpBoneMatrix(LPSTR _BoneName);
+	D3DXMATRIX* GetBoneMatrixAdr(LPSTR _BoneName);
+	//VOID CSkinMesh::GetBoneMtxAll(D3DXMATRIX** pMtxBoneArray);
 
 	DWORD	m_dwContainerCount;			// ボーン数カウント
 	DWORD	m_dwBoneCount;			// ボーン数カウント
@@ -180,34 +188,40 @@ private:
 	//ボーン情報
 	LPD3DXFRAME m_pFrameRoot;
 	//アニメーションコントローラ
-	LPD3DXANIMATIONCONTROLLER m_pAnimController;
+	LPD3DXANIMATIONCONTROLLER m_pAnimController[ANIMATION_CONTROLLER_MAX];
 	//ヒエラルキークラス変数
 	MY_HIERARCHY m_cHierarchy;
 	//アニメーションデータ格納用変数(ここは可変に変更したほうがいい)
 	LPD3DXANIMATIONSET m_pAnimSet[ANIMATION_SET_MAX];
 	//現在のアニメーションが開始されてからの時間(1/60秒)
-	DWORD m_AnimeTime;
+	DWORD m_AnimeTime[ANIMATION_CONTROLLER_MAX];
 	//アニメーションスピード
-	FLOAT m_AnimSpeed;
+	FLOAT m_AnimSpeed[ANIMATION_CONTROLLER_MAX];
 	//現在のアニメーショントラック
-	DWORD m_CurrentTrack;
+	DWORD m_CurrentTrack[ANIMATION_CONTROLLER_MAX];
 	//現在のアニメーションデータトラック
-	D3DXTRACK_DESC m_CurrentTrackDesc;
-	//進行方向
-	D3DXMATRIX m_World;
+	D3DXTRACK_DESC m_CurrentTrackDesc[ANIMATION_CONTROLLER_MAX];
+	//ワールドマトリクス
+	D3DXMATRIX m_World[ANIMATION_CONTROLLER_MAX];
 	//メッシュのマテリアル関係
 	//マテリアル変更フラグ
 	BOOL m_MaterialFlg;
 	//マテリアルデータ
 	D3DMATERIAL9 m_Material;
+	// アニメーション再生フラグ
+	BOOL m_bAnim;
 
 	// シェーダ用
 	LPD3DXEFFECT	pEffect;
 
+	FLOAT	m_fLoopTime[ANIMATION_CONTROLLER_MAX];
+	FLOAT	m_fAnimeTime[ANIMATION_CONTROLLER_MAX];
+	BOOL	m_bLoopFlag[ANIMATION_CONTROLLER_MAX][ANIMATION_SET_MAX];
+
 
 	// モーションブレンド用追加プロパティ
-	FLOAT	m_fShiftTime;			// シフトするのにかかる時間
-	FLOAT	m_fCurWeight;			// 現在のウェイト時間
-	DWORD	m_OldTrack;				// 変更前アニメーショントラック
+	FLOAT	m_fShiftTime[ANIMATION_CONTROLLER_MAX];			// シフトするのにかかる時間
+	FLOAT	m_fCurWeight[ANIMATION_CONTROLLER_MAX];			// 現在のウェイト時間
+	DWORD	m_OldTrack[ANIMATION_CONTROLLER_MAX];				// 変更前アニメーショントラック
 };
 #endif

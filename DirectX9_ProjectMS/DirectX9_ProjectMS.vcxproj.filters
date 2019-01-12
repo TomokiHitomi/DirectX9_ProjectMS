@@ -407,9 +407,6 @@
     <ClCompile Include="roundlogo.cpp">
       <Filter>ソース ファイル\Object\Ui</Filter>
     </ClCompile>
-    <ClCompile Include="selectface.h.cpp">
-      <Filter>ソース ファイル\Object\Ui</Filter>
-    </ClCompile>
     <ClCompile Include="winnerlogo.cpp">
       <Filter>ソース ファイル\Object\Ui</Filter>
     </ClCompile>
@@ -442,6 +439,9 @@
     </ClCompile>
     <ClCompile Include="selectcharacter.cpp">
       <Filter>ソース ファイル\Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="selectface.cpp">
+      <Filter>ソース ファイル\Object\Ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

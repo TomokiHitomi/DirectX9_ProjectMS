@@ -1043,9 +1043,9 @@ void Selectface::SetChar(void)
 		{
 			// 選択中のキャラクターを探査して シーンマネージャーに保管
 			if (i == SELECT_1P)
-				SceneManager::SetSelectChar(i, SearchChar(SelectMovePlayer000));
+				SceneManager::SetSelectChar(i, SearchChar(&SelectMovePlayer000[0]));
 			else if (i == SELECT_2P)
-				SceneManager::SetSelectChar(i, SearchChar(SelectMovePlayer001));
+				SceneManager::SetSelectChar(i, SearchChar(&SelectMovePlayer001[0]));
 
 			// 選択したキャラクターを確定
 			bSelect[i] = true;
@@ -1083,5 +1083,27 @@ int Selectface::SearchChar(int* nSMP)
 	{
 		// 0以外が格納されていたら i を返す
 		if (*nSMP)return i;
+	}
+}
+
+
+//=============================================================================
+// 選択情報の探査処理（キャラ番号指定）
+//=============================================================================
+int SearchCharSelect(int nNum)
+{
+	int* pTemp;
+
+	// 指定されたキャラ番号で分岐
+	if		(nNum == 0)
+		pTemp = &SelectMovePlayer000[0];
+	else if	(nNum == 1)
+		pTemp = &SelectMovePlayer001[0];
+
+	// 選択情報の数だけ探査する
+	for (int i = 0; i < NUM_SELECT_MAX; i++, pTemp++)
+	{
+		// 0以外が格納されていたら i を返す
+		if (*pTemp)return i;
 	}
 }

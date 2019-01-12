@@ -17,6 +17,7 @@
 #include "plane.h"
 #include "rightleft.h"
 #include "game.h"
+#include "scene.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -51,11 +52,30 @@ PlayerManager::PlayerManager(void)
 
 	for (unsigned int i = 0; i < PLAYER_MAX; i++)
 	{
+		// プレイヤーを初期化
 		m_pPlayer[i] = NULL;
+		// 選択キャラをシーンマネージャーから取得
+		int eTemp = SceneManager::GetSelectChar(i);
+		// 選択キャラに応じてキャラクターをセット
+		switch ((CharacterManager::TYPE)eTemp)
+		{
+		case CharacterManager::FIREMAN:
+			Set<Fireman>((PLAYER)i, (CharacterManager::TYPE)eTemp);
+			break;
+		case CharacterManager::PASTRY:
+			Set<Idol>((PLAYER)i, (CharacterManager::TYPE)eTemp);
+			break;
+		case CharacterManager::IDOL:
+			Set<Idol>((PLAYER)i, (CharacterManager::TYPE)eTemp);
+			break;
+		case CharacterManager::DOCTOR:
+			Set<Idol>((PLAYER)i, (CharacterManager::TYPE)eTemp);
+			break;
+		}
 	}
 
-	Set<Fireman>(PLAYER_2P, CharacterManager::FIREMAN);
-	Set<Idol>(PLAYER_1P, CharacterManager::IDOL);
+	//Set<Idol>(PLAYER_2P, CharacterManager::IDOL);
+	//Set<Idol>(PLAYER_1P, CharacterManager::IDOL);
 }
 
 //=============================================================================
@@ -291,7 +311,7 @@ void Player::Update(void)
 		if (m_CSkinMesh != NULL)
 		{
 			// モデルを更新
-			m_CSkinMesh->Update();
+			m_CSkinMesh->Update(m_nNum);
 		}
 	}
 
@@ -388,8 +408,10 @@ void Player::Draw(void)
 
 		if (m_CSkinMesh != NULL)
 		{
+			if(CameraManager::GetType() == CameraManager::MULTI2) m_CSkinMesh->StopAnim();
 			// モデルを描画
-			m_CSkinMesh->Draw(pDevice, m_mtxWorld);
+			m_CSkinMesh->Draw(pDevice, m_mtxWorld, m_nNum);
+			m_CSkinMesh->PlayAnim();
 		}
 	}
 }
@@ -1019,7 +1041,7 @@ void Player::ChangeAnim(DWORD dwAnime, FLOAT fShift)
 {
 	if (m_CSkinMesh != NULL)
 	{
-		m_CSkinMesh->ChangeAnim(dwAnime, fShift);
+		m_CSkinMesh->ChangeAnim(dwAnime, fShift, m_nNum);
 	}
 }
 
@@ -1030,7 +1052,7 @@ void Player::ChangeAnimSpeed(FLOAT AnimSpeed)
 {
 	if (m_CSkinMesh != NULL)
 	{
-		m_CSkinMesh->SetAnimSpeed(AnimSpeed);
+		m_CSkinMesh->SetAnimSpeed(AnimSpeed, m_nNum);
 	}
 }
 

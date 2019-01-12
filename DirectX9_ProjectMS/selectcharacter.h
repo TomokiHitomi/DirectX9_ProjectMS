@@ -17,6 +17,9 @@
 // マクロ定義
 //*****************************************************************************
 #define SELECTCHARCTER_POS_MARGIN	(30.0f)
+#define SELECTCHARCTER_CAMERA_EYE	(D3DXVECTOR3(0.0f, 10.0f, 0.0f))
+#define SELECTCHARCTER_CAMERA_AT1	(D3DXVECTOR3(-10.0f, 5.0f, -15.0f))
+#define SELECTCHARCTER_CAMERA_AT2	(D3DXVECTOR3(10.0f, 5.0f, -15.0f))
 
 //*****************************************************************************
 // 構造体定義

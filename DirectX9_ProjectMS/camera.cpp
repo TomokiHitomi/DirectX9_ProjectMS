@@ -358,8 +358,8 @@ void Camera::Uninit(void)
 //=============================================================================
 void Camera::Update(void)
 {
-		vEye = vEye + ((vEyeNext - vEye) * fEyeIner);
-		vAt = vAt + ((vAtNext - vAt) * fAtIner);
+	vEye = vEye + ((vEyeNext - vEye) * fEyeIner);
+	vAt = vAt + ((vAtNext - vAt) * fAtIner);
 }
 
 //=============================================================================

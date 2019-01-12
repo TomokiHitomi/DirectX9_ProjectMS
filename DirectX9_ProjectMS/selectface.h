@@ -175,5 +175,6 @@ private:
 	int SearchChar(int* nSMP);
 };
 
+int SearchCharSelect(int nNum);
 
 #endif

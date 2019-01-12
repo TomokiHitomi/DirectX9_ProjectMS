@@ -185,8 +185,6 @@ public:
 
 
 public:
-
-
 	Joycon(struct hid_device_info *dev) {
 
 		if (dev->product_id == JOYCON_CHARGING_GRIP) {

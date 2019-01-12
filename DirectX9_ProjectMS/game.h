@@ -50,9 +50,6 @@ private:
 	bool	GameStop(void);			// ゲーム停止メソッド
 	int		m_nGameCount;			// ゲーム停止カウント
 
-	
-
-
 	void Pause(void);
 };
 

@@ -319,7 +319,7 @@ public:
 		m_pPlayer[player]->m_CSkinMesh = SceneManager::GetCharMgr()->GetCharData(type);
 		if (m_pPlayer[player]->m_CSkinMesh)
 		{
-			m_pPlayer[player]->m_CSkinMesh->ChangeAnim(Player::IDOL, 0.05f);
+			m_pPlayer[player]->m_CSkinMesh->ChangeAnim(Player::IDOL, 0.05f, m_pPlayer[player]->m_nNum);
 		}	
 	}
 

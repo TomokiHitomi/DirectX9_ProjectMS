@@ -38,6 +38,7 @@ public:
 	virtual void Draw(void) = 0;
 	virtual ~BaseScene() {};
 	BaseScene() { bSceneChange = false; bPause = false;}
+
 };
 
 class SceneManager

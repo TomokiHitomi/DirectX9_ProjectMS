@@ -41,8 +41,8 @@
 //*****************************************************************************
 //始めはシーンを空にしておく
 BaseScene			*SceneManager::m_pScene = NULL;
-bool				 BaseScene::bSceneChange = false;
-bool				 BaseScene::bPause = false;
+bool				BaseScene::bSceneChange = false;
+bool				BaseScene::bPause = false;
 SceneManager::SCENE	SceneManager::m_eScene;
 
 int					SceneManager::m_nSelectChar[2];
@@ -242,44 +242,27 @@ void SceneManager::DebugScene(void)
 		break;
 	}
 
-	//PrintDebugProc("【 Result 】\n");
-	//PrintDebugProc("Rate [%f]  ", GetStageRate());
-	//switch (GetStageWinPlayer())
-	//{
-	//case STAGE_WIN_NON:
-	//	PrintDebugProc("Win[NON]\n");
-	//	break;
-	//case STAGE_WIN_1P:
-	//	PrintDebugProc("Win[1P]\n");
-	//	break;
-	//case STAGE_WIN_2P:
-	//	PrintDebugProc("Win[2P]\n");
-	//	break;
-	//}
-	//PrintDebugProc("\n");
+	// 選択・勝利キャラ
+	PrintDebugProc("Select 1P[%d] 2P[%d]  Win[%d]",
+		m_nSelectChar[0], m_nSelectChar[1], m_nWinPlayer);
+
+	// シーン強制変更
 	if (GetKeyboardTrigger(DIK_F2))
 	{
 		SetFadeScene(TITLE);
-		//ChangeScene(TITLE);
 	}
 	if (GetKeyboardTrigger(DIK_F3))
 	{
 		SetFadeScene(SELECT);
-		
-		//ChangeScene(RESULT);
 	}
 	if (GetKeyboardTrigger(DIK_F4))
 	{
 		SetFadeScene(GAME);
-		
-		//ChangeScene(SELECT);
 	}
 	if (GetKeyboardTrigger(DIK_F5))
 	{
 		SetFadeScene(RESULT);
-		//ChangeScene(SELECT);
 	}
-
 
 	// SEテスト（sound.hをincludeして関数を呼ぶ）
 	if (GetKeyboardTrigger(DIK_1))

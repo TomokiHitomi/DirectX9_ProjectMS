@@ -53,7 +53,6 @@ public:
 	static CameraPort eCameraPort;
 	static CameraType eCameraType;
 
-
 	CameraManager();
 	~CameraManager();
 	static void Init(void);
