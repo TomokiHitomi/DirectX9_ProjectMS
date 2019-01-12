@@ -18,6 +18,7 @@
 #include "resultselect.h"
 #include "winnerlogo.h"
 #include "joycon.h"
+#include "resultcharacter.h"
 
 /* Debug */
 #ifdef _DEBUG
@@ -103,6 +104,7 @@ ResultScene::ResultScene(void)
 	ObjectManager::CreateObject<Winnerlogo>();
 	ObjectManager::CreateObject<Gray>();
 	ObjectManager::CreateObject<Resultselect>();
+	ObjectManager::CreateObject<ResultCharacterManager>();
 }
 
 //=============================================================================

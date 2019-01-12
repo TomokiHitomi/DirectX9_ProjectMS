@@ -279,6 +279,9 @@
     <ClInclude Include="selectcharacter.h">
       <Filter>ソース ファイル\Object\Character</Filter>
     </ClInclude>
+    <ClInclude Include="resultcharacter.h">
+      <Filter>ソース ファイル\Object\Character</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collision.cpp">
@@ -442,6 +445,9 @@
     </ClCompile>
     <ClCompile Include="selectface.cpp">
       <Filter>ソース ファイル\Object\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="resultcharacter.cpp">
+      <Filter>ソース ファイル\Object\Character</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -222,6 +222,7 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="result.h" />
+    <ClInclude Include="resultcharacter.h" />
     <ClInclude Include="resultselect.h" />
     <ClInclude Include="rightleft.h" />
     <ClInclude Include="roundlogo.h" />
@@ -278,6 +279,7 @@
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="result.cpp" />
+    <ClCompile Include="resultcharacter.cpp" />
     <ClCompile Include="resultselect.cpp" />
     <ClCompile Include="rightleft.cpp" />
     <ClCompile Include="roundlogo.cpp" />

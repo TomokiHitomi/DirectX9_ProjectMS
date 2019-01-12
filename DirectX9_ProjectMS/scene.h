@@ -63,6 +63,8 @@ public:
 	static void			Update(void);
 	// シーンの描画関数
 	static void			Draw(void);
+	static void			Load(SCENE scene);
+
 
 	// 現在のシーン取得
 	static SCENE		GetScene(void)				{ return m_eScene; }

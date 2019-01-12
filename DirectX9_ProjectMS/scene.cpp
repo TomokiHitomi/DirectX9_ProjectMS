@@ -66,6 +66,15 @@ void SceneManager::ChangeScene(SCENE scene)
 	// SEの停止処理
 	EndSeS();
 
+	// 次シーンの読み込み処理
+	Load(scene);
+}
+
+//=============================================================================
+// 初期化処理
+//=============================================================================
+void SceneManager::Load(SCENE scene)
+{
 	// 選択されたシーンを保管
 	m_eScene = scene;
 
@@ -166,6 +175,7 @@ void SceneManager::Update(void)
 	m_pScene->Update();			// 現在のシーンの更新関数
 
 	CameraManager::Update();	// カメラ
+
 	UpdateSound();				// サウンド
 }
 
@@ -174,12 +184,12 @@ void SceneManager::Update(void)
 //=============================================================================
 void SceneManager::Draw(void)
 {
-	m_pScene->Draw();		// 現在のシーンの描画関数
+		m_pScene->Draw();		// 現在のシーンの描画関数
 
-	DrawFade();				// フェード
+		DrawFade();				// フェード
 
 #ifdef _DEBUG
-	DrawDebugProc();
+		DrawDebugProc();
 #endif
 }
 

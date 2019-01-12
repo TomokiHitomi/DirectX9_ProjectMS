@@ -372,15 +372,15 @@ void Update(void)
 	//}
 
 	// XVˆ—
-	{	
-#ifdef _DEBUG
-		Debugtimer timer2;
-#endif
+//	{	
+//#ifdef _DEBUG
+//		Debugtimer timer2;
+//#endif
 		SceneManager::Update();
-#ifdef _DEBUG
-		PrintDebugProc("yUpdateAtz\n[%f]\n", timer2.End());
-#endif
-	}
+//#ifdef _DEBUG
+//		PrintDebugProc("yUpdateAtz\n[%f]\n", timer2.End());
+//#endif
+//	}
 
 }
 
@@ -396,16 +396,16 @@ void Draw(void)
 	// •`‰æ‚ÌŠJŽn
 	if (SUCCEEDED(g_pD3DDevice->BeginScene()))
 	{
-#ifdef _DEBUG
-		Debugtimer timer;
-#endif
-
+//#ifdef _DEBUG
+//		Debugtimer timer;
+//#endif
+//
 		// •`‰æˆ—
 		SceneManager::Draw();
 
-#ifdef _DEBUG
-		PrintDebugProc("yDrawAtz\n[%f]\n", timer.End());
-#endif
+//#ifdef _DEBUG
+//		PrintDebugProc("yDrawAtz\n[%f]\n", timer.End());
+//#endif
 
 		// •`‰æ‚ÌI—¹
 		if (FAILED(g_pD3DDevice->EndScene()))
