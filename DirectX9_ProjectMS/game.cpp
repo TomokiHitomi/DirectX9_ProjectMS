@@ -256,18 +256,24 @@ void GameScene::SetRoundWin(int num)
 //=============================================================================
 void GameScene::Pause(void)
 {
-	// 決定になりえるボタンが押されている場合、遷移フラグを true
+	// ポーズになりえるボタンが押されている場合、遷移フラグを true
 	if (GetKeyboardTrigger(DIK_ESCAPE))
+	{
+		SetSe(SE_CANCEL, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 		bPause = bPause ? false : true;
+	}
 	else
 	{
 		// Joyconの数だけ回す
 		for (unsigned int i = 0; i < GetJoyconSize(); i++)
 		{
-			// 決定になりえるボタンが押されている場合、遷移フラグを true
+			// ポーズになりえるボタンが押されている場合、遷移フラグを true
 			if (JcTriggered(i, JC_L_BUTTON_MINUS | JC_R_BUTTON_PLUS)
 				|| GetKeyboardTrigger(DIK_ESCAPE))
+			{
+				SetSe(SE_CANCEL, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 				bPause = bPause ? false : true;;
+			}
 		}
 	}
 }

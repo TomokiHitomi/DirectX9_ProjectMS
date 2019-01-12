@@ -11,6 +11,7 @@
 #include "joycon.h"
 #include "scene.h"
 #include "fade.h"
+#include "sound.h"
 #include <math.h>
 
 // デバッグ用
@@ -286,6 +287,7 @@ void Resultselect::Update(void)
 				if (JcTriggered(i, JC_L_BUTTON_UP | JC_L_STICK_UP | JC_R_STICK_UP)
 					|| GetKeyboardTrigger(DIK_UP))
 				{
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 					// セレクトを減算
 					nSelect--;
 					if (nSelect < 0) nSelect = 2;
@@ -296,6 +298,7 @@ void Resultselect::Update(void)
 				else if (JcTriggered(i, JC_L_BUTTON_DOWN | JC_L_STICK_DOWN | JC_R_STICK_DOWN)
 					|| GetKeyboardTrigger(DIK_DOWN))
 				{
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 					// セレクトを加算
 					nSelect++;
 					break;
@@ -306,13 +309,15 @@ void Resultselect::Update(void)
 					| JC_R_BUTTON_R | JC_R_BUTTON_ZR | JC_R_BUTTON_A)
 					|| GetKeyboardTrigger(DIK_RETURN))
 				{
+					SetSe(SE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 					// 遷移フラグを true 
 					BaseScene::bSceneChange = true;
 					break;
 				}
-				// 決定になりえるボタンが押されている場合、遷移フラグを true
+				// キャンセルになりえるボタンが押されている場合、遷移フラグを true
 				else if (JcTriggered(i, JC_R_BUTTON_B))
 				{
+					SetSe(SE_CANCEL, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 					// 遷移フラグを false
 					BaseScene::bPause = false;
 					break;

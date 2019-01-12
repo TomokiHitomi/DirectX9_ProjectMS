@@ -15,14 +15,14 @@
 //*****************************************************************************
 // É}ÉNÉçíËã`
 //*****************************************************************************
-#define CHARACTER_FIREMAN			("Fireman.X")
-#define CHARACTER_FIREMAN_SCL		(0.29f)
+#define CHARACTER_FIREMAN			("data/MODEL/Fireman/Fireman.X")
+#define CHARACTER_FIREMAN_SCL		(12.0f)
 
-#define CHARACTER_PASTRY			("pastry.X")
+#define CHARACTER_PASTRY			("data/MODEL/Pastry/Pastry.X")
 #define CHARACTER_PASTRY_SCL		(10.25f)
 
-#define CHARACTER_IDOL				("Idol.X")
-#define CHARACTER_IDOL_SCL			(0.25f)
+#define CHARACTER_IDOL				("data/MODEL/Idol/Idol.X")
+#define CHARACTER_IDOL_SCL			(10.25f)
 
 #define CHARACTER_DOCTOR			("Idol.X")
 #define CHARACTER_DOCTOR_SCL		(0.25f)

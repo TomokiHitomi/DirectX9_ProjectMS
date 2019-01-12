@@ -17,6 +17,7 @@
 #include "scene.h"
 #include "fade.h"
 #include "game.h"
+#include "sound.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -67,6 +68,9 @@ void ChackHit(void)
 						{
 							// ターゲットのダメージフラグを立てる
 							pTarget->SetDamage();
+							// ヒットSE
+							SetSe(SE_COLLIDE, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+
 							// ターゲットのHPを減算
 							if (pTarget->SubHp(pWeapon->GetDamage()))
 							{

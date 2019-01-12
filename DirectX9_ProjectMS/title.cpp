@@ -98,7 +98,11 @@ void TitleScene::SceneChange(void)
 				if (JcTriggered(i, JC_L_BUTTON_L | JC_L_BUTTON_ZL
 					| JC_R_BUTTON_R | JC_R_BUTTON_ZR | JC_R_BUTTON_A)
 					|| GetKeyboardTrigger(DIK_RETURN))
+				{
+					SetSe(SE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 					bSceneChange = true;
+					break;
+				}
 			}
 
 		}

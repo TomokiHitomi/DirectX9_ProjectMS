@@ -267,11 +267,11 @@ void SceneManager::DebugScene(void)
 	// SEテスト（sound.hをincludeして関数を呼ぶ）
 	if (GetKeyboardTrigger(DIK_1))
 	{	// 
-		SetSe(SE_TITLE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 	if (GetKeyboardTrigger(DIK_2))
 	{	// 
-		SetSe(SE_CHARA_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 	if (GetKeyboardTrigger(DIK_3))
 	{	// 
@@ -279,7 +279,7 @@ void SceneManager::DebugScene(void)
 	}
 	if (GetKeyboardTrigger(DIK_4))
 	{	//		
-		SetSe(SE_CHARA_SENNI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+		SetSe(SE_SENNI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 	}
 	if (GetKeyboardTrigger(DIK_5))
 	{	// 

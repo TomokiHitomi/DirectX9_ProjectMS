@@ -26,13 +26,13 @@
 #define TEXTURE_GAGE3D_008					"data/TEXTURE/gage000.png"											// gage3d skill
 #define TEXTURE_GAGE3D_009					"data/TEXTURE/gage000.png"											// gage3d skill
 #define TEXTURE_GAGE3D_010					"data/NAME/ショウボウシ.png"										// name
-#define TEXTURE_GAGE3D_011					"data/NAME/ドクター.png"											// name
-#define TEXTURE_GAGE3D_012					"data/NAME/パティシエ.png"											// name
-#define TEXTURE_GAGE3D_013					"data/NAME/アイドル.png"											// name
-#define TEXTURE_GAGE3D_014					"data/NAME/ショウボウシ.png"										// name
-#define TEXTURE_GAGE3D_015					"data/NAME/ドクター.png"											// name
-#define TEXTURE_GAGE3D_016					"data/NAME/パティシエ.png"											// name
-#define TEXTURE_GAGE3D_017					"data/NAME/アイドル.png"											// name
+#define TEXTURE_GAGE3D_013					"data/NAME/ドクター.png"											// name
+#define TEXTURE_GAGE3D_011					"data/NAME/パティシエ.png"											// name
+#define TEXTURE_GAGE3D_012					"data/NAME/アイドル.png"											// name
+//#define TEXTURE_GAGE3D_014					"data/NAME/ショウボウシ.png"										// name
+//#define TEXTURE_GAGE3D_015					"data/NAME/ドクター.png"											// name
+//#define TEXTURE_GAGE3D_016					"data/NAME/パティシエ.png"											// name
+//#define TEXTURE_GAGE3D_017					"data/NAME/アイドル.png"											// name
 
 
 #define TEXTURE_GAGE3D_PIXEL000_X				(1000)																// ピクセルサイズ

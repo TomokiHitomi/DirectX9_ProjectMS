@@ -114,7 +114,7 @@ void Ko::Update(void)
 {
 	//CharacterManager::FIREMAN;
 #ifdef _DEBUG
-	PrintDebugProc("KoObj[2].Alfa:%d\n", KoObj[2].Alfa);
+	PrintDebugProc("KoObj[0].Alfa:%d\n", KoObj[0].Alfa);
 	PrintDebugProc("\n");
 
 	PrintDebugProc("KoObj[1].Alfa:%d\n", KoObj[1].Alfa);

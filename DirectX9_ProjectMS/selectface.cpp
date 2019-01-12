@@ -12,6 +12,7 @@
 #include "joycon.h"
 #include "select.h"
 #include "fade.h"
+#include "sound.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -297,6 +298,7 @@ void Selectface::Update(void)
 					SelectMovePlayer000[0] = 0;
 					SelectMovePlayer000[1] = 1;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 					break;
 				}
 				if (CreateSelectCount == 8 && SelectMovePlayer000[1] == 1)
@@ -304,6 +306,7 @@ void Selectface::Update(void)
 					SelectMovePlayer000[1] = 0;
 					SelectMovePlayer000[2] = 1;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 					break;
 				}
 				if (CreateSelectCount == 8 && SelectMovePlayer000[2] == 1)
@@ -311,6 +314,7 @@ void Selectface::Update(void)
 					SelectMovePlayer000[2] = 0;
 					SelectMovePlayer000[3] = 1;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT03_MOVE_X, TEXTURE_SELECT03_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 					break;
 				}
 			}
@@ -322,18 +326,24 @@ void Selectface::Update(void)
 					SelectMovePlayer000[0] = 1;
 					SelectMovePlayer000[1] = 0;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT00_MOVE_X, TEXTURE_SELECT00_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+					break;
 				}
 				if (CreateSelectCount == 8 && SelectMovePlayer000[2] == 1)
 				{
 					SelectMovePlayer000[1] = 1;
 					SelectMovePlayer000[2] = 0;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+					break;
 				}
 				if (CreateSelectCount == 8 && SelectMovePlayer000[3] == 1)
 				{
 					SelectMovePlayer000[2] = 1;
 					SelectMovePlayer000[3] = 0;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+					break;
 				}
 			}
 		}
@@ -369,6 +379,7 @@ void Selectface::Update(void)
 					SelectMovePlayer001[0] = 0;
 					SelectMovePlayer001[1] = 1;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 					break;
 				}
 				if (CreateSelectCount == 9 && SelectMovePlayer001[1] == 1)
@@ -376,6 +387,7 @@ void Selectface::Update(void)
 					SelectMovePlayer001[1] = 0;
 					SelectMovePlayer001[2] = 1;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 					break;
 				}
 				if (CreateSelectCount == 9 && SelectMovePlayer001[2] == 1)
@@ -383,6 +395,7 @@ void Selectface::Update(void)
 					SelectMovePlayer001[2] = 0;
 					SelectMovePlayer001[3] = 1;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT03_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT03_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 					break;
 				}
 			}
@@ -394,18 +407,24 @@ void Selectface::Update(void)
 					SelectMovePlayer001[0] = 1;
 					SelectMovePlayer001[1] = 0;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT00_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT00_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+					break;
 				}
 				if (CreateSelectCount == 9 && SelectMovePlayer001[2] == 1)
 				{
 					SelectMovePlayer001[1] = 1;
 					SelectMovePlayer001[2] = 0;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT01_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT01_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+					break;
 				}
 				if (CreateSelectCount == 9 && SelectMovePlayer001[3] == 1)
 				{
 					SelectMovePlayer001[2] = 1;
 					SelectMovePlayer001[3] = 0;
 					Select[CreateSelectCount].posSelect = D3DXVECTOR3(TEXTURE_SELECT02_MOVE_X + TEXTURE_SELECT_MOVE_DISTANCE_X, TEXTURE_SELECT02_MOVE_Y, 0.0f);
+					SetSe(SE_SELECT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+					break;
 				}
 			}
 		}
@@ -1049,6 +1068,7 @@ void Selectface::SetChar(void)
 
 			// 選択したキャラクターを確定
 			bSelect[i] = true;
+			SetSe(SE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 		}
 
 		// Joyconで Bボタン が押された場合
@@ -1056,6 +1076,7 @@ void Selectface::SetChar(void)
 		{
 			// 決定したキャラクターをキャンセル
 			bSelect[i] = false;
+			SetSe(SE_CANCEL, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 		}
 	}
 
@@ -1065,6 +1086,7 @@ void Selectface::SetChar(void)
 		// シーン遷移フラグが立っていなければ
 		if (!SelectScene::bSceneChange)
 		{
+			SetSe(SE_SENNI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 			// シーン遷移開始
 			SetFadeScene(SceneManager::GAME);
 			// シーン遷移フラグを立てる

@@ -26,13 +26,13 @@
 #define TEXTURE_GAGE_008					"data/TEXTURE/white_1x1.png"											// gage skill黄
 #define TEXTURE_GAGE_009					"data/TEXTURE/white_1x1.png"											// gage skill黄
 #define TEXTURE_GAGE_010					"data/NAME/ショウボウシ000.png"										// name
-#define TEXTURE_GAGE_011					"data/NAME/ドクター000.png"											// name
-#define TEXTURE_GAGE_012					"data/NAME/パティシエ000.png"											// name
-#define TEXTURE_GAGE_013					"data/NAME/アイドル000.png"											// name
-#define TEXTURE_GAGE_014					"data/NAME/ショウボウシ000.png"										// name
-#define TEXTURE_GAGE_015					"data/NAME/ドクター000.png"											// name
-#define TEXTURE_GAGE_016					"data/NAME/パティシエ000.png"											// name
-#define TEXTURE_GAGE_017					"data/NAME/アイドル000.png"											// name
+#define TEXTURE_GAGE_013					"data/NAME/ドクター000.png"											// name
+#define TEXTURE_GAGE_011					"data/NAME/パティシエ000.png"											// name
+#define TEXTURE_GAGE_012					"data/NAME/アイドル000.png"											// name
+//#define TEXTURE_GAGE_014					"data/NAME/ショウボウシ000.png"										// name
+//#define TEXTURE_GAGE_015					"data/NAME/ドクター000.png"											// name
+//#define TEXTURE_GAGE_016					"data/NAME/パティシエ000.png"											// name
+//#define TEXTURE_GAGE_017					"data/NAME/アイドル000.png"											// name
 
 
 #define TEXTURE_GAGE_PIXEL000_X				(1000)																// ピクセルサイズ

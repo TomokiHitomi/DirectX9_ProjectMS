@@ -684,6 +684,9 @@ void Player::Attack(WeaponLR eLR)
 			// ウェポン復元処理
 			RestoreWeaponSp();
 		}
+		else
+			SetSe(SE_DOCTOR_THROW, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+
 
 		if (eLR == TYPE_LEFT)
 		{
@@ -729,8 +732,6 @@ void Player::Attack(WeaponLR eLR)
 
 		// ウェポンをセット
 		pWeapon[eLR]->Set(posTmp, moveTmp);
-
-
 
 		// Joycon振動
 		JcRumble((int)eLR + m_nNum * 2, 100, 1);

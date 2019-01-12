@@ -185,7 +185,7 @@ HRESULT Gage3d::Init()
 			Gage3dObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE3D_SIZEADD_X, TEXTURE_GAGE3D_SIZEADD_Y);
 			Gage3dObj[i].Count = 0;
 			Gage3dObj[i].Alfa = 255;
-			Gage3dObj[i].Use = true;
+			Gage3dObj[i].Use = false;
 			Gage3dObj[i].Damege = true;
 			Gage3dObj[i].Texture = Gage3dObj[i].pD3DTexture;
 		}
@@ -241,7 +241,7 @@ HRESULT Gage3d::Init()
 			Gage3dObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE3D_SIZEADD_X, TEXTURE_GAGE3D_SIZEADD_Y);
 			Gage3dObj[i].Count = 0;
 			Gage3dObj[i].Alfa = 255;
-			Gage3dObj[i].Use = true;
+			Gage3dObj[i].Use = false;
 			Gage3dObj[i].Damege = true;
 			Gage3dObj[i].Texture = Gage3dObj[10].pD3DTexture;
 		}
@@ -269,10 +269,10 @@ HRESULT Gage3d::Init()
 		}
 		if (i == 17)
 		{
-			if (type == 0)
-			{
-				D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE3D_017, &Gage3dObj[i].pD3DTexture);
-			}
+			//if (type == 0)
+			//{
+			//	D3DXCreateTextureFromFile(pDevice, TEXTURE_GAGE3D_017, &Gage3dObj[i].pD3DTexture);
+			//}
 			Gage3dObj[i].Pos = D3DXVECTOR3(TEXTURE_GAGE3D_POSITION017_X, TEXTURE_GAGE3D_POSITION017_Y, 0.0f);
 			Gage3dObj[i].TextureSize = D3DXVECTOR2(TEXTURE_GAGE3D_SIZE017_X, TEXTURE_GAGE3D_SIZE017_Y);
 			Gage3dObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE3D_SIZEADD_X, TEXTURE_GAGE3D_SIZEADD_Y);
@@ -291,6 +291,12 @@ HRESULT Gage3d::Init()
 		Gage3dObj[i].NowSkill = 0.0;
 		MakeVertexGage3d(i);
 	}
+
+	int nTemp;
+	nTemp = SceneManager::GetSelectChar(0);
+	Gage3dObj[10 + nTemp].Use = true;
+	nTemp = SceneManager::GetSelectChar(1);
+	Gage3dObj[14 + nTemp].Use = true;
 	return S_OK;
 }
 
@@ -417,7 +423,7 @@ void Gage3d::InitStatus(void)
 			Gage3dObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE3D_SIZEADD_X, TEXTURE_GAGE3D_SIZEADD_Y);
 			Gage3dObj[i].Count = 0;
 			Gage3dObj[i].Alfa = 255;
-			Gage3dObj[i].Use = true;
+			Gage3dObj[i].Use = false;
 			Gage3dObj[i].Damege = true;
 			Gage3dObj[i].Texture = Gage3dObj[i].pD3DTexture;
 		}
@@ -461,7 +467,7 @@ void Gage3d::InitStatus(void)
 			Gage3dObj[i].TextureSizeAdd = D3DXVECTOR2(TEXTURE_GAGE3D_SIZEADD_X, TEXTURE_GAGE3D_SIZEADD_Y);
 			Gage3dObj[i].Count = 0;
 			Gage3dObj[i].Alfa = 255;
-			Gage3dObj[i].Use = true;
+			Gage3dObj[i].Use = false;
 			Gage3dObj[i].Damege = true;
 			Gage3dObj[i].Texture = Gage3dObj[10].pD3DTexture;
 		}
@@ -506,6 +512,12 @@ void Gage3d::InitStatus(void)
 		Gage3dObj[i].NowHp = TEXTURE_GAGE3D_MAX_HP;
 		Gage3dObj[i].NowSkill = 0.0;
 	}
+
+	int nTemp;
+	nTemp = SceneManager::GetSelectChar(0);
+	Gage3dObj[10 + nTemp].Use = true;
+	nTemp = SceneManager::GetSelectChar(1);
+	Gage3dObj[14 + nTemp].Use = true;
 }
 
 //=============================================================================
@@ -638,62 +650,62 @@ void Gage3d::Update(void)
 			Gage3dObj[9].TextureSize.x--;
 			Gage3dObj[9].TextureSizeAdd.y -= 0.14f;
 		}
-		if (GetKeyboardPress(DIK_Q))
-		{
-			Gage3dObj[10].Use = true;
-			Gage3dObj[11].Use = false;
-			Gage3dObj[12].Use = false;
-			Gage3dObj[13].Use = false;
-		}
-		if (GetKeyboardPress(DIK_W))
-		{
-			Gage3dObj[10].Use = false;
-			Gage3dObj[11].Use = true;
-			Gage3dObj[12].Use = false;
-			Gage3dObj[13].Use = false;
-		}
-		if (GetKeyboardPress(DIK_E))
-		{
-			Gage3dObj[10].Use = false;
-			Gage3dObj[11].Use = false;
-			Gage3dObj[12].Use = true;
-			Gage3dObj[13].Use = false;
-		}
-		if (GetKeyboardPress(DIK_R))
-		{
-			Gage3dObj[10].Use = false;
-			Gage3dObj[11].Use = false;
-			Gage3dObj[12].Use = false;
-			Gage3dObj[13].Use = true;
-		}
-		if (GetKeyboardPress(DIK_A))
-		{
-			Gage3dObj[14].Use = true;
-			Gage3dObj[15].Use = false;
-			Gage3dObj[16].Use = false;
-			Gage3dObj[17].Use = false;
-		}
-		if (GetKeyboardPress(DIK_S))
-		{
-			Gage3dObj[14].Use = false;
-			Gage3dObj[15].Use = true;
-			Gage3dObj[16].Use = false;
-			Gage3dObj[17].Use = false;
-		}
-		if (GetKeyboardPress(DIK_D))
-		{
-			Gage3dObj[14].Use = false;
-			Gage3dObj[15].Use = false;
-			Gage3dObj[16].Use = true;
-			Gage3dObj[17].Use = false;
-		}
-		if (GetKeyboardPress(DIK_F))
-		{
-			Gage3dObj[14].Use = false;
-			Gage3dObj[15].Use = false;
-			Gage3dObj[16].Use = false;
-			Gage3dObj[17].Use = true;
-		}
+		//if (GetKeyboardPress(DIK_Q))
+		//{
+		//	Gage3dObj[10].Use = true;
+		//	Gage3dObj[11].Use = false;
+		//	Gage3dObj[12].Use = false;
+		//	Gage3dObj[13].Use = false;
+		//}
+		//if (GetKeyboardPress(DIK_W))
+		//{
+		//	Gage3dObj[10].Use = false;
+		//	Gage3dObj[11].Use = true;
+		//	Gage3dObj[12].Use = false;
+		//	Gage3dObj[13].Use = false;
+		//}
+		//if (GetKeyboardPress(DIK_E))
+		//{
+		//	Gage3dObj[10].Use = false;
+		//	Gage3dObj[11].Use = false;
+		//	Gage3dObj[12].Use = true;
+		//	Gage3dObj[13].Use = false;
+		//}
+		//if (GetKeyboardPress(DIK_R))
+		//{
+		//	Gage3dObj[10].Use = false;
+		//	Gage3dObj[11].Use = false;
+		//	Gage3dObj[12].Use = false;
+		//	Gage3dObj[13].Use = true;
+		//}
+		//if (GetKeyboardPress(DIK_A))
+		//{
+		//	Gage3dObj[14].Use = true;
+		//	Gage3dObj[15].Use = false;
+		//	Gage3dObj[16].Use = false;
+		//	Gage3dObj[17].Use = false;
+		//}
+		//if (GetKeyboardPress(DIK_S))
+		//{
+		//	Gage3dObj[14].Use = false;
+		//	Gage3dObj[15].Use = true;
+		//	Gage3dObj[16].Use = false;
+		//	Gage3dObj[17].Use = false;
+		//}
+		//if (GetKeyboardPress(DIK_D))
+		//{
+		//	Gage3dObj[14].Use = false;
+		//	Gage3dObj[15].Use = false;
+		//	Gage3dObj[16].Use = true;
+		//	Gage3dObj[17].Use = false;
+		//}
+		//if (GetKeyboardPress(DIK_F))
+		//{
+		//	Gage3dObj[14].Use = false;
+		//	Gage3dObj[15].Use = false;
+		//	Gage3dObj[16].Use = false;
+		//	Gage3dObj[17].Use = true;
+		//}
 		if (GetKeyboardPress(DIK_Z))
 		{
 			Gage3dObj[i].Scale.x += 0.01;
