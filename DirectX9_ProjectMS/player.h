@@ -372,6 +372,25 @@ public:
 	{
 		// スケールをセット
 		SetScl(CHARACTER_DOCTOR_SCL);
+
+		// ウェポンをセット（テスト）
+		pWeapon[Player::TYPE_LEFT] =
+			WeaponManager::SetWeapon(WeaponManager::CDCASE);
+		pWeapon[Player::TYPE_LEFT]->SetStatus(
+			PLAYER_SIZE_WEAPON, PLAYER_DAMAGE_NORMAL,
+			WEAPON_MODEL_CDCASE_SCL, true);
+
+		pWeapon[Player::TYPE_RIGHT] =
+			WeaponManager::SetWeapon(WeaponManager::MIC);
+		pWeapon[Player::TYPE_RIGHT]->SetStatus(
+			PLAYER_SIZE_WEAPON, PLAYER_DAMAGE_NORMAL,
+			WEAPON_MODEL_MIC_SCL, true);
+
+		pWeapon[Player::TYPE_SP] =
+			WeaponManager::SetWeapon(WeaponManager::KARAAGE);
+		pWeapon[Player::TYPE_SP]->SetStatus(
+			PLAYER_SIZE_WEAPON_SP, PLAYER_DAMAGE_SP,
+			WEAPON_MODEL_KARAAGE_SCL, false);
 	}
 	~Doctor()
 	{
@@ -387,19 +406,30 @@ public:
 		// スケールをセット
 		SetScl(CHARACTER_PASTRY_SCL);
 
-		// ウェポンをセット
+		// ウェポンをセット（テスト）
 		pWeapon[Player::TYPE_LEFT] =
 			WeaponManager::SetWeapon(WeaponManager::BEATER);
-		pWeapon[Player::TYPE_LEFT]->SetRot(true);
-		pWeapon[Player::TYPE_LEFT]->SetScl(WEAPON_MODEL_BEATER_SCL);
+		pWeapon[Player::TYPE_LEFT]->SetStatus(
+			PLAYER_SIZE_WEAPON, PLAYER_DAMAGE_NORMAL,
+			WEAPON_MODEL_BEATER_SCL, true);
 
 		pWeapon[Player::TYPE_RIGHT] =
 			WeaponManager::SetWeapon(WeaponManager::BOWL);
-		pWeapon[Player::TYPE_RIGHT]->SetRot(true);
-		pWeapon[Player::TYPE_RIGHT]->SetScl(WEAPON_MODEL_BOWL_SCL);
-	}
-	~Pastry();
+		pWeapon[Player::TYPE_RIGHT]->SetStatus(
+			PLAYER_SIZE_WEAPON, PLAYER_DAMAGE_NORMAL,
+			WEAPON_MODEL_BOWL_SCL, true);
 
+		pWeapon[Player::TYPE_SP] =
+			WeaponManager::SetWeapon(WeaponManager::KARAAGE);
+		pWeapon[Player::TYPE_SP]->SetStatus(
+			PLAYER_SIZE_WEAPON_SP, PLAYER_DAMAGE_SP,
+			WEAPON_MODEL_KARAAGE_SCL, false);
+
+	}
+	~Pastry()
+	{
+
+	}
 };
 
 class Idol : public Player

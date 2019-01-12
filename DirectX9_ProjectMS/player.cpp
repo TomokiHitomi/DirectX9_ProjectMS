@@ -63,13 +63,13 @@ PlayerManager::PlayerManager(void)
 			Set<Fireman>((PLAYER)i, (CharacterManager::TYPE)eTemp);
 			break;
 		case CharacterManager::PASTRY:
-			Set<Idol>((PLAYER)i, (CharacterManager::TYPE)eTemp);
+			Set<Pastry>((PLAYER)i, (CharacterManager::TYPE)eTemp);
 			break;
 		case CharacterManager::IDOL:
 			Set<Idol>((PLAYER)i, (CharacterManager::TYPE)eTemp);
 			break;
 		case CharacterManager::DOCTOR:
-			Set<Idol>((PLAYER)i, (CharacterManager::TYPE)eTemp);
+			Set<Doctor>((PLAYER)i, (CharacterManager::TYPE)eTemp);
 			break;
 		}
 	}
@@ -213,7 +213,7 @@ void Player::InitStatus(void)
 	// 各プロパティの初期化
 	m_vPos = ZERO_D3DXVECTOR3;
 	m_vRot = ZERO_D3DXVECTOR3;
-	m_vScl = D3DXVECTOR3(PLAYER_SCL, PLAYER_SCL, PLAYER_SCL);
+	//m_vScl = D3DXVECTOR3(PLAYER_SCL, PLAYER_SCL, PLAYER_SCL);
 
 	m_vMove = ZERO_D3DXVECTOR3;
 	m_vRotInertia = ZERO_D3DXVECTOR3;
