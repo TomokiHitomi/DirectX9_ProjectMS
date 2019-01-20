@@ -22,10 +22,10 @@
 #define CHARACTER_PASTRY_SCL		(10.25f)
 
 #define CHARACTER_IDOL				("data/MODEL/Idol/Idol.X")
-#define CHARACTER_IDOL_SCL			(10.25f)
+#define CHARACTER_IDOL_SCL			(10.0f)
 
-#define CHARACTER_DOCTOR			("Idol.X")
-#define CHARACTER_DOCTOR_SCL		(0.25f)
+#define CHARACTER_DOCTOR			(CHARACTER_IDOL)
+#define CHARACTER_DOCTOR_SCL		(10.0f)
 
 //*****************************************************************************
 // ç\ë¢ëÃíËã`

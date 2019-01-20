@@ -1039,6 +1039,9 @@ VOID CSkinMesh::CreateFrameArray(LPD3DXFRAME _pFrame) {
 //=============================================================================
 VOID CSkinMesh::Update(int nAC)
 {
+#ifdef _DEBUG
+	PrintDebugProc("CSkin nAC[%d]  Track[%d]\n", nAC, m_CurrentTrack[nAC]);
+#endif
 	if (nAC >= ANIMATION_CONTROLLER_MAX) return;
 
 	// モーションブレンド確認
@@ -1063,16 +1066,24 @@ VOID CSkinMesh::Update(int nAC)
 	m_pAnimController[nAC]->SetTrackDesc(0, &(m_CurrentTrackDesc[nAC]));
 
 	//// ループフラグが true の場合はアニメーション時間データの更新
-	//if (m_bLoopFlag[m_CurrentTrack[nAC]])
-	//	m_pAnimController[nAC]->AdvanceTime(m_AnimSpeed[nAC], NULL);
+	//if (m_bLoopFlag[nAC][m_CurrentTrack[nAC]])
+	//{
+	//	//現在のアニメーション番号を適応
+	//	m_pAnimController[nAC]->SetTrackAnimationSet(0, m_pAnimSet[m_CurrentTrack[nAC]]);
+	//	//0(再生中の)トラックからトラックデスクをセットする
+	//	m_pAnimController[nAC]->SetTrackDesc(0, &(m_CurrentTrackDesc[nAC]));
+	//}
 	//// false の場合は1ループ目まで更新
 	//else
 	//{
-	//	// アニメーション時間を加算
-	//	m_fAnimeTime[nAC] += m_AnimSpeed[nAC];
 	//	// 1ループの時間を上回るまで更新
 	//	if (m_fLoopTime[nAC] > m_fAnimeTime[nAC])
-	//		m_pAnimController[nAC]->AdvanceTime(m_AnimSpeed[nAC], NULL);
+	//	{
+	//		//現在のアニメーション番号を適応
+	//		m_pAnimController[nAC]->SetTrackAnimationSet(0, m_pAnimSet[m_CurrentTrack[nAC]]);
+	//		//0(再生中の)トラックからトラックデスクをセットする
+	//		m_pAnimController[nAC]->SetTrackDesc(0, &(m_CurrentTrackDesc[nAC]));
+	//	}
 	//}
 
 	//アニメーション時間を更新
@@ -1091,32 +1102,51 @@ VOID CSkinMesh::Draw(LPDIRECT3DDEVICE9 lpD3DDevice, D3DXMATRIX _World, int nAC)
 
 	FLOAT fAnimeSpeedTemp = m_AnimSpeed[nAC];
 
-	//if (CameraManager::GetType() == CameraManager::MULTI2 || BaseScene::bPause)
-	if (!m_bAnim || BaseScene::bPause)
-		m_AnimSpeed[nAC] = 0.0f;
-
-	// ループフラグが true の場合はアニメーション時間データの更新
-	if (m_bLoopFlag[m_CurrentTrack[nAC]])
-		m_pAnimController[nAC]->AdvanceTime(m_AnimSpeed[nAC], NULL);
-	// false の場合は1ループ目まで更新
-	else
+	if (!m_bLoopFlag[nAC][m_CurrentTrack[nAC]])
 	{
 		// アニメーション時間を加算
 		m_fAnimeTime[nAC] += m_AnimSpeed[nAC];
 		// 1ループの時間を上回るまで更新
-		if (m_fLoopTime[nAC] > m_fAnimeTime[nAC])
-			m_pAnimController[nAC]->AdvanceTime(m_AnimSpeed[nAC], NULL);
+		if (m_fLoopTime[nAC] <= m_fAnimeTime[nAC] + m_AnimSpeed[nAC])
+		{
+			m_AnimSpeed[nAC] = 0.0f;
+		}
 	}
+
+	//if (CameraManager::GetType() == CameraManager::MULTI2 || BaseScene::bPause)
+	if (!m_bAnim || BaseScene::bPause)
+		m_AnimSpeed[nAC] = 0.0f;
+
+	//// ループフラグが true の場合はアニメーション時間データの更新
+	//if (m_bLoopFlag[nAC][m_CurrentTrack[nAC]])
+	//{
+	//	m_pAnimController[nAC]->AdvanceTime(m_AnimSpeed[nAC], NULL);
+	//}
+	//// false の場合は1ループ目まで更新
+	//else
+	//{
+	//	// アニメーション時間を加算
+	//	m_fAnimeTime[nAC] += m_AnimSpeed[nAC];
+	//	// 1ループの時間を上回るまで更新
+	//	if (m_fLoopTime[nAC] > m_fAnimeTime[nAC])
+	//	{
+	//		m_pAnimController[nAC]->AdvanceTime(m_AnimSpeed[nAC], NULL);
+	//	}
+	//}
+
+	m_pAnimController[nAC]->AdvanceTime(m_AnimSpeed[nAC], NULL);
+
 
 	m_AnimSpeed[nAC] = fAnimeSpeedTemp;
 
 	//アニメーションデータを更新
 	UpdateFrameMatrices(m_pFrameRoot, &m_World[nAC]);
+
 	//アニメーション描画
 	DrawFrame(lpD3DDevice, m_pFrameRoot);
+
 	//0(再生中の)トラックから更新したトラックデスクを取得する
 	m_pAnimController[nAC]->GetTrackDesc(0, &m_CurrentTrackDesc[nAC]);
-
 }
 
 //=============================================================================

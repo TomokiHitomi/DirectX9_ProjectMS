@@ -61,6 +61,9 @@ SelectCharacterManager::SelectCharacterManager(void)
 			{
 				m_CSkinMesh[i]->ChangeAnim(Player::IDOL, 1.0f, 0);
 				m_CSkinMesh[i]->ChangeAnim(Player::IDOL, 1.0f, 1);
+
+				//m_CSkinMesh[i]->LoopAnim(Player::IDOL, false, 0);
+				//m_CSkinMesh[i]->LoopAnim(Player::IDOL, false, 1);
 			}
 		}
 	}
@@ -120,13 +123,12 @@ void SelectCharacterManager::Update(void)
 	for (unsigned int i = 0; i < CharacterManager::TYPE_MAX; i++)
 	{
 
+#ifdef _DEBUG
 		if (GetKeyboardTrigger(DIK_LEFT))vRot[i].y += 0.1f;
 		if (GetKeyboardTrigger(DIK_RIGHT))vRot[i].y -= 0.1f;
-		WorldConvert(&mtxWorld[i], vPos[i], vRot[i], vScl[i]);
-#ifdef _DEBUG
 		PrintDebugProc("rot[%f] \n", vRot[i].y);
 #endif
-
+		WorldConvert(&mtxWorld[i], vPos[i], vRot[i], vScl[i]);
 	}
 
 	int nSelectChar;
@@ -171,11 +173,12 @@ void SelectCharacterManager::Update(void)
 void SelectCharacterManager::Draw(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	int nCameraType = (int)CameraManager::GetType();
 
 	for (unsigned int i = 0; i < CharacterManager::TYPE_MAX; i++)
 	{
 		if (m_CSkinMesh[i] != NULL)
-		m_CSkinMesh[i]->Draw(pDevice, mtxWorld[i], (int)CameraManager::GetType());
+		m_CSkinMesh[i]->Draw(pDevice, mtxWorld[i], nCameraType);
 	}
 }
 

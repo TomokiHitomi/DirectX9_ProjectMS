@@ -31,14 +31,11 @@
 class SelectCharacterManager : public ObjectManager
 {
 public:
-
 	CSkinMesh	*m_CSkinMesh[CharacterManager::TYPE_MAX];	// スキンメッシュ格納用
 	D3DXVECTOR3	vPos[CharacterManager::TYPE_MAX];
 	D3DXVECTOR3	vScl[CharacterManager::TYPE_MAX];
 	D3DXVECTOR3	vRot[CharacterManager::TYPE_MAX];
 	D3DXMATRIX mtxWorld[CharacterManager::TYPE_MAX];
-
-
 public:
 	// コンストラクタ（初期化処理）
 	SelectCharacterManager(void);
