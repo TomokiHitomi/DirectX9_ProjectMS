@@ -13,6 +13,8 @@
 #include "select.h"
 #include "fade.h"
 #include "sound.h"
+#include "selectcharacter.h"
+#include "player.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -1053,30 +1055,62 @@ void Selectface::SetTextureSelect(int CreateSelectCount)
 //=============================================================================
 void Selectface::SetChar(void)
 {
+	int nSelectChar = 0;
+	//CSkinMesh* pCSkinMesh;
+	SelectCharacterManager* pSCM = ObjectManager::GetObjectPointer<SelectCharacterManager>(ObjectManager::SELECTCHARACTER);
+
 	for (unsigned int i = 0; i < SELECT_MAX;i++)
 	{
+		// 選択中のキャラクターを探査
+		if (i == SELECT_1P)
+			nSelectChar = SearchChar(&SelectMovePlayer000[0]);
+		else if (i == SELECT_2P)
+			nSelectChar = SearchChar(&SelectMovePlayer001[0]);
+
 		// Joyconで Aボタン または決定ボタンになりえるボタンが押された場合
 		if (JcTriggered(0 + i * 2, JC_L_BUTTON_L | JC_L_BUTTON_ZL)
 			|| JcTriggered(1 + i * 2, JC_R_BUTTON_R | JC_R_BUTTON_ZR | JC_R_BUTTON_A)
 			|| GetKeyboardTrigger(DIK_RETURN))
 		{
-			// 選択中のキャラクターを探査して シーンマネージャーに保管
-			if (i == SELECT_1P)
-				SceneManager::SetSelectChar(i, SearchChar(&SelectMovePlayer000[0]));
-			else if (i == SELECT_2P)
-				SceneManager::SetSelectChar(i, SearchChar(&SelectMovePlayer001[0]));
-
-			// 選択したキャラクターを確定
-			bSelect[i] = true;
-			SetSe(SE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+			if (!bSelect[i])
+			{
+				// シーンマネージャーに保管
+				SceneManager::SetSelectChar(i, nSelectChar);
+				// 選択したキャラクターを確定
+				bSelect[i] = true;
+				SetSe(SE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+				if (pSCM != NULL)
+				{
+					switch (nSelectChar)
+					{
+					case 0:
+						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP3, 1.0f, i);
+						break;
+					case 1:
+					case 2:
+						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP2, 1.0f, i);
+						break;
+					case 3:
+						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP1, 1.0f, i);
+						break;
+					}
+				}
+			}
 		}
 
 		// Joyconで Bボタン が押された場合
 		else if (JcTriggered(1 + i * 2, JC_R_BUTTON_B) || GetKeyboardTrigger(DIK_ESCAPE))
 		{
-			// 決定したキャラクターをキャンセル
-			bSelect[i] = false;
-			SetSe(SE_CANCEL, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+			if (bSelect[i])
+			{
+				// 決定したキャラクターをキャンセル
+				bSelect[i] = false;
+				SetSe(SE_CANCEL, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+				if (pSCM != NULL)
+				{
+					pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::IDOL, PLAYER_ANIM_WEIGHT_ATTACK, i);
+				}
+			}
 		}
 	}
 

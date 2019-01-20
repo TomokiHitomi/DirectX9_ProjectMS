@@ -6,6 +6,7 @@
 //=============================================================================
 #include "main.h"
 #include "character.h"
+#include "player.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -50,6 +51,22 @@ CharacterManager::CharacterManager(void)
 
 		//m_CSkinMesh[PASTRY]->Init(pDevice, CHARACTER_PASTRY);
 		//m_CSkinMesh[IDOL]->Init(pDevice, CHARACTER_IDOL);
+	}
+
+	// ループしないアニメーションを指定
+	for (unsigned int i = 0; i < TYPE_MAX; i++)
+	{
+		for (unsigned int j = 0; j < 2; j++)
+		{
+			m_CSkinMesh[i]->LoopAnim(Player::JUMP_START, false, j);
+
+			m_CSkinMesh[i]->LoopAnim(Player::ATK_LEFT, false, j);
+			m_CSkinMesh[i]->LoopAnim(Player::ATK_RIGHT, false, j);
+
+			m_CSkinMesh[i]->LoopAnim(Player::ATK_SP1, false, j);
+			m_CSkinMesh[i]->LoopAnim(Player::ATK_SP2, false, j);
+			m_CSkinMesh[i]->LoopAnim(Player::ATK_SP3, false, j);
+		}
 	}
 }
 

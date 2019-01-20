@@ -268,6 +268,10 @@ public:
 	// 追記は逆順（新しいものから格納される）
 	enum PLAYER_ANIME
 	{	// アニメーション
+		ATK_SP3,
+		ATK_SP2,
+		ATK_SP1,
+		DOWN,
 		JUMP_END,
 		JUMP,
 		JUMP_START,

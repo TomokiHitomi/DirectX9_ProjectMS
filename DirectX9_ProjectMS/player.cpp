@@ -887,35 +887,36 @@ void Player::Jump(void)
 	// ジャンプ中
 	if (bJump)
 	{
-		// ジャンプクールダウンフラグが true
-		if (m_stAction[AC_JUMP_CD].bFlag)
-		{
+		//// ジャンプクールダウンフラグが true
+		//if (m_stAction[AC_JUMP_CD].bFlag)
+		//{
 			// ジャンプスタートアニメーションをセット
 			m_dwAnim |= PLAYER_ANIM_JUMP_START;
-		}
-		else
-		{
-			// ジャンプスタートアニメーションをセット
-			m_dwAnim |= PLAYER_ANIM_JUMP;
-		}
+		//}
+		//else
+		//{
+		//	// ジャンプスタートアニメーションをセット
+		//	m_dwAnim |= PLAYER_ANIM_JUMP;
+		//}
 
 		fVelocity -= fGravity;
 		m_vPos.y += fVelocity;
-		if (m_vPos.y < 0.0f)
+		if (m_vPos.y <= 0.0f)
 		{
-			// カウント開始
-			m_stAction[AC_JUMP_END_CD].bFlag = true;
-			// カウント値を設定
-			m_stAction[AC_JUMP_END_CD].nCnt = PLAYER_JUMP_CD;
+			//// カウント開始
+			//m_stAction[AC_JUMP_END_CD].bFlag = true;
+			//// カウント値を設定
+			//m_stAction[AC_JUMP_END_CD].nCnt = PLAYER_JUMP_CD;
 
 			m_vPos.y = 0.0f;
 			fVelocity = PLAYER_VELOCITY;
 			fGravity = PLAYER_GRAVITY;
 			bJump = false;
+			//m_dwAnim |= PLAYER_ANIM_JUMP_END;
 		}
 	}
-	if(m_stAction[AC_JUMP_END_CD].bFlag)
-		m_dwAnim |= PLAYER_ANIM_JUMP_END;
+//	if(m_stAction[AC_JUMP_END_CD].bFlag)
+//		m_dwAnim |= PLAYER_ANIM_JUMP_END;
 }
 
 //=============================================================================

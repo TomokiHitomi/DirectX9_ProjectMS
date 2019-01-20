@@ -161,7 +161,8 @@ public:
 	//アニメーションタイムを設定
 	VOID SetAnimTime(DWORD _AnimeTime, int nAC) { m_AnimeTime[nAC] = _AnimeTime; }
 	// アニメーションのループフラグ設定処理（標準はtrue）
-	VOID LoopAnim(DWORD dwTrack, BOOL bFlag, int nAC) { m_bLoopFlag[nAC][dwTrack] = bFlag; }
+	VOID LoopAnim(DWORD dwTrack, BOOL bFlag, int nAC)
+	{ m_bLoopFlag[nAC][dwTrack] = bFlag; }
 private:
 	//対象のボーンを検索
 	D3DXFRAME_DERIVED* SearchBoneFrame(LPSTR _BoneName, D3DXFRAME* _pFrame);
