@@ -97,7 +97,7 @@ enum
 {	// SE
 	SE_BUTTON,
 	SE_BULLET,
-	SE_MISS,
+	SE_DASH,		// ÉTÉbÅI
 	SE_BOMB,
 	SE_ITEM,
 	SE_ENEMY_WALK,

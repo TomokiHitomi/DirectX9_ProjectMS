@@ -188,11 +188,11 @@ void PlayerManager::Reset(void)
 //=============================================================================
 Player::Player(void)
 {
-	// ステータス初期化
-	InitStatus();
-
 	// スキンメッシュポインタを NULL に初期化
 	m_CSkinMesh = NULL;
+
+	// ステータス初期化
+	InitStatus();
 
 	// ウェポンの数だけ NULL に初期化
 	for (unsigned int i = 0; i < TYPE_MAX; i++)
@@ -261,6 +261,8 @@ void Player::InitStatus(void)
 
 	// SPアタック用 TEMP で初期化
 	eLRSp = TYPE_TEMP;
+
+	ChangeAnim(IDOL, PLAYER_ANIM_WEIGHT_MAX);
 }
 
 //=============================================================================
@@ -303,6 +305,9 @@ void Player::Update(void)
 
 			// 移動処理
 			Move();
+
+			if (m_fHp <= 0.0f)
+				m_dwAnim |= PLAYER_ANIM_DOWN;
 
 			// アニメーションを設定
 			SetAnim();
@@ -533,24 +538,28 @@ void Player::Action(void)
 				}
 			}
 
-			// ジャンプ
-			if (JcTriggered(1 + m_nNum * 2, JC_R_BUTTON_R))
+			if (!bJump)
 			{
-				if (!bJump)
+				// ジャンプ
+				if (JcTriggered(1 + m_nNum * 2, JC_R_BUTTON_R))
 				{
-					// カウント開始
-					m_stAction[AC_JUMP_CD].bFlag = true;
-					// カウント値を設定
-					m_stAction[AC_JUMP_CD].nCnt = PLAYER_JUMP_CD;
-				}
-
+				// カウント開始
+				m_stAction[AC_JUMP_CD].bFlag = true;
+				// カウント値を設定
+				m_stAction[AC_JUMP_CD].nCnt = PLAYER_JUMP_CD;
 				bJump = true;
+
+				}
 			}
 
-			// ダッシュ
-			if (JcTriggered(0 + m_nNum * 2, JC_L_BUTTON_L))
+			if (!bDash)
 			{
-				bDash = true;
+				// ダッシュ
+				if (JcTriggered(0 + m_nNum * 2, JC_L_BUTTON_L))
+				{
+					bDash = true;
+					SetSe(SE_DASH, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+				}
 			}
 		}
 		// SPアタック処理
@@ -1064,7 +1073,10 @@ void Player::ChangeAnimSpeed(FLOAT AnimSpeed)
 void Player::SetAnim(void)
 {
 	// 優先順位ごとに if 分岐
-	if (PLAYER_ANIM_DAMAGE_1 & m_dwAnim)
+	if (PLAYER_ANIM_DUMMY & m_dwAnim);
+	else if (PLAYER_ANIM_DOWN & m_dwAnim)
+		ChangeAnim(DOWN, PLAYER_ANIM_WEIGHT_DAMAGE);
+	else if (PLAYER_ANIM_DAMAGE_1 & m_dwAnim)
 	{
 		ChangeAnim(DAMAGE_1, PLAYER_ANIM_WEIGHT_DAMAGE);
 	}

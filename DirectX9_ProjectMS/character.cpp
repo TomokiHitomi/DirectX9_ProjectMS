@@ -63,9 +63,12 @@ CharacterManager::CharacterManager(void)
 			m_CSkinMesh[i]->LoopAnim(Player::ATK_LEFT, false, j);
 			m_CSkinMesh[i]->LoopAnim(Player::ATK_RIGHT, false, j);
 
+			m_CSkinMesh[i]->LoopAnim(Player::DOWN, false, j);
+
 			m_CSkinMesh[i]->LoopAnim(Player::ATK_SP1, false, j);
 			m_CSkinMesh[i]->LoopAnim(Player::ATK_SP2, false, j);
 			m_CSkinMesh[i]->LoopAnim(Player::ATK_SP3, false, j);
+			m_CSkinMesh[i]->LoopAnim(Player::GUARD_SP1, false, j);
 		}
 	}
 }

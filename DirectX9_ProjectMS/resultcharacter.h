@@ -17,9 +17,10 @@
 // マクロ定義
 //*****************************************************************************
 #define RESULTCHARCTER_POS_MARGIN	(30.0f)
-#define RESULTCHARCTER_CAMERA_EYE	(D3DXVECTOR3(0.0f, 10.0f, 0.0f))
-#define RESULTCHARCTER_CAMERA_AT1	(D3DXVECTOR3(-10.0f, 5.0f, -15.0f))
-#define RESULTCHARCTER_CAMERA_AT2	(D3DXVECTOR3(10.0f, 5.0f, -15.0f))
+#define RESULTCHARCTER_CAMERA_EYE	(D3DXVECTOR3(-10.0f, 8.0f, -15.0f))
+#define RESULTCHARCTER_CAMERA_AT	(D3DXVECTOR3(0.0f, 10.0f, 0.0f))
+
+#define RESULTCHARCTER_STARTANIM	(60)
 
 //*****************************************************************************
 // 構造体定義
@@ -42,6 +43,9 @@ private:
 	D3DXVECTOR3	vScl[RESULT_MAX];
 	D3DXVECTOR3	vRot[RESULT_MAX];
 	D3DXMATRIX mtxWorld[RESULT_MAX];
+
+	int m_nCount;
+	int m_nWin;
 
 
 public:

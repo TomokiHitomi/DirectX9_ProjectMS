@@ -82,6 +82,8 @@ technique Tec01		// テクスチャ描画
 {
 	pass p0
 	{
+		// 裏面カリング
+		CullMode = CCW;
 		VertexShader = compile vs_3_0 vs_main();
 		PixelShader = compile ps_3_0 ps_nomal();
 	}

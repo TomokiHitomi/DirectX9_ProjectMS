@@ -273,8 +273,6 @@ technique t0
 		CullMode = None;
 		VertexShader = (vsArray[CurNumBones]);
 		PixelShader = compile ps_3_0 ps_nomal();
-		// — –ÊƒJƒŠƒ“ƒO
-		CullMode = CCW;
 	}
 }
 

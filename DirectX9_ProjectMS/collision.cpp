@@ -79,8 +79,23 @@ void ChackHit(void)
 								// アニメーションを設定
 								pPlayer->ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
 								pPlayer->ChangeAnim(Player::IDOL, PLAYER_ANIM_WEIGHT_DAMAGE);
+
+								//switch (pPlayer->m_nType)
+								//{
+								//case 0:
+								//	pPlayer->ChangeAnim(Player::ATK_SP3, PLAYER_ANIM_WEIGHT_DAMAGE);
+								//	break;
+								//case 1:
+								//case 2:
+								//	pPlayer->ChangeAnim(Player::ATK_SP2, PLAYER_ANIM_WEIGHT_DAMAGE);
+								//	break;
+								//case 3:
+								//	pPlayer->ChangeAnim(Player::ATK_SP1, PLAYER_ANIM_WEIGHT_DAMAGE);
+								//	break;
+								//}
+
 								pTarget->ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
-								pTarget->ChangeAnim(Player::IDOL, PLAYER_ANIM_WEIGHT_DAMAGE);
+								pTarget->ChangeAnim(Player::DOWN, PLAYER_ANIM_WEIGHT_DAMAGE);
 								//if (!BaseScene::bSceneChange) SetFadeScene(SceneManager::RESULT);
 								//BaseScene::bSceneChange = true;
 							}

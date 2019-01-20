@@ -19,8 +19,9 @@
 #define GAME_ROUND_MAX		(3)
 
 // 各種カウント
-#define GAME_ROUND_RESET	(90)
-#define GAME_ROUND_START	(100)
+//#define GAME_ROUND_RESET	(90)
+//#define GAME_ROUND_RESET	(180)
+#define GAME_ROUND_START	(120)
 
 //*****************************************************************************
 // クラス定義

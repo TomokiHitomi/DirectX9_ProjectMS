@@ -92,20 +92,25 @@
 /***** アニメーション *****/
 
 // アニメーションフラグ
-#define PLAYER_ANIM_FRONT			0x00000001
-#define PLAYER_ANIM_BACK			0x00000002
-#define PLAYER_ANIM_LEFT			0x00000004
-#define PLAYER_ANIM_RIGHT			0x00000008
-#define PLAYER_ANIM_GUARD			0x00000010
-#define PLAYER_ANIM_ATK_RIGHT		0x00000020
-#define PLAYER_ANIM_ATK_LEFT		0x00000040
-#define PLAYER_ANIM_DAMAGE_1		0x00000080
-#define PLAYER_ANIM_DAMAGE_2		0x00000100
-#define PLAYER_ANIM_JUMP_START		0x00000200
-#define PLAYER_ANIM_JUMP			0x00001000
-#define PLAYER_ANIM_JUMP_END		0x00002000
-//#define PLAYER_ANIM_				0x00004000
-//#define PLAYER_ANIM_				0x00008000
+#define PLAYER_ANIM_FRONT			(0x00000001)
+#define PLAYER_ANIM_BACK			(0x00000002)
+#define PLAYER_ANIM_LEFT			(0x00000004)
+#define PLAYER_ANIM_RIGHT			(0x00000008)
+#define PLAYER_ANIM_GUARD			(0x00000010)
+#define PLAYER_ANIM_ATK_RIGHT		(0x00000020)
+#define PLAYER_ANIM_ATK_LEFT		(0x00000040)
+#define PLAYER_ANIM_DAMAGE_1		(0x00000080)
+#define PLAYER_ANIM_DAMAGE_2		(0x00000100)
+#define PLAYER_ANIM_JUMP_START		(0x00000200)
+#define PLAYER_ANIM_JUMP			(0x00001000)
+#define PLAYER_ANIM_JUMP_END		(0x00002000)
+#define PLAYER_ANIM_DOWN			(0x00004000)
+#define PLAYER_ANIM_ATK_SP1			(0x00008000)
+#define PLAYER_ANIM_ATK_SP2			(0x00010000)
+#define PLAYER_ANIM_ATK_SP3			(0x00020000)
+#define PLAYER_ANIM_GUARD_SP1		(0x00040000)
+//#define PLAYER_ANIM_				(0x00080000)
+#define PLAYER_ANIM_DUMMY			(0x80000000)
 
 // アニメーションスピード
 #define PLAYER_ANIM_SPEED_DEF		(60.0f / 3500.0f)
@@ -116,6 +121,7 @@
 #define PLAYER_ANIM_WEIGHT_GUARD	(0.3f)
 #define PLAYER_ANIM_WEIGHT_DAMAGE	(1.0f)
 #define PLAYER_ANIM_WEIGHT_JUMP		(0.5f)
+#define PLAYER_ANIM_WEIGHT_MAX		(1.0f)
 
 /***** UI *****/
 #define PLAYER_GAGE_SET_XZ			(3.0f)
@@ -159,6 +165,7 @@ public:
 
 	int				m_nNum;				// プレイヤーナンバー
 	int				m_nTagNum;
+	int				m_nType;
 	bool			m_bUse;				// 使用フラグ
 
 	typedef struct
@@ -268,6 +275,7 @@ public:
 	// 追記は逆順（新しいものから格納される）
 	enum PLAYER_ANIME
 	{	// アニメーション
+		GUARD_SP1,
 		ATK_SP3,
 		ATK_SP2,
 		ATK_SP1,
@@ -319,6 +327,7 @@ public:
 		m_pPlayer[player] = new Type;
 		m_pPlayer[player]->m_nNum = int(player);
 		m_pPlayer[player]->m_nTagNum = int(PLAYER_2P - player);
+		m_pPlayer[player]->m_nType = (int)type;
 		m_pPlayer[player]->InitPos();
 		m_pPlayer[player]->m_CSkinMesh = SceneManager::GetCharMgr()->GetCharData(type);
 		if (m_pPlayer[player]->m_CSkinMesh)

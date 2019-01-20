@@ -1084,14 +1084,16 @@ void Selectface::SetChar(void)
 					switch (nSelectChar)
 					{
 					case 0:
-						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP3, 1.0f, i);
+						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP1, 1.0f, i);
 						break;
 					case 1:
+						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP3, 1.0f, i);
+						break;
 					case 2:
 						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP2, 1.0f, i);
 						break;
 					case 3:
-						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP1, 1.0f, i);
+						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::GUARD_SP1, 1.0f, i);
 						break;
 					}
 				}

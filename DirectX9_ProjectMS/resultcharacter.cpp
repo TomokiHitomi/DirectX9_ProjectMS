@@ -46,13 +46,14 @@ ResultCharacterManager::ResultCharacterManager(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	int nWin = SceneManager::GetWinPlayer();
+	m_nCount = 0;
 
 	for (unsigned int i = 0; i < RESULT_MAX; i++)
 	{
 		m_CSkinMesh[i] = NULL;
 		vPos[i] = ZERO_D3DXVECTOR3;
 		vPos[i].x = (i * RESULTCHARCTER_POS_MARGIN) - ((RESULT_MAX - 1) * RESULTCHARCTER_POS_MARGIN / 2);
-
+		//vPos[i].x *= -1.0f;
 		vRot[i] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	}
 
@@ -69,6 +70,8 @@ ResultCharacterManager::ResultCharacterManager(void)
 			SceneManager::GetCharMgr()->GetCharData((CharacterManager::TYPE)nLoseSelect);
 		m_CSkinMesh[RESULT_LOSE]->ChangeAnim(Player::IDOL, 1.0f, 1);
 		vScl[RESULT_LOSE] = SetScl(SearchScl(nLoseSelect));
+
+
 	}
 
 
@@ -89,7 +92,7 @@ ResultCharacterManager::~ResultCharacterManager(void)
 }
 
 //=============================================================================
-// デストラクタ（終了処理）
+// キャラサイズの取得
 //=============================================================================
 float ResultCharacterManager::SearchScl(int nChar)
 {
@@ -127,10 +130,10 @@ void ResultCharacterManager::Init(void)
 	pCamera->SetEyeIner(0.1f);
 
 	// カメラをAtをセット
-	pCamera->SetAt(vPos[RESULT_WIN] + RESULTCHARCTER_CAMERA_EYE);
+	pCamera->SetAt(vPos[RESULT_WIN] + RESULTCHARCTER_CAMERA_AT);
 
 	// カメラEyeをセット
-	pCamera->SetEye(vPos[RESULT_WIN] + RESULTCHARCTER_CAMERA_AT1);
+	pCamera->SetEye(vPos[RESULT_WIN] + RESULTCHARCTER_CAMERA_EYE);
 }
 
 //=============================================================================
@@ -145,6 +148,31 @@ void ResultCharacterManager::Update(void)
 	for (unsigned int i = 0; i < RESULT_MAX; i++)
 	{
 		if (m_CSkinMesh[i] != NULL) m_CSkinMesh[i]->Update(i);
+	}
+
+	m_nCount++;
+	if (m_nCount == RESULTCHARCTER_STARTANIM)
+	{
+		int nWin = SceneManager::GetWinPlayer();
+
+		switch (SceneManager::GetSelectChar(nWin))
+		{
+		case 0:
+			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::ATK_SP1, 1.0f, RESULT_WIN);
+			break;
+		case 1:
+			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::ATK_SP3, 1.0f, RESULT_WIN);
+			break;
+		case 2:
+			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::ATK_SP2, 1.0f, RESULT_WIN);
+			break;
+		case 3:
+			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::GUARD_SP1, 1.0f, RESULT_WIN);
+			break;
+		}
+
+		m_CSkinMesh[RESULT_LOSE]->ChangeAnim(Player::DOWN, 1.0f, RESULT_LOSE);
+
 	}
 
 #ifdef _DEBUG
