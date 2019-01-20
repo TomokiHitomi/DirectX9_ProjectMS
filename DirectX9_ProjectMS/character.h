@@ -24,7 +24,7 @@
 #define CHARACTER_IDOL				("data/MODEL/Idol/Idol.X")
 #define CHARACTER_IDOL_SCL			(10.0f)
 
-#define CHARACTER_DOCTOR			(CHARACTER_IDOL)
+#define CHARACTER_DOCTOR			("data/MODEL/Doctor/Doctor.X")
 #define CHARACTER_DOCTOR_SCL		(10.0f)
 
 //*****************************************************************************

@@ -124,8 +124,8 @@ void SelectCharacterManager::Update(void)
 	{
 
 #ifdef _DEBUG
-		if (GetKeyboardTrigger(DIK_LEFT))vRot[i].y += 0.1f;
-		if (GetKeyboardTrigger(DIK_RIGHT))vRot[i].y -= 0.1f;
+		//if (GetKeyboardTrigger(DIK_LEFT))vRot[i].y += 0.1f;
+		//if (GetKeyboardTrigger(DIK_RIGHT))vRot[i].y -= 0.1f;
 		PrintDebugProc("rot[%f] \n", vRot[i].y);
 #endif
 		WorldConvert(&mtxWorld[i], vPos[i], vRot[i], vScl[i]);

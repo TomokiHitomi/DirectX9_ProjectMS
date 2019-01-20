@@ -164,10 +164,10 @@ void ResultCharacterManager::Update(void)
 			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::ATK_SP3, 1.0f, RESULT_WIN);
 			break;
 		case 2:
-			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::ATK_SP2, 1.0f, RESULT_WIN);
+			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::GUARD_SP1, 1.0f, RESULT_WIN);
 			break;
 		case 3:
-			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::GUARD_SP1, 1.0f, RESULT_WIN);
+			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::ATK_SP2, 1.0f, RESULT_WIN);
 			break;
 		}
 
