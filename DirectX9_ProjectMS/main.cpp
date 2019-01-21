@@ -11,8 +11,8 @@
 #include "scene.h"
 #include "input.h"
 #include "joycon.h"
-//#include <imgui\imgui.h>
-//#include <imgui\imgui_impl_dx9.h>
+#include "gui.h"
+
 //
 /* Debug */
 #ifdef _DEBUG
@@ -31,6 +31,10 @@ void Draw(void);
 void MainLoop(HWND hWnd);
 void SubLoop(void);
 
+// ImGui用プロシージャ
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+
 //*****************************************************************************
 // グローバル変数:
 //*****************************************************************************
@@ -38,6 +42,10 @@ LPDIRECT3D9			g_pD3D = NULL;			// Direct3Dオブジェクト
 LPDIRECT3DDEVICE9	g_pD3DDevice = NULL;	// デバイスオブジェクト(描画に必要)
 int					g_nCountFPS = 0;		// FPSカウンタ
 bool				g_bContinue = true;		// ゲーム継続フラグ
+
+#ifdef _DEBUG
+Gui g_cImgui;
+#endif
 
 //=============================================================================
 // メイン関数
@@ -192,6 +200,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	// スレッド1の処理が終わるまで待機
 	t1.join();
 
+#ifdef _DEBUG
+	// imguiの終了処理
+	g_cImgui.Uninit();
+#endif
+
 	DestroyWindow(hWnd);
 
 	// ウィンドウクラスの登録を解除
@@ -229,6 +242,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	default:
 		break;
 	}
+
+
+#ifdef _DEBUG
+	// imguiの終了処理
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+	{
+		return true;
+	}
+#endif
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -327,7 +349,10 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);	// 最初のアルファ引数
 	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);	// ２番目のアルファ引数
 
-	//ImGui_ImplDX9_Init(g_pD3DDevice);
+#ifdef _DEBUG
+	// imguiの初期化処理
+	g_cImgui.Init(hWnd, g_pD3DDevice);
+#endif
 
 	// Joycon認識開始
 	start();
@@ -365,6 +390,11 @@ void Uninit(void)
 //=============================================================================
 void Update(void)
 {
+#ifdef _DEBUG
+	// imguiの更新開始
+	g_cImgui.Start();
+#endif
+
 	//{	
 	//	Debugtimer timer;
 	//	pollLoop();
@@ -381,7 +411,10 @@ void Update(void)
 //		PrintDebugProc("【UpdateAt】\n[%f]\n", timer2.End());
 //#endif
 //	}
-
+#ifdef _DEBUG
+	// imguiの更新終了
+		g_cImgui.End();
+#endif
 }
 
 //=============================================================================
@@ -403,6 +436,10 @@ void Draw(void)
 		// 描画処理
 		SceneManager::Draw();
 
+#ifdef _DEBUG
+		// imguiの描画処理
+		g_cImgui.Draw();
+#endif
 //#ifdef _DEBUG
 //		PrintDebugProc("【DrawAt】\n[%f]\n", timer.End());
 //#endif
@@ -451,3 +488,13 @@ LPDIRECT3DDEVICE9 GetDevice(void)
 {
 	return g_pD3DDevice;
 }
+
+#ifdef _DEBUG
+//=============================================================================
+// フレームレート取得
+//=============================================================================
+int GetFps(void)
+{
+	return g_nCountFPS;
+}
+#endif

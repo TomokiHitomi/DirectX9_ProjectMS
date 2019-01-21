@@ -61,6 +61,7 @@ public:
 	static bool m_bUse;
 
 private:
+	D3DXVECTOR3 m_vEye, m_vAt;
 	D3DXVECTOR3 SetScl(float scl) { return D3DXVECTOR3(scl, scl, scl); }
 };
 

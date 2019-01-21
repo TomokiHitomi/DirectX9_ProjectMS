@@ -73,8 +73,6 @@ ResultCharacterManager::ResultCharacterManager(void)
 
 
 	}
-
-
 	Init();
 }
 
@@ -129,11 +127,13 @@ void ResultCharacterManager::Init(void)
 	pCamera->SetAtIner(0.3f);
 	pCamera->SetEyeIner(0.1f);
 
-	// カメラをAtをセット
-	pCamera->SetAt(vPos[RESULT_WIN] + RESULTCHARCTER_CAMERA_AT);
+	m_vEye = RESULTCHARCTER_CAMERA_EYE;
+	m_vAt = RESULTCHARCTER_CAMERA_AT;
 
+	// カメラをAtをセット
+	pCamera->SetAt(vPos[RESULT_WIN] + m_vAt);
 	// カメラEyeをセット
-	pCamera->SetEye(vPos[RESULT_WIN] + RESULTCHARCTER_CAMERA_EYE);
+	pCamera->SetEye(vPos[RESULT_WIN] + m_vEye);
 }
 
 //=============================================================================
@@ -142,8 +142,20 @@ void ResultCharacterManager::Init(void)
 void ResultCharacterManager::Update(void)
 {
 #ifdef _DEBUG
-	PrintDebugProc("【　ResultCharacter　】\n");
+	// imguiの更新開始
+	ImGui::Begin("ResultCharacter");
+	ImGui::InputFloat3("Eye", &m_vEye.x, 2);
+	ImGui::InputFloat3("At1", &m_vAt.x, 2);
+
+	Camera* pCamera;
+	pCamera = CameraManager::GetCamera(CameraManager::SINGLE);
+
+	// カメラをAtをセット
+	pCamera->SetAt(vPos[RESULT_WIN] + m_vAt);
+	// カメラEyeをセット
+	pCamera->SetEye(vPos[RESULT_WIN] + m_vEye);
 #endif
+
 
 	for (unsigned int i = 0; i < RESULT_MAX; i++)
 	{
@@ -164,10 +176,10 @@ void ResultCharacterManager::Update(void)
 			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::ATK_SP3, 1.0f, RESULT_WIN);
 			break;
 		case 2:
-			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::GUARD_SP1, 1.0f, RESULT_WIN);
+			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::ATK_SP2, 1.0f, RESULT_WIN);
 			break;
 		case 3:
-			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::ATK_SP2, 1.0f, RESULT_WIN);
+			m_CSkinMesh[RESULT_WIN]->ChangeAnim(Player::GUARD_SP1, 1.0f, RESULT_WIN);
 			break;
 		}
 
@@ -176,7 +188,8 @@ void ResultCharacterManager::Update(void)
 	}
 
 #ifdef _DEBUG
-	PrintDebugProc("\n");
+	// imguiの更新終了
+	ImGui::End();
 #endif
 }
 

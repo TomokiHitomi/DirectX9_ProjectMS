@@ -17,9 +17,9 @@
 // マクロ定義
 //*****************************************************************************
 #define SELECTCHARCTER_POS_MARGIN	(30.0f)
-#define SELECTCHARCTER_CAMERA_EYE	(D3DXVECTOR3(0.0f, 10.0f, 0.0f))
-#define SELECTCHARCTER_CAMERA_AT1	(D3DXVECTOR3(-10.0f, 5.0f, -15.0f))
-#define SELECTCHARCTER_CAMERA_AT2	(D3DXVECTOR3(10.0f, 5.0f, -15.0f))
+#define SELECTCHARCTER_CAMERA_EYE	(D3DXVECTOR3(0.0f, 9.0f, 0.0f))
+#define SELECTCHARCTER_CAMERA_AT1	(D3DXVECTOR3(-10.0f, 2.0f, -15.0f))
+#define SELECTCHARCTER_CAMERA_AT2	(D3DXVECTOR3(10.0f, 2.0f, -15.0f))
 
 //*****************************************************************************
 // 構造体定義
@@ -48,6 +48,8 @@ public:
 	static bool m_bUse;
 
 private:
+
+	D3DXVECTOR3 m_vEye, m_vAt1, m_vAt2, m_vRot;
 	D3DXVECTOR3 SetScl(float scl) { return D3DXVECTOR3(scl, scl, scl); }
 };
 

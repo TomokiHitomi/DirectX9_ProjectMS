@@ -15,7 +15,16 @@
 #include <time.h>
 #include <stdio.h>
 
-#if _DEBUG
+
+
+
+#ifdef _DEBUG
+
+/* imgui */
+#include "imgui.h"
+#include "imgui_impl_dx9.h"
+#include "imgui_internal.h"
+
 // ƒƒ‚ƒŠƒŠ[ƒNŒŸo
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
@@ -97,5 +106,9 @@ typedef struct
 //*****************************************************************************
 void EndGame(void);
 LPDIRECT3DDEVICE9 GetDevice(void);
+
+#ifdef _DEBUG
+int GetFps(void);
+#endif
 
 #endif

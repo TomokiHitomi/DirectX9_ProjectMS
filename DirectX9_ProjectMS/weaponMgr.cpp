@@ -97,8 +97,12 @@ WeaponManager::~WeaponManager(void)
 void WeaponManager::Update(void)
 {
 #ifdef _DEBUG
-	PrintDebugProc("【 Weapon 】\n");
+	//PrintDebugProc("【 Weapon 】\n");
+	// imguiの更新開始
+	ImGui::Begin("Weapon");
 #endif
+
+
 	for (unsigned int i = 0; i < WEAPON_MAX; i++)
 	{
 		//SAFE_UPDATE(pWeapon[i]);
@@ -108,7 +112,9 @@ void WeaponManager::Update(void)
 		}
 	}
 #ifdef _DEBUG
-	PrintDebugProc("\n");
+	//PrintDebugProc("\n");
+	// imguiの更新終了
+	ImGui::End();
 #endif
 }
 

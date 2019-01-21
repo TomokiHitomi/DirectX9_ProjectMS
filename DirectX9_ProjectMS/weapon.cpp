@@ -102,10 +102,14 @@ void Weapon::Update(void)
 	}
 
 #ifdef _DEBUG
-		PrintDebugProc("Use [%d] Remote[%f]\n",bUse, fRemote);
-		PrintDebugProc("Pos [%f,%f,%f]\n", vPos.x, vPos.y, vPos.z);
-		PrintDebugProc("Move[%f,%f,%f]\n", vMove.x, vMove.y, vMove.z);
-		PrintDebugProc("\n");
+
+	ImGui::Text("Use [%d] Remote[%.2f] Pos [%.2f,%.2f,%.2f] Move[%.2f,%.2f,%.2f]\n",
+		bUse, fRemote, vPos.x, vPos.y, vPos.z, vMove.x, vMove.y, vMove.z);
+
+		//PrintDebugProc("Use [%d] Remote[%f]\n",bUse, fRemote);
+		//PrintDebugProc("Pos [%f,%f,%f]\n", vPos.x, vPos.y, vPos.z);
+		//PrintDebugProc("Move[%f,%f,%f]\n", vMove.x, vMove.y, vMove.z);
+		//PrintDebugProc("\n");
 #endif
 }
 

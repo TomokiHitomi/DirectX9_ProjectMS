@@ -95,6 +95,10 @@ PlayerManager::~PlayerManager(void)
 //=============================================================================
 void PlayerManager::Update(void)
 {
+#ifdef _DEBUG
+	// imguiの更新開始
+	ImGui::Begin("Player");
+#endif
 	for (unsigned int i = 0; i < PLAYER_MAX; i++)
 	{
 		if (m_pPlayer[i] != NULL)
@@ -118,6 +122,10 @@ void PlayerManager::Update(void)
 			}
 		}
 	}
+#ifdef _DEBUG
+	// imguiの更新終了
+	ImGui::End();
+#endif
 }
 
 //=============================================================================
@@ -284,7 +292,8 @@ Player::~Player(void)
 void Player::Update(void)
 {
 #ifdef _DEBUG
-	PrintDebugProc("Player[%d]  Hp[%f]  GHp[%f]\n", m_nNum, m_fHp, m_fGuardHp);
+	//PrintDebugProc("Player[%d]  Hp[%f]  GHp[%f]\n", m_nNum, m_fHp, m_fGuardHp);
+	ImGui::Text("Player[%d]  Hp[%f]  GHp[%f]\n", m_nNum, m_fHp, m_fGuardHp);
 #endif
 
 	if (m_bUse)
@@ -320,9 +329,9 @@ void Player::Update(void)
 		}
 	}
 
-#ifdef _DEBUG
-	PrintDebugProc("\n");
-#endif
+//#ifdef _DEBUG
+//	PrintDebugProc("\n");
+//#endif
 }
 
 //=============================================================================

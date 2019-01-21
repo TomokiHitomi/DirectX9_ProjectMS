@@ -42,7 +42,6 @@ SelectCharacterManager::SelectCharacterManager(void)
 	// オブジェクトタイプの設定
 	SetObjectType(ObjectManager::ObjectType::NORMAL);
 
-
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	for (unsigned int i = 0; i < CharacterManager::TYPE_MAX; i++)
@@ -67,6 +66,11 @@ SelectCharacterManager::SelectCharacterManager(void)
 			}
 		}
 	}
+
+	m_vEye = SELECTCHARCTER_CAMERA_EYE;
+	m_vAt1 = SELECTCHARCTER_CAMERA_AT1;
+	m_vAt2 = SELECTCHARCTER_CAMERA_AT2;
+
 	Init();
 }
 
@@ -115,18 +119,21 @@ void SelectCharacterManager::Init(void)
 void SelectCharacterManager::Update(void)
 {
 #ifdef _DEBUG
-	PrintDebugProc("【　SelectCharacter　】\n");
+	// imguiの更新開始
+	ImGui::Begin("SelectCharacter");
+
+	m_vRot = vRot[0];
+	ImGui::InputFloat3("Eye", &m_vEye.x, 2);
+	ImGui::InputFloat3("At1", &m_vAt1.x, 2);
+	ImGui::InputFloat3("At2", &m_vAt2.x, 2);
+	ImGui::InputFloat3("rot", &m_vRot.x, 2);
+	//PrintDebugProc("rot[%f] \n", vRot[i].y);
 #endif
-
-
 
 	for (unsigned int i = 0; i < CharacterManager::TYPE_MAX; i++)
 	{
-
 #ifdef _DEBUG
-		//if (GetKeyboardTrigger(DIK_LEFT))vRot[i].y += 0.1f;
-		//if (GetKeyboardTrigger(DIK_RIGHT))vRot[i].y -= 0.1f;
-		PrintDebugProc("rot[%f] \n", vRot[i].y);
+		vRot[i] = m_vRot;
 #endif
 		WorldConvert(&mtxWorld[i], vPos[i], vRot[i], vScl[i]);
 	}
@@ -142,15 +149,17 @@ void SelectCharacterManager::Update(void)
 		}
 
 		// カメラをAtをセット
-		CameraManager::pCamera[i]->SetAt(vPos[nSelectChar] + SELECTCHARCTER_CAMERA_EYE);
+		CameraManager::pCamera[i]->SetAt(vPos[nSelectChar] + m_vEye);
 
 		// カメラEyeをセット
-		if		(i == 0) CameraManager::pCamera[i]->SetEye(vPos[nSelectChar] + SELECTCHARCTER_CAMERA_AT1);
-		else if	(i == 1) CameraManager::pCamera[i]->SetEye(vPos[nSelectChar] + SELECTCHARCTER_CAMERA_AT2);
+		if		(i == 0) CameraManager::pCamera[i]->SetEye(vPos[nSelectChar] + m_vAt1);
+		else if	(i == 1) CameraManager::pCamera[i]->SetEye(vPos[nSelectChar] + m_vAt2);
 
 
 #ifdef _DEBUG
-		PrintDebugProc("Player%d:[%d] \n",i, nSelectChar);
+		ImGui::Text("Player%d:[%d] \n", i, nSelectChar);
+
+		//PrintDebugProc("Player%d:[%d] \n", i, nSelectChar);
 #endif
 	}
 
@@ -163,7 +172,8 @@ void SelectCharacterManager::Update(void)
 
 	//}
 #ifdef _DEBUG
-	PrintDebugProc("\n");
+	// imguiの更新終了
+	ImGui::End();
 #endif
 }
 
