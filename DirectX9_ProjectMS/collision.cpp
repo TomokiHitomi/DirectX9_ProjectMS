@@ -64,6 +64,10 @@ void ChackHit(void)
 						{
 							bGuard = pTarget->SubHpGuard(pWeapon->GetDamage());
 							//pTarget->SetPos()
+							if(!bGuard)
+								SetSe(SE_DEF, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+							else
+								SetSe(SE_DEF_B, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 						}
 						// ガードHPがなかったらガード貫通
 						if (bGuard)
@@ -80,6 +84,11 @@ void ChackHit(void)
 							// ターゲットのHPを減算
 							if (pTarget->SubHp(pWeapon->GetDamage()))
 							{
+								// 終了SE
+								SetSe(SE_GONG, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+								// ダウンSE
+								SetSe(SE_DOWN, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+
 								// 勝利プレイヤーを設定
 								GameScene::SetRoundWin(pPlayer->m_nNum);
 								// アニメーションを設定

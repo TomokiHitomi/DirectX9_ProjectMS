@@ -194,19 +194,7 @@ void Weapon::Remote(float remote)
 			// リモート値（加速度値）を補正
 			remote *= WEAPON_REMOTE_CORRECTION;
 
-			//// １フレームあたりに代入できる時間に補正
-			//if (remote > WEAPON_REMOTE_ADD_MAX) remote = WEAPON_REMOTE_ADD_MAX;
-			//else if (remote < -WEAPON_REMOTE_ADD_MAX) remote = -WEAPON_REMOTE_ADD_MAX;
-
-			//// リモート値を加算
-			//fRemote += remote;
-
-			//// 最大値以内に補正
-			//if (fRemote > WEAPON_REMOTE_MAX) fRemote = WEAPON_REMOTE_MAX;
-			//else if (fRemote < -WEAPON_REMOTE_MAX) fRemote = -WEAPON_REMOTE_MAX;
-
 			vMove += vRemote * remote;
-
 
 			// 射出ベクトルと補正したリモートベクトルを足して移動量に代入
 			//vMove = vShot + (vRemote * (fRemote));

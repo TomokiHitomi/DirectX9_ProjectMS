@@ -87,6 +87,9 @@
 #define TEXTURE_ROUNDLOGO_TIME_000					(FRAME)								//90
 
 #define NUM_ROUNDLOGO								(1)																// テクスチャの数
+
+#define ROUNDLOGO_VOICE_ROUND						(10)
+
 //=============================================================================
 //
 //SELECT構造体

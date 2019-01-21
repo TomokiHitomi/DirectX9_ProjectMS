@@ -8,6 +8,7 @@
 #include "input.h"
 #include "roundlogo.h"
 #include "character.h"
+#include "sound.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -149,18 +150,26 @@ void Roundlogo::Update(void)
 		}
 		if (RoundlogoObj[0].Count < TEXTURE_ROUNDLOGO_TIME_000&&RoundlogoObj[0].Nowselect == 0)
 		{
+			if(RoundlogoObj[0].Count == ROUNDLOGO_VOICE_ROUND)
+				SetVoice(VOICE_ROUND1, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 			TexRoundlogo(i, RoundlogoObj[0].Nowselect);
 		}
 		if (RoundlogoObj[0].Count < TEXTURE_ROUNDLOGO_TIME_000&&RoundlogoObj[0].Nowselect == 1)
 		{
+			if (RoundlogoObj[0].Count == ROUNDLOGO_VOICE_ROUND)
+				SetVoice(VOICE_ROUND2, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 			TexRoundlogo(i, RoundlogoObj[0].Nowselect);
 		}
 		if (RoundlogoObj[0].Count < TEXTURE_ROUNDLOGO_TIME_000&&RoundlogoObj[0].Nowselect == 2)
 		{
+			if (RoundlogoObj[0].Count == ROUNDLOGO_VOICE_ROUND)
+				SetVoice(VOICE_ROUND3, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 			TexRoundlogo(i, RoundlogoObj[0].Nowselect);
 		}
 		if (RoundlogoObj[0].Count > TEXTURE_ROUNDLOGO_TIME_000&&RoundlogoObj[0].Nowselect == 3)
 		{
+			if (RoundlogoObj[0].Count == TEXTURE_ROUNDLOGO_TIME_000 + ROUNDLOGO_VOICE_ROUND)
+				SetVoice(VOICE_FIGHT, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 			TexRoundlogo(i, RoundlogoObj[0].Nowselect);
 		}
 		if (RoundlogoObj[0].Count == TEXTURE_ROUNDLOGO_TIME_000)

@@ -95,15 +95,18 @@
 #define TEXTURE_RIGHTLEFT_COLOR_CHANGE_G			(204)																// テクスチャ頂点カラー変化前
 #define TEXTURE_RIGHTLEFT_COLOR_CHANGE_B			(224)																// テクスチャ頂点カラー変化前
 #define TEXTURE_RIGHTLEFT_COLOR_CHANGE_A			(255)																// テクスチャ頂点カラー変化前
-//#define TEXTURE_RIGHTLEFT_SCOND						(3)																// テクスチャ頂点カラー変化前
-#define TEXTURE_RIGHTLEFT_SCOND_COUNT				(2)
-#define TEXTURE_RIGHTLEFT_SCOND_COUNT_COLOR			(255.0f /TEXTURE_RIGHTLEFT_SCOND_COUNT)
-#define TEXTURE_RIGHTLEFT_SCOND_TIME				(FRAME*TEXTURE_RIGHTLEFT_SCOND)									//300
-#define TEXTURE_RIGHTLEFT_SCOND_COLOR				(TEXTURE_RIGHTLEFT_SCOND_COUNT_COLOR/TEXTURE_RIGHTLEFT_SCOND_TIME)								//90
 
 // リキャストカウント(s)
 #define TEXTURE_RIGHTLEFT_SCOND						(5)																// テクスチャ頂点カラー変化前
+#define TEXTURE_RIGHTLEFT_SCOND_FAST				(2)																// テクスチャ頂点カラー変化前
 #define NUM_RIGHTLEFT								(4)																// テクスチャの数
+
+//#define TEXTURE_RIGHTLEFT_SCOND						(3)																// テクスチャ頂点カラー変化前
+#define TEXTURE_RIGHTLEFT_SCOND_COUNT				(2)
+#define TEXTURE_RIGHTLEFT_SCOND_COUNT_COLOR			(255.0f /TEXTURE_RIGHTLEFT_SCOND_COUNT)
+//#define TEXTURE_RIGHTLEFT_SCOND_TIME				(FRAME*TEXTURE_RIGHTLEFT_SCOND)									//300
+#define TEXTURE_RIGHTLEFT_SCOND_COLOR				(TEXTURE_RIGHTLEFT_SCOND_COUNT_COLOR)								//90
+
 //=============================================================================
 //
 //SELECT構造体
@@ -129,6 +132,7 @@ public:
 		bool					Use;									// true:使用  false:未使用
 		LPDIRECT3DTEXTURE9		pD3DTexture;							// テクスチャへのポリゴン (*33)
 		bool					Nowselect;
+		int						nScendCount;
 	};
 	RightleftParts RightleftObj[NUM_RIGHTLEFT];
 	void SetVertexRightleft(int CreateCount);
@@ -141,11 +145,20 @@ public:
 	Rightleft();
 	~Rightleft();
 	bool Set(int nLR);
+
+	//int m_nScendCount[];
+};
+
+enum
+{
+	RIGHTLEFT_COUNT_NORMAL,
+	RIGHTLEFT_COUNT_FAST
 };
 
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
 bool SetRightLeft(int nLR);
+bool SetRightLeftSpeed(int nLR, int nFlag);
 
 #endif

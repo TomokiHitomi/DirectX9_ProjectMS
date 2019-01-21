@@ -71,7 +71,7 @@
 // ガード
 #define PLAYER_GUARD_CD				(5)			// クールダウン
 #define PLAYER_GUARD_COUNT			(5)			// ガードスタートカウント
-#define PLAYER_GUARD_HP_MAX			(15.0f)		// ガードの耐久値
+#define PLAYER_GUARD_HP_MAX			(20.0f)		// ガードの耐久値
 #define PLAYER_GUARD_HP_RECOVER		(0.2f)		// ガードの耐久回復値
 
 // ジャンプ
@@ -80,8 +80,8 @@
 #define PLAYER_JUMP_CD				(15)			// クールダウン
 
 // ダッシュ
-#define PLAYER_DASH_CD				(10)
-#define PLAYER_DASH_SPEED			(1.8f)
+#define PLAYER_DASH_CD				(15)
+#define PLAYER_DASH_SPEED			(2.0f)
 #define PLAYER_DASH_TIME			(10)
 
 // 当たり判定

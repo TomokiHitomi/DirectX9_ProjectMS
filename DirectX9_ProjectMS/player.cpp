@@ -581,6 +581,16 @@ void Player::Action(void)
 	}
 	Dash();
 	Jump();
+	if (GetKeyboardTrigger(DIK_Z))
+	{
+		SetRightLeftSpeed(0 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
+		SetRightLeftSpeed(1 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
+	}
+	else if (GetKeyboardTrigger(DIK_X))
+	{
+		SetRightLeftSpeed(0 + m_nNum * 2, RIGHTLEFT_COUNT_FAST);
+		SetRightLeftSpeed(1 + m_nNum * 2, RIGHTLEFT_COUNT_FAST);
+	}
 } 
 
 //=============================================================================
@@ -752,7 +762,7 @@ void Player::Attack(WeaponLR eLR)
 		pWeapon[eLR]->Set(posTmp, moveTmp);
 
 		// JoyconU“®
-		JcRumble((int)eLR + m_nNum * 2, 21, 1);
+		JcRumble((int)eLR + m_nNum * 2, 99, 1);
 		return;
 	}
 }

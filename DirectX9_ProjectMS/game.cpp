@@ -59,9 +59,17 @@ int		GameScene::m_nRoundWin = 0;
 //=============================================================================
 void GameScene::Update(void)
 {
+
 	if (!m_bGame)
 	{
-		if (m_nGameCount == GAME_ROUND_START)
+		int nGameCount;
+		if (m_nGameRound == 0)
+			nGameCount = GAME_ROUND_START_FAST;
+		else
+		{
+			nGameCount = GAME_ROUND_START;
+		}
+		if (m_nGameCount == nGameCount)
 		{
 			if (bSceneChange) SetFadeScene(SceneManager::RESULT);
 			else
@@ -80,7 +88,7 @@ void GameScene::Update(void)
 				pRoundlogo->Set(m_nGameRound);
 			}
 		}
-		if (m_nGameCount > GAME_ROUND_START)
+		if (m_nGameCount > nGameCount)
 		{
 			if (!bSceneChange)
 			{

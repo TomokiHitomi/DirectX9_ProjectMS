@@ -45,6 +45,15 @@ extern SceneManager		g_cScene;				// Sceneマネージャ
 void SelectScene::Update(void)
 {
 	ObjectManager::UpdateAll();
+
+	if (bSceneChange)
+	{
+		m_nSceneCount++;
+	}
+
+	if(m_nSceneCount == SELECT_CHANGE_COUNT)
+		// シーン遷移開始
+		SetFadeScene(SceneManager::GAME);
 }
 
 //=============================================================================
@@ -76,6 +85,7 @@ void SelectScene::Draw(void)
 //=============================================================================
 SelectScene::SelectScene(void)
 {
+	m_nSceneCount = 0;
 	ObjectManager::CreateObject<ParticleManager>();
 	ObjectManager::CreateObject<StageManager>();
 	ObjectManager::CreateObject<Selectface>();

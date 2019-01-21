@@ -59,16 +59,6 @@ const TCHAR* c_soundFilename[] = {
 	_T("data/SOUND/SE/ホイッスル・単発.wav"),					// 終了合図に使えそう
 	_T("data/SOUND/SE/ホイッスル・単発02.wav"),					// 終了合図に使えそう
 	_T("data/SOUND/SE/ホイッスル・連続.wav"),					// 終了合図に使えそう
-	_T("data/SOUND/SE/fire.wav"),
-	_T("data/SOUND/SE/fire1.wav"),
-	_T("data/SOUND/SE/water_suck.wav"),
-	_T("data/SOUND/SE/water1.wav"),
-	_T("data/SOUND/SE/water2.wav"),
-	_T("data/SOUND/SE/wind_suck.wav"),
-	_T("data/SOUND/SE/wind1.wav"),
-	_T("data/SOUND/SE/darararara_daaan.wav"),
-	_T("data/SOUND/SE/shizen_tinka.wav"),
-	_T("data/SOUND/SE/mizu_tinka.wav"),
 	_T("data/SOUND/SE/geme_start.wav"),
 	_T("data/SOUND/SE/geme_select.wav"),
 	_T("data/SOUND/SE/game_kettei.wav"),
@@ -88,11 +78,16 @@ const TCHAR* c_soundFilename[] = {
 	_T("data/SOUND/SE/泥・ぬかるみ.wav"),						// パティシエ必殺技						SE_PATISSIER_SP
 	_T("data/SOUND/SE/刀剣・投げナイフ.wav"),					// 医者メス投げ							SE_DOCTOR_THROW
 	_T("data/SOUND/SE/_滝壺の水音（環境音）.wav"),				// 消防士放水							SE_FIREMAN_WATER
+	_T("data/SOUND/SE/gong-played2.wav"),				// 消防士放水							SE_FIREMAN_WATER
+	_T("data/SOUND/SE/down1.wav"),				// 消防士放水							SE_FIREMAN_WATER
+	_T("data/SOUND/SE/defense1.wav"),				// 消防士放水							SE_FIREMAN_WATER
+	_T("data/SOUND/SE/se_maoudamashii_battle16.wav"),				// 消防士放水							SE_FIREMAN_WATER
 	// VOICE
-	_T("data/SOUND/VOICE/start_voice.wav"),
-	_T("data/SOUND/VOICE/1_voice.wav"),
-	_T("data/SOUND/VOICE/2_voice.wav"),
-	_T("data/SOUND/VOICE/3_voice.wav")
+	_T("data/SOUND/VOICE/round1.wav"),
+	_T("data/SOUND/VOICE/round2.wav"),
+	_T("data/SOUND/VOICE/round3.wav"),
+	_T("data/SOUND/VOICE/fight.wav"),
+	_T("data/SOUND/VOICE/youwin.wav")
 };
 
 // グローバル変数
@@ -446,7 +441,7 @@ void EndSe(int nSe)
 //=============================================================================
 void SetVoice(int nVoice, int nFlag, int nOption, DWORD dwPos)
 {
-		PlaySound(g_pVoice[nVoice], nFlag, nOption, dwPos);
+	PlaySound(g_pVoice[nVoice], nFlag, nOption, dwPos);
 }
 
 //=============================================================================

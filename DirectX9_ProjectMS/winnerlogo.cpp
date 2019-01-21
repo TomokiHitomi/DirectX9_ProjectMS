@@ -8,6 +8,7 @@
 #include "input.h"
 #include "winnerlogo.h"
 #include "character.h"
+#include "sound.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -120,10 +121,10 @@ void Winnerlogo::Update(void)
 		if (GetKeyboardTrigger(DIK_1))
 		{
 			WinnerlogoObj[i].Nowselect = true;
-			
 		}
 		if (WinnerlogoObj[i].Nowselect == true)
 		{
+
 			Starttime();
 		}
 		if (GetKeyboardTrigger(DIK_U))
@@ -236,6 +237,8 @@ void Winnerlogo::Starttime(void)
 		}
 		if (WinnerlogoObj[1].Count == WINNER_TIME)
 		{
+			WinnerlogoObj[1].Count++;
+			SetVoice(VOICE_YOUWIN, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 			WinnerlogoObj[1].Pos = WinnerlogoObj[0].Pos;
 		}
 	}

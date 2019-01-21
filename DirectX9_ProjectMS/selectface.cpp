@@ -1055,76 +1055,76 @@ void Selectface::SetTextureSelect(int CreateSelectCount)
 //=============================================================================
 void Selectface::SetChar(void)
 {
-	int nSelectChar = 0;
-	//CSkinMesh* pCSkinMesh;
-	SelectCharacterManager* pSCM = ObjectManager::GetObjectPointer<SelectCharacterManager>(ObjectManager::SELECTCHARACTER);
-
-	for (unsigned int i = 0; i < SELECT_MAX;i++)
+	// シーン遷移フラグが立っていなければ
+	if (!SelectScene::bSceneChange)
 	{
-		// 選択中のキャラクターを探査
-		if (i == SELECT_1P)
-			nSelectChar = SearchChar(&SelectMovePlayer000[0]);
-		else if (i == SELECT_2P)
-			nSelectChar = SearchChar(&SelectMovePlayer001[0]);
+		int nSelectChar = 0;
+		//CSkinMesh* pCSkinMesh;
+		SelectCharacterManager* pSCM = ObjectManager::GetObjectPointer<SelectCharacterManager>(ObjectManager::SELECTCHARACTER);
 
-		// Joyconで Aボタン または決定ボタンになりえるボタンが押された場合
-		if (JcTriggered(0 + i * 2, JC_L_BUTTON_L | JC_L_BUTTON_ZL)
-			|| JcTriggered(1 + i * 2, JC_R_BUTTON_R | JC_R_BUTTON_ZR | JC_R_BUTTON_A)
-			|| GetKeyboardTrigger(DIK_RETURN))
+		for (unsigned int i = 0; i < SELECT_MAX; i++)
 		{
-			if (!bSelect[i])
+			// 選択中のキャラクターを探査
+			if (i == SELECT_1P)
+				nSelectChar = SearchChar(&SelectMovePlayer000[0]);
+			else if (i == SELECT_2P)
+				nSelectChar = SearchChar(&SelectMovePlayer001[0]);
+
+			// Joyconで Aボタン または決定ボタンになりえるボタンが押された場合
+			if (JcTriggered(0 + i * 2, JC_L_BUTTON_L | JC_L_BUTTON_ZL)
+				|| JcTriggered(1 + i * 2, JC_R_BUTTON_R | JC_R_BUTTON_ZR | JC_R_BUTTON_A)
+				|| GetKeyboardTrigger(DIK_RETURN))
 			{
-				// シーンマネージャーに保管
-				SceneManager::SetSelectChar(i, nSelectChar);
-				// 選択したキャラクターを確定
-				bSelect[i] = true;
-				SetSe(SE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-				if (pSCM != NULL)
+				if (!bSelect[i])
 				{
-					switch (nSelectChar)
+					// シーンマネージャーに保管
+					SceneManager::SetSelectChar(i, nSelectChar);
+					// 選択したキャラクターを確定
+					bSelect[i] = true;
+					SetSe(SE_KETTEI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+					if (pSCM != NULL)
 					{
-					case 0:
-						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP1, 1.0f, i);
-						break;
-					case 1:
-						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP3, 1.0f, i);
-						break;
-					case 2:
-						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP2, 1.0f, i);
-						break;
-					case 3:
-						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::GUARD_SP1, 1.0f, i);
-						break;
+						switch (nSelectChar)
+						{
+						case 0:
+							pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP1, 1.0f, i);
+							break;
+						case 1:
+							pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP3, 1.0f, i);
+							break;
+						case 2:
+							pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::ATK_SP2, 1.0f, i);
+							break;
+						case 3:
+							pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::GUARD_SP1, 1.0f, i);
+							break;
+						}
+					}
+				}
+			}
+
+			// Joyconで Bボタン が押された場合
+			else if (JcTriggered(1 + i * 2, JC_R_BUTTON_B) || GetKeyboardTrigger(DIK_ESCAPE))
+			{
+				if (bSelect[i])
+				{
+					// 決定したキャラクターをキャンセル
+					bSelect[i] = false;
+					SetSe(SE_CANCEL, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+					if (pSCM != NULL)
+					{
+						pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::IDOL, PLAYER_ANIM_WEIGHT_ATTACK, i);
 					}
 				}
 			}
 		}
 
-		// Joyconで Bボタン が押された場合
-		else if (JcTriggered(1 + i * 2, JC_R_BUTTON_B) || GetKeyboardTrigger(DIK_ESCAPE))
-		{
-			if (bSelect[i])
-			{
-				// 決定したキャラクターをキャンセル
-				bSelect[i] = false;
-				SetSe(SE_CANCEL, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-				if (pSCM != NULL)
-				{
-					pSCM->m_CSkinMesh[nSelectChar]->ChangeAnim(Player::IDOL, PLAYER_ANIM_WEIGHT_ATTACK, i);
-				}
-			}
-		}
-	}
-
-	// 1Pと2Pの双方が決定済みだった場合
-	if (bSelect[SELECT_1P] && bSelect[SELECT_2P])
-	{
-		// シーン遷移フラグが立っていなければ
-		if (!SelectScene::bSceneChange)
+		// 1Pと2Pの双方が決定済みだった場合
+		if (bSelect[SELECT_1P] && bSelect[SELECT_2P])
 		{
 			SetSe(SE_SENNI, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-			// シーン遷移開始
-			SetFadeScene(SceneManager::GAME);
+			//// シーン遷移開始
+			//SetFadeScene(SceneManager::GAME);
 			// シーン遷移フラグを立てる
 			SelectScene::bSceneChange = true;
 		}

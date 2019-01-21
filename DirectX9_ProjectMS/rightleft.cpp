@@ -109,6 +109,7 @@ HRESULT Rightleft::Init()
 			RightleftObj[i].Nowselect = false;
 			RightleftObj[i].Texture = RightleftObj[1].pD3DTexture;
 		}
+		RightleftObj[i].nScendCount = TEXTURE_RIGHTLEFT_SCOND;
 		RightleftObj[i].Scale = D3DXVECTOR2(TEXTURE_RIGHTLEFT_SCALE_X, TEXTURE_RIGHTLEFT_SCALE_Y);
 		RightleftObj[i].Angle = TEXTURE_RIGHTLEFT_ANGLE_X;
 		MakeVertexRightleft(i);
@@ -167,8 +168,8 @@ void Rightleft::Update(void)
 		if(RightleftObj[0].Nowselect == true)
 		{
 			RightleftObj[0].Count++;
-			RightleftObj[0].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR;
-			if (RightleftObj[0].Count == FRAME * TEXTURE_RIGHTLEFT_SCOND)
+			RightleftObj[0].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR / (FRAME * RightleftObj[0].nScendCount);
+			if (RightleftObj[0].Count == FRAME * RightleftObj[0].nScendCount)
 			{
 				RightleftObj[0].Count = 0;
 				RightleftObj[0].Color = 255;
@@ -185,8 +186,8 @@ void Rightleft::Update(void)
 		if (RightleftObj[1].Nowselect == true)
 		{
 			RightleftObj[1].Count++;
-			RightleftObj[1].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR;
-			if (RightleftObj[1].Count == FRAME * TEXTURE_RIGHTLEFT_SCOND)
+			RightleftObj[1].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR / (FRAME * RightleftObj[1].nScendCount);
+			if (RightleftObj[1].Count == FRAME * RightleftObj[1].nScendCount)
 			{
 				RightleftObj[1].Count = 0;
 				RightleftObj[1].Color = 255;
@@ -203,8 +204,8 @@ void Rightleft::Update(void)
 		if (RightleftObj[2].Nowselect == true)
 		{
 			RightleftObj[2].Count++;
-			RightleftObj[2].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR;
-			if (RightleftObj[2].Count == FRAME * TEXTURE_RIGHTLEFT_SCOND)
+			RightleftObj[2].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR /(FRAME * RightleftObj[2].nScendCount);
+			if (RightleftObj[2].Count == FRAME * RightleftObj[2].nScendCount)
 			{
 				RightleftObj[2].Count = 0;
 				RightleftObj[2].Color = 255;
@@ -221,8 +222,8 @@ void Rightleft::Update(void)
 		if (RightleftObj[3].Nowselect == true)
 		{
 			RightleftObj[3].Count++;
-			RightleftObj[3].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR;
-			if (RightleftObj[3].Count == FRAME * TEXTURE_RIGHTLEFT_SCOND)
+			RightleftObj[3].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR / (FRAME * RightleftObj[3].nScendCount);
+			if (RightleftObj[3].Count == FRAME * RightleftObj[3].nScendCount)
 			{
 				RightleftObj[3].Count = 0;
 				RightleftObj[3].Color = 255;
@@ -342,6 +343,33 @@ bool Rightleft::Set(int nLR)
 		// true を返す
 		return true;
 	}
+}
+
+//=============================================================================
+// スピードセット関数 nFlag = 0:通常 1:スピードアップ
+//=============================================================================
+bool SetRightLeftSpeed(int nLR,int nFlag)
+{	
+	// ObjectManager から Rightleft のポインタを取得
+	Rightleft* pRightleft = ObjectManager::GetObjectPointer<Rightleft>(ObjectManager::RIGHTLEFT);
+	// ポインタが NULL でなければ
+	if (pRightleft != NULL)
+	{
+
+		if (nFlag == RIGHTLEFT_COUNT_NORMAL)
+		{
+			pRightleft->RightleftObj[nLR].nScendCount
+				= TEXTURE_RIGHTLEFT_SCOND;
+		}
+		else if (nFlag == RIGHTLEFT_COUNT_FAST)
+		{
+			pRightleft->RightleftObj[nLR].nScendCount
+				= TEXTURE_RIGHTLEFT_SCOND_FAST;
+		}
+		return true;
+	}
+	// ポインタ NULL ならば false を返す
+	return false;
 }
 
 //=============================================================================

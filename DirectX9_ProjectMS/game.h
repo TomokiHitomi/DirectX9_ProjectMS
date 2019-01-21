@@ -21,7 +21,8 @@
 // 各種カウント
 //#define GAME_ROUND_RESET	(90)
 //#define GAME_ROUND_RESET	(180)
-#define GAME_ROUND_START	(120)
+#define GAME_ROUND_START		(200)
+#define GAME_ROUND_START_FAST	(100)
 
 //*****************************************************************************
 // クラス定義
