@@ -55,7 +55,8 @@
 // ステータス
 #define PLAYER_HP_MAX				(100)
 #define PLAYER_SP_MAX				(100)
-#define PLAYER_SP_CHARGE_AUTO		(0.05f)
+//#define PLAYER_SP_CHARGE_AUTO		(0.05f)
+#define PLAYER_SP_CHARGE_AUTO		(0.5f)
 #define PLAYER_SP_CHARGE_ATTACK		(5.0f)
 
 // ダメージ
@@ -388,22 +389,22 @@ public:
 
 		// ウェポンをセット（テスト）
 		pWeapon[Player::TYPE_LEFT] =
-			WeaponManager::SetWeapon(WeaponManager::CDCASE);
+			WeaponManager::SetWeapon(WeaponManager::MESU);
 		pWeapon[Player::TYPE_LEFT]->SetStatus(
 			PLAYER_SIZE_WEAPON, PLAYER_DAMAGE_NORMAL,
-			WEAPON_MODEL_CDCASE_SCL, true);
+			WEAPON_MODEL_MESU_SCL, true);
 
 		pWeapon[Player::TYPE_RIGHT] =
-			WeaponManager::SetWeapon(WeaponManager::MIC);
+			WeaponManager::SetWeapon(WeaponManager::SYRINGE);
 		pWeapon[Player::TYPE_RIGHT]->SetStatus(
 			PLAYER_SIZE_WEAPON, PLAYER_DAMAGE_NORMAL,
-			WEAPON_MODEL_MIC_SCL, true);
+			WEAPON_MODEL_SYRINGE_SCL, true);
 
 		pWeapon[Player::TYPE_SP] =
-			WeaponManager::SetWeapon(WeaponManager::KARAAGE);
+			WeaponManager::SetWeapon(WeaponManager::BED);
 		pWeapon[Player::TYPE_SP]->SetStatus(
 			PLAYER_SIZE_WEAPON_SP, PLAYER_DAMAGE_SP,
-			WEAPON_MODEL_KARAAGE_SCL, false);
+			WEAPON_MODEL_BED_SCL, false);
 	}
 	~Doctor()
 	{
@@ -433,10 +434,10 @@ public:
 			WEAPON_MODEL_BOWL_SCL, true);
 
 		pWeapon[Player::TYPE_SP] =
-			WeaponManager::SetWeapon(WeaponManager::KARAAGE);
+			WeaponManager::SetWeapon(WeaponManager::CAKE);
 		pWeapon[Player::TYPE_SP]->SetStatus(
 			PLAYER_SIZE_WEAPON_SP, PLAYER_DAMAGE_SP,
-			WEAPON_MODEL_KARAAGE_SCL, false);
+			WEAPON_MODEL_CAKE_SCL, false);
 
 	}
 	~Pastry()

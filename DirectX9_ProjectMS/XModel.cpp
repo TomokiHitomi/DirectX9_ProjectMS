@@ -79,6 +79,12 @@ HRESULT CXModel::Init(LPDIRECT3DDEVICE9 pDevice, LPSTR pMeshPass, LPSTR pTexPass
 				return E_FAIL;
 			}
 		}
+
+		D3DXCOLOR xTemp = d3Mat[i].MatD3D.Diffuse;
+		xTemp *= XMODEL_AMBIENT;
+
+		d3Mat[i].MatD3D.Ambient = xTemp;
+		d3Mat[i].MatD3D.Ambient.a = 1.0f;
 	}
 
 	// シェーダのアドレスを取得
@@ -175,10 +181,16 @@ void CXModel::Draw(D3DXMATRIX mtxWorld)
 
 		// 環境光初期化
 		//pMat[i].MatD3D.Ambient = pMat[i].MatD3D.Diffuse;
-		pMat[i].MatD3D.Ambient.r = 0.5f;
-		pMat[i].MatD3D.Ambient.g = 0.5f;
-		pMat[i].MatD3D.Ambient.b = 0.5f;
-		pMat[i].MatD3D.Ambient.a = 1.0f;
+
+		//D3DXCOLOR xTemp = pMat[i].MatD3D.Diffuse;
+		//xTemp *= 0.3f;
+
+		//pMat[i].MatD3D.Ambient = xTemp;
+
+		//pMat[i].MatD3D.Ambient.r = 0.5f;
+		//pMat[i].MatD3D.Ambient.g = 0.5f;
+		//pMat[i].MatD3D.Ambient.b = 0.5f;
+		//pMat[i].MatD3D.Ambient.a = 1.0f;
 
 		// マテリアルをセット
 		pEffect->SetValue("mat", &pMat[i].MatD3D, sizeof(D3DMATERIAL9));

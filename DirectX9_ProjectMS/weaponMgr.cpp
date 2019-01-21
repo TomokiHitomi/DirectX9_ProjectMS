@@ -56,14 +56,23 @@ WeaponManager::WeaponManager(void)
 	}
 
 	// モデルデータを初期化
+
+	// パティシエ
 	pXModel[BEATER]->Init(pDevice, WEAPON_MODEL_BEATER, NULL);
 	pXModel[BOWL]->Init(pDevice, WEAPON_MODEL_BOWL, NULL);
+	pXModel[CAKE]->Init(pDevice, WEAPON_MODEL_CAKE, NULL);
+	// アイドル
 	pXModel[MIC]->Init(pDevice, WEAPON_MODEL_MIC, NULL);
 	pXModel[CDCASE]->Init(pDevice, WEAPON_MODEL_CDCASE, NULL);
+	pXModel[KARAAGE]->Init(pDevice, WEAPON_MODEL_KARAAGE, NULL);
+	// ショウボウシ
 	pXModel[EXTINGUISHER]->Init(pDevice, WEAPON_MODEL_EXTINGUISHER, NULL);
 	pXModel[HELMET]->Init(pDevice, WEAPON_MODEL_HELMET, NULL);
 	pXModel[FIREENGIN]->Init(pDevice, WEAPON_MODEL_FIREENGIN, NULL);
-	pXModel[KARAAGE]->Init(pDevice, WEAPON_MODEL_KARAAGE, NULL);
+	// ドクター
+	pXModel[MESU]->Init(pDevice, WEAPON_MODEL_MESU, NULL);
+	pXModel[SYRINGE]->Init(pDevice, WEAPON_MODEL_SYRINGE, NULL);
+	pXModel[BED]->Init(pDevice, WEAPON_MODEL_BED, NULL);
 }
 
 //=============================================================================
