@@ -10,6 +10,7 @@
 #include "character.h"
 #include "object.h"
 #include <math.h>
+#include "joycon.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -172,6 +173,8 @@ void Rightleft::Update(void)
 				RightleftObj[0].Count = 0;
 				RightleftObj[0].Color = 255;
 				RightleftObj[0].Nowselect = false;
+				// Joycon振動
+				JcRumble(0, 100, 2);
 			}
 		}
 		if (GetKeyboardTrigger(DIK_X) && RightleftObj[1].Nowselect == false)
@@ -188,6 +191,8 @@ void Rightleft::Update(void)
 				RightleftObj[1].Count = 0;
 				RightleftObj[1].Color = 255;
 				RightleftObj[1].Nowselect = false;
+				// Joycon振動
+				JcRumble(1, 100, 2);
 			}
 		}
 		if (GetKeyboardTrigger(DIK_C) && RightleftObj[2].Nowselect == false)
@@ -204,6 +209,8 @@ void Rightleft::Update(void)
 				RightleftObj[2].Count = 0;
 				RightleftObj[2].Color = 255;
 				RightleftObj[2].Nowselect = false;
+				// Joycon振動
+				JcRumble(2, 100, 2);
 			}
 		}
 		if (GetKeyboardTrigger(DIK_V) && RightleftObj[3].Nowselect == false)
@@ -220,6 +227,8 @@ void Rightleft::Update(void)
 				RightleftObj[3].Count = 0;
 				RightleftObj[3].Color = 255;
 				RightleftObj[3].Nowselect = false;
+				// Joycon振動
+				JcRumble(3, 100, 2);
 			}
 		}
 		//	頂点カラーの設定

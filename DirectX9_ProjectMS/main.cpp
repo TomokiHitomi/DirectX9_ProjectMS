@@ -182,7 +182,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 				dwExecLastTime = dwCurrentTime;
 
 				// 更新処理
-				JoyconUpdate();
 				Update();
 				//pollLoop();
 
@@ -394,7 +393,7 @@ void Update(void)
 	// imguiの更新開始
 	g_cImgui.Start();
 #endif
-
+	JoyconUpdate();
 	//{	
 	//	Debugtimer timer;
 	//	pollLoop();

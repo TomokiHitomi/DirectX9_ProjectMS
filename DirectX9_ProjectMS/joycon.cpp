@@ -1024,6 +1024,23 @@ int GetJoyconSize(void)
 
 void JoyconUpdate(void)
 {
+#ifdef _DEBUG
+	static int s_nSelect, s_nFrequency, s_nIntensity;
+	// imgui‚ÌXVŠJn
+	ImGui::Begin("Joycon");
+	ImGui::SetNextTreeNodeOpen(false, ImGuiSetCond_Once);
+	if(ImGui::TreeNode("Rumble"))
+	{
+		ImGui::SliderInt("Select", &s_nSelect, 0, 3);
+		ImGui::SliderInt("Frequency", &s_nFrequency, 0, 255);
+		ImGui::SliderInt("Intensity", &s_nIntensity, 0, 8);
+		if (ImGui::Button("Rumble"))
+			JcRumble(s_nSelect, s_nFrequency, s_nIntensity);
+		ImGui::TreePop();
+	}
+
+	bool bGui = ImGui::TreeNode("Prop");
+#endif
 	// Joycon”‚ğæ“¾
 	int size = joycons.size();
 
@@ -1078,14 +1095,24 @@ void JoyconUpdate(void)
 
 
 #ifdef _DEBUG
-			PrintDebugProc("yJoy-Con Leftz\n");
+			if (bGui)
+			{
+				ImGui::Text("yJoy-Con LeftzNo[%d]\n",i);
+				ImGui::Text("U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
+					jc->btns.up, jc->btns.down, jc->btns.left, jc->btns.right, jc->btns.l, jc->btns.zl, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
+					jc->btns.minus, jc->btns.capture, (jc->stick.CalX), (jc->stick.CalY), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
+				ImGui::Text("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
+				ImGui::Text("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
+				ImGui::Text("Battery [%d]\n\n", (UCHAR)jc->battery);
+			}
 
-			PrintDebugProc("U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
-				jc->btns.up, jc->btns.down, jc->btns.left, jc->btns.right, jc->btns.l, jc->btns.zl, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
-				jc->btns.minus, jc->btns.capture, (jc->stick.CalX), (jc->stick.CalY), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
-			PrintDebugProc("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
-			PrintDebugProc("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
-			PrintDebugProc("Battery [%d]\n", (UCHAR)jc->battery);
+			//PrintDebugProc("yJoy-Con Leftz\n");
+			//PrintDebugProc("U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
+			//	jc->btns.up, jc->btns.down, jc->btns.left, jc->btns.right, jc->btns.l, jc->btns.zl, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
+			//	jc->btns.minus, jc->btns.capture, (jc->stick.CalX), (jc->stick.CalY), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
+			//PrintDebugProc("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
+			//PrintDebugProc("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
+			//PrintDebugProc("Battery [%d]\n", (UCHAR)jc->battery);
 #endif
 		}
 
@@ -1127,14 +1154,23 @@ void JoyconUpdate(void)
 
 
 #ifdef _DEBUG
-			PrintDebugProc("yJoy-Con Rightz\n");
-
-			PrintDebugProc("A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
-				jc->btns.a, jc->btns.b, jc->btns.x, jc->btns.y, jc->btns.r, jc->btns.zr, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
-				jc->btns.plus, jc->btns.home, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
-			PrintDebugProc("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
-			PrintDebugProc("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
-			PrintDebugProc("Battery [%d]\n", (UCHAR)jc->battery);
+			if (bGui)
+			{
+				ImGui::Text("yJoy-Con RightzNo[%d]\n", i);
+				ImGui::Text("A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
+					jc->btns.a, jc->btns.b, jc->btns.x, jc->btns.y, jc->btns.r, jc->btns.zr, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
+					jc->btns.plus, jc->btns.home, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
+				ImGui::Text("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
+				ImGui::Text("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
+				ImGui::Text("Battery [%d]\n\n", (UCHAR)jc->battery);
+			}
+			//PrintDebugProc("yJoy-Con Rightz\n");
+			//PrintDebugProc("A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
+			//	jc->btns.a, jc->btns.b, jc->btns.x, jc->btns.y, jc->btns.r, jc->btns.zr, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
+			//	jc->btns.plus, jc->btns.home, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
+			//PrintDebugProc("Accel[X:%f Y:%f Z:%f]\n", jc->accel.x / 10, jc->accel.y / 10, jc->accel.z / 10);
+			//PrintDebugProc("Gyro [R:%f P:%f Y:%f]\n", jc->gyro.roll, jc->gyro.pitch, jc->gyro.yaw);
+			//PrintDebugProc("Battery [%d]\n", (UCHAR)jc->battery);
 #endif
 		}
 		// Triggerİ’è
@@ -1144,6 +1180,13 @@ void JoyconUpdate(void)
 		g_dwJcRelease[i] = ((lastJcState ^ g_dwJcState[i])	// ‘O‰ñ‚Æˆá‚Á‚Ä‚¢‚Ä
 			& ~g_dwJcState[i]);					// ‚µ‚©‚à¡OFF‚Ì‚â‚Â
 	}
+
+	//JcRumble(1 + pTarget->m_nNum * 2, 100, 7);
+#ifdef _DEBUG
+	if (bGui) ImGui::TreePop();
+	// imgui‚ÌXVI—¹
+	ImGui::End();
+#endif
 }
 
 BOOL JcPressed(int jcNo, DWORD button)
@@ -1161,7 +1204,7 @@ BOOL JcReleased(int jcNo, DWORD button)
 	return (button & g_dwJcRelease[jcNo]);
 }
 
-// U“®İ’è
+// U“®İ’èFfrequency 0-255  intensity 0-8
 void JcRumble(int jcNo, int frequency, int intensity)
 {
 		g_pRumble[jcNo].nFrequency = frequency;

@@ -752,7 +752,7 @@ void Player::Attack(WeaponLR eLR)
 		pWeapon[eLR]->Set(posTmp, moveTmp);
 
 		// JoyconU“®
-		JcRumble((int)eLR + m_nNum * 2, 100, 1);
+		JcRumble((int)eLR + m_nNum * 2, 21, 1);
 		return;
 	}
 }

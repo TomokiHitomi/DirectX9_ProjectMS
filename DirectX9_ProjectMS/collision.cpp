@@ -18,6 +18,7 @@
 #include "fade.h"
 #include "game.h"
 #include "sound.h"
+#include "joycon.h"
 
 // デバッグ用
 #ifdef _DEBUG
@@ -62,6 +63,7 @@ void ChackHit(void)
 						if (pTarget->m_stAction[Player::AC_GURAD_WU].bUse)
 						{
 							bGuard = pTarget->SubHpGuard(pWeapon->GetDamage());
+							//pTarget->SetPos()
 						}
 						// ガードHPがなかったらガード貫通
 						if (bGuard)
@@ -70,6 +72,10 @@ void ChackHit(void)
 							pTarget->SetDamage();
 							// ヒットSE
 							SetSe(SE_COLLIDE, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+
+							// Joycon振動
+							JcRumble(0 + pTarget->m_nNum * 2, 100, 1);
+							JcRumble(1 + pTarget->m_nNum * 2, 100, 1);
 
 							// ターゲットのHPを減算
 							if (pTarget->SubHp(pWeapon->GetDamage()))
