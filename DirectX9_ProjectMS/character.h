@@ -16,17 +16,18 @@
 // マクロ定義
 //*****************************************************************************
 #define CHARACTER_FIREMAN			("data/MODEL/Fireman/Fireman.X")
-#define CHARACTER_FIREMAN_SCL		(12.0f)
+#define CHARACTER_FIREMAN_SCL		(10.0f)
 
 #define CHARACTER_PASTRY			("data/MODEL/Pastry/Pastry.X")
-#define CHARACTER_PASTRY_SCL		(10.25f)
+//#define CHARACTER_PASTRY_SCL		(10.25f)
+#define CHARACTER_PASTRY_SCL		(0.23f)
 
 #define CHARACTER_IDOL				("data/MODEL/Idol/Idol.X")
-#define CHARACTER_IDOL_SCL			(10.0f)
+#define CHARACTER_IDOL_SCL			(9.0f)
 
 #define CHARACTER_DOCTOR			("data/MODEL/Doctor/Doctor.X")
 //#define CHARACTER_DOCTOR_SCL		(0.1f)
-#define CHARACTER_DOCTOR_SCL		(0.25f)
+#define CHARACTER_DOCTOR_SCL		(0.23f)
 
 //*****************************************************************************
 // 構造体定義
