@@ -381,7 +381,7 @@ void Uninit(void)
 
 	// ƒV[ƒ“‚ÌI—¹ˆ—
 	SceneManager::Uninit();
-	//actuallyQuit();
+	actuallyQuit();
 }
 
 //=============================================================================

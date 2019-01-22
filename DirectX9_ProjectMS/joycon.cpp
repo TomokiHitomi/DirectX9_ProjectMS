@@ -139,7 +139,7 @@ struct Settings {
 
 	// times to poll per second per joycon:
 	//float pollsPerSec = 30.0f;
-	float pollsPerSec = 60.0f;
+	float pollsPerSec = 30.0f;
 
 	// time to sleep (in ms) between polls:
 	float timeToSleepMS = 4.0f;
@@ -1097,7 +1097,7 @@ void JoyconUpdate(void)
 #ifdef _DEBUG
 			if (bGui)
 			{
-				ImGui::Text("yJoy-Con LeftzNo[%d]\n",i);
+				ImGui::Text(u8"yJoy-Con LeftzNo[%d]\n",i);
 				ImGui::Text("U: %d D: %d L: %d R: %d LL: %d ZL: %d SB: %d SL: %d SR: %d M: %d C: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
 					jc->btns.up, jc->btns.down, jc->btns.left, jc->btns.right, jc->btns.l, jc->btns.zl, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
 					jc->btns.minus, jc->btns.capture, (jc->stick.CalX), (jc->stick.CalY), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);
@@ -1156,7 +1156,7 @@ void JoyconUpdate(void)
 #ifdef _DEBUG
 			if (bGui)
 			{
-				ImGui::Text("yJoy-Con RightzNo[%d]\n", i);
+				ImGui::Text(u8"yJoy-Con RightzNo[%d]\n", i);
 				ImGui::Text("A: %d B: %d X: %d Y: %d RR: %d ZR: %d SB: %d SL: %d SR: %d P: %d H: %d SX: %f SY: %f GR: %d GP: %d GY: %d\n", \
 					jc->btns.a, jc->btns.b, jc->btns.x, jc->btns.y, jc->btns.r, jc->btns.zr, jc->btns.stick_button, jc->btns.sl, jc->btns.sr, \
 					jc->btns.plus, jc->btns.home, (jc->stick.CalX + 1), (jc->stick.CalY + 1), (int)jc->gyro.roll, (int)jc->gyro.pitch, (int)jc->gyro.yaw);

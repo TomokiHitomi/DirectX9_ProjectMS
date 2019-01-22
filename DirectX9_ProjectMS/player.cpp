@@ -276,6 +276,9 @@ void Player::InitStatus(void)
 	eLRSp = TYPE_TEMP;
 
 	ChangeAnim(IDOL, PLAYER_ANIM_WEIGHT_MAX);
+
+	SetRightLeftSpeed(0 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
+	SetRightLeftSpeed(1 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
 }
 
 //=============================================================================

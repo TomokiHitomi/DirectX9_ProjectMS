@@ -61,7 +61,7 @@
 #define TEXTURE_TIME_TIME_000				(FRAME)								//90
 #define TEXTURE_TIME_DIGIT					(2)							// 桁数
 #define TEXTURE_TIME_MAX					(99)						// スコアの最大値
-#define TEXTURE_TIME_SECOND					(20)
+#define TEXTURE_TIME_SECOND					(99)
 #define NUM_TIME							(1)																// テクスチャの数
 //=============================================================================
 //
