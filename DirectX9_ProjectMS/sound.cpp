@@ -82,6 +82,8 @@ const TCHAR* c_soundFilename[] = {
 	_T("data/SOUND/SE/down1.wav"),				// Á–hŽm•ú…							SE_FIREMAN_WATER
 	_T("data/SOUND/SE/defense1.wav"),				// Á–hŽm•ú…							SE_FIREMAN_WATER
 	_T("data/SOUND/SE/se_maoudamashii_battle16.wav"),				// Á–hŽm•ú…							SE_FIREMAN_WATER
+	_T("data/SOUND/SE/enemybulletreversal.wav"),				// Á–hŽm•ú…							SE_FIREMAN_WATER
+
 	// VOICE
 	_T("data/SOUND/VOICE/round1.wav"),
 	_T("data/SOUND/VOICE/round2.wav"),

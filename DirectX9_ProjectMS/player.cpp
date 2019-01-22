@@ -238,6 +238,7 @@ void Player::InitStatus(void)
 	m_fSp = 0;
 	m_bSpMax = false;
 	m_bSpStandby = false;
+	m_bSpMode = false;
 
 	// クールダウン値
 	m_nCoolDown = 0;
@@ -294,6 +295,10 @@ void Player::Update(void)
 #ifdef _DEBUG
 	//PrintDebugProc("Player[%d]  Hp[%f]  GHp[%f]\n", m_nNum, m_fHp, m_fGuardHp);
 	ImGui::Text("Player[%d]  Hp[%f]  GHp[%f]\n", m_nNum, m_fHp, m_fGuardHp);
+	if (ImGui::Button("SpMode = true"))
+	{
+		m_bSpMode = true;
+	}
 #endif
 
 	if (m_bUse)
@@ -320,6 +325,9 @@ void Player::Update(void)
 
 			// アニメーションを設定
 			SetAnim();
+
+			// SPの自動チャージ
+			AddSp(PLAYER_SP_CHARGE_AUTO);
 		}
 
 		if (m_CSkinMesh != NULL)
@@ -341,8 +349,8 @@ void Player::LateUpdate(void)
 {
 	if (m_bUse)
 	{
-		// SPの自動チャージ
-		AddSp(PLAYER_SP_CHARGE_AUTO);
+		//// SPの自動チャージ
+		//AddSp(PLAYER_SP_CHARGE_AUTO);
 
 		// 移動制限処理
 		MoveLimit();
@@ -443,6 +451,9 @@ void Player::Action(void)
 
 	// ダメージ処理
 	Damage();
+
+	// Sp減算処理
+	SubSp(PLAYER_SP_SUB);
 
 	if (CheckJoyconSize(4) || (CheckJoyconSize(2) && m_nNum == 0))
 	{
@@ -581,16 +592,6 @@ void Player::Action(void)
 	}
 	Dash();
 	Jump();
-	if (GetKeyboardTrigger(DIK_Z))
-	{
-		SetRightLeftSpeed(0 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
-		SetRightLeftSpeed(1 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
-	}
-	else if (GetKeyboardTrigger(DIK_X))
-	{
-		SetRightLeftSpeed(0 + m_nNum * 2, RIGHTLEFT_COUNT_FAST);
-		SetRightLeftSpeed(1 + m_nNum * 2, RIGHTLEFT_COUNT_FAST);
-	}
 } 
 
 //=============================================================================
@@ -699,20 +700,20 @@ void Player::Attack(WeaponLR eLR)
 		// SPチャージ
 		AddSp(PLAYER_SP_CHARGE_ATTACK);
 
-		// SPアタックが準備済み
-		if (m_bSpStandby)
-		{
-			// Spを初期化
-			ResetSp();
-			// スタンバイフラグを false
-			m_bSpStandby = false;
-		}
-		else if (eLRSp != TYPE_TEMP)
-		{
-			// ウェポン復元処理
-			RestoreWeaponSp();
-		}
-		else
+		//// SPアタックが準備済み
+		//if (m_bSpStandby)
+		//{
+		//	// Spを初期化
+		//	ResetSp();
+		//	// スタンバイフラグを false
+		//	m_bSpStandby = false;
+		//}
+		//else if (eLRSp != TYPE_TEMP)
+		//{
+		//	// ウェポン復元処理
+		//	RestoreWeaponSp();
+		//}
+		//else
 			SetSe(SE_DOCTOR_THROW, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 
 
@@ -773,32 +774,44 @@ void Player::Attack(WeaponLR eLR)
 void Player::ChangeWeaponSp(void)
 {
 	// Spが最大値の場合
-	if (m_bSpMax && !m_bSpStandby)
+	if (m_bSpMax)
 	{
 		// Joyconで
-		if (JcTriggered(0 + m_nNum * 2, JC_L_BUTTON_ZL))
+		if (JcTriggered(0 + m_nNum * 2, JC_L_BUTTON_ZL)
+			|| JcTriggered(1 + m_nNum * 2, JC_R_BUTTON_ZR))
 		{
-			// LEFTのポインタをテンポラリに保管
-			pWeapon[Player::TYPE_TEMP] = pWeapon[Player::TYPE_LEFT];
-			// LEFTにSPを接続
-			pWeapon[Player::TYPE_LEFT] = pWeapon[Player::TYPE_SP];
-			// 接続先を格納
-			eLRSp = TYPE_LEFT;
-			// スタンバイフラグを true
-			m_bSpStandby = true;
-		}
-		else if (JcTriggered(1 + m_nNum * 2, JC_R_BUTTON_ZR))
-		{
-			// RIGHTのポインタをテンポラリに保管
-			pWeapon[Player::TYPE_TEMP] = pWeapon[Player::TYPE_RIGHT];
-			// RIGHTにSPを接続
-			pWeapon[Player::TYPE_RIGHT] = pWeapon[Player::TYPE_SP];
-			// 接続先を格納
-			eLRSp = TYPE_RIGHT;
-			// スタンバイフラグを true
-			m_bSpStandby = true;
+			m_bSpMax = false;
+			m_bSpMode = true;
+			SetSe(SE_ATKSP, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 		}
 	}
+
+	//if (m_bSpMax && !m_bSpStandby)
+	//{
+	//	// Joyconで
+	//	if (JcTriggered(0 + m_nNum * 2, JC_L_BUTTON_ZL))
+	//	{
+	//		// LEFTのポインタをテンポラリに保管
+	//		pWeapon[Player::TYPE_TEMP] = pWeapon[Player::TYPE_LEFT];
+	//		// LEFTにSPを接続
+	//		pWeapon[Player::TYPE_LEFT] = pWeapon[Player::TYPE_SP];
+	//		// 接続先を格納
+	//		eLRSp = TYPE_LEFT;
+	//		// スタンバイフラグを true
+	//		m_bSpStandby = true;
+	//	}
+	//	else if (JcTriggered(1 + m_nNum * 2, JC_R_BUTTON_ZR))
+	//	{
+	//		// RIGHTのポインタをテンポラリに保管
+	//		pWeapon[Player::TYPE_TEMP] = pWeapon[Player::TYPE_RIGHT];
+	//		// RIGHTにSPを接続
+	//		pWeapon[Player::TYPE_RIGHT] = pWeapon[Player::TYPE_SP];
+	//		// 接続先を格納
+	//		eLRSp = TYPE_RIGHT;
+	//		// スタンバイフラグを true
+	//		m_bSpStandby = true;
+	//	}
+	//}
 }
 
 //=============================================================================
@@ -817,17 +830,60 @@ void Player::RestoreWeaponSp(void)
 //=============================================================================
 void Player::AddSp(float fSp)
 {
-	m_fSp += fSp;
-	pGage->SkillAdd(fSp, m_nNum);
-	pGage3d->SkillAdd(fSp, m_nNum);
-	if (m_fSp >= PLAYER_SP_MAX)
+	if (!m_bSpMode)
 	{
-		m_fSp = PLAYER_SP_MAX;
-		if (!m_bSpMax)SetSe(SE_SP_MAX, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-		m_bSpMax = true;
-		return;
+		m_fSp += fSp;
+		pGage->SkillAdd(fSp, m_nNum);
+		pGage3d->SkillAdd(fSp, m_nNum);
+		if (m_fSp >= PLAYER_SP_MAX)
+		{
+			m_fSp = PLAYER_SP_MAX;
+			if (!m_bSpMax)
+				SetSe(SE_SP_MAX, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+			m_bSpMax = true;
+			return;
+		}
+		m_bSpMax = false;
 	}
-	m_bSpMax = false;
+}
+
+//=============================================================================
+// SP減算処理
+//=============================================================================
+void Player::SubSp(float fSp)
+{
+	if (m_bSpMode)
+	{
+		SetRightLeftSpeed(0 + m_nNum * 2, RIGHTLEFT_COUNT_FAST);
+		SetRightLeftSpeed(1 + m_nNum * 2, RIGHTLEFT_COUNT_FAST);
+
+		m_fSp -= fSp;
+		pGage->SkillReduce(fSp, m_nNum);
+		pGage3d->SkillReduce(fSp, m_nNum);
+		if (m_fSp < 0)
+		{
+			m_fSp = 0;
+			if (m_bSpMode)
+				SetSe(SE_SP_MAX, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+			m_bSpMode = false;
+			SetRightLeftSpeed(0 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
+			SetRightLeftSpeed(1 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
+
+			return;
+		}
+	}
+
+	//if (GetKeyboardTrigger(DIK_Z))
+	//{
+	//	SetRightLeftSpeed(0 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
+	//	SetRightLeftSpeed(1 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
+	//}
+	//else if (GetKeyboardTrigger(DIK_X))
+	//{
+	//	SetRightLeftSpeed(0 + m_nNum * 2, RIGHTLEFT_COUNT_FAST);
+	//	SetRightLeftSpeed(1 + m_nNum * 2, RIGHTLEFT_COUNT_FAST);
+	//}
+	//m_bSpMax = false;
 }
 
 //=============================================================================

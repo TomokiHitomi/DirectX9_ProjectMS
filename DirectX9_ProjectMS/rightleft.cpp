@@ -169,7 +169,7 @@ void Rightleft::Update(void)
 		{
 			RightleftObj[0].Count++;
 			RightleftObj[0].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR / (FRAME * RightleftObj[0].nScendCount);
-			if (RightleftObj[0].Count == FRAME * RightleftObj[0].nScendCount)
+			if (RightleftObj[0].Count >= FRAME * RightleftObj[0].nScendCount)
 			{
 				RightleftObj[0].Count = 0;
 				RightleftObj[0].Color = 255;
@@ -187,7 +187,7 @@ void Rightleft::Update(void)
 		{
 			RightleftObj[1].Count++;
 			RightleftObj[1].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR / (FRAME * RightleftObj[1].nScendCount);
-			if (RightleftObj[1].Count == FRAME * RightleftObj[1].nScendCount)
+			if (RightleftObj[1].Count >= FRAME * RightleftObj[1].nScendCount)
 			{
 				RightleftObj[1].Count = 0;
 				RightleftObj[1].Color = 255;
@@ -205,7 +205,7 @@ void Rightleft::Update(void)
 		{
 			RightleftObj[2].Count++;
 			RightleftObj[2].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR /(FRAME * RightleftObj[2].nScendCount);
-			if (RightleftObj[2].Count == FRAME * RightleftObj[2].nScendCount)
+			if (RightleftObj[2].Count >= FRAME * RightleftObj[2].nScendCount)
 			{
 				RightleftObj[2].Count = 0;
 				RightleftObj[2].Color = 255;
@@ -223,7 +223,7 @@ void Rightleft::Update(void)
 		{
 			RightleftObj[3].Count++;
 			RightleftObj[3].Color += TEXTURE_RIGHTLEFT_SCOND_COLOR / (FRAME * RightleftObj[3].nScendCount);
-			if (RightleftObj[3].Count == FRAME * RightleftObj[3].nScendCount)
+			if (RightleftObj[3].Count >= FRAME * RightleftObj[3].nScendCount)
 			{
 				RightleftObj[3].Count = 0;
 				RightleftObj[3].Color = 255;

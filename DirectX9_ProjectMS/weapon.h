@@ -34,6 +34,8 @@
 #define WEAPON_REMOTE_MAX			(0.35f)		// 最大加算値
 
 
+#define WEAPON_DATA_MAX				(5)
+
 //*****************************************************************************
 // 構造体定義
 //*****************************************************************************
@@ -44,22 +46,39 @@
 class Weapon
 {
 private:
+	class WeaponData
+	{
+	public:
+		D3DXVECTOR3		vPos;				// 座標情報
+		D3DXVECTOR3		vRot;				// 回転情報
+		D3DXVECTOR3		vMove;				// 移動情報
+		D3DXVECTOR3		vRemote;
+		int				nTime;				// 生存カウント
+		bool			bUse;				// 使用フラグ
+	};
+
+	WeaponData cWD[WEAPON_DATA_MAX];
+
+
 	CXModel*		pXModel;			// モデル格納用
-	D3DXVECTOR3		vPos;				// 座標情報
-	D3DXVECTOR3		vRot;				// 回転情報
+	//D3DXVECTOR3		vPos;				// 座標情報
+	//D3DXVECTOR3		vRot;				// 回転情報
+	//D3DXVECTOR3		vMove;				// 移動情報
+
 	D3DXVECTOR3		vScl;				// 拡縮情報
-	D3DXVECTOR3		vMove;				// 移動情報
-	D3DXVECTOR3		vShot;
-	D3DXVECTOR3		vRemote;
+	//D3DXVECTOR3		vShot;
+	//D3DXVECTOR3		vRemote;
 	D3DXMATRIX		mtxWorld;			// ワールドマトリクス
-	int				nTime;				// 生存カウント
+	//int				nTime;				// 生存カウント
 	float			fRemote;
 	float			fSize;
 	float			fDamage;
 	bool			bRot;
-	bool			bUse;				// 使用フラグ
+
+	//bool			bUse;				// 使用フラグ
 
 public:
+
 	Weapon(CXModel* XModel);
 	virtual ~Weapon();
 	virtual void Update(void);
@@ -79,10 +98,10 @@ public:
 	virtual bool Set(D3DXVECTOR3 pos, D3DXVECTOR3 shot);
 
 
-	virtual void SetUse(bool use) { bUse = use; }
-	virtual bool GetUse(void) { return bUse; }
+	virtual void SetUse(bool use, int nIdx) { cWD[nIdx].bUse = use; }
+	virtual bool GetUse(int nIdx) { return cWD[nIdx].bUse; }
 	virtual void Remote(float remote);
-	virtual D3DXVECTOR3 GetPos(void) { return vPos; }
+	virtual D3DXVECTOR3 GetPos(int nIdx) { return cWD[nIdx].vPos; }
 };
 
 //*****************************************************************************

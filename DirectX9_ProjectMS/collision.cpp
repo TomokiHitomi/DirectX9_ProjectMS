@@ -51,80 +51,83 @@ void ChackHit(void)
 			pWeapon = pPlayer->GetWeapon((Player::WeaponLR)j);
 			if (pWeapon != NULL)
 			{
-				if (pWeapon->GetUse())
+				for (UINT i = 0; i < WEAPON_DATA_MAX; i++)
 				{
-					vTarget = pTarget->GetPos();
-					vTarget.y += PLAYER_HEIGHT_HIT;
-					if (CheckHitBC(pWeapon->GetPos(), vTarget,
-						PLAYER_SIZE_HIT, pWeapon->GetSize()))
+					if (pWeapon->GetUse(i))
 					{
-						bool bGuard = true;
-						// ガード中ならば
-						if (pTarget->m_stAction[Player::AC_GURAD_WU].bUse)
+						vTarget = pTarget->GetPos();
+						vTarget.y += PLAYER_HEIGHT_HIT;
+						if (CheckHitBC(pWeapon->GetPos(i), vTarget,
+							PLAYER_SIZE_HIT, pWeapon->GetSize()))
 						{
-							bGuard = pTarget->SubHpGuard(pWeapon->GetDamage());
-							//pTarget->SetPos()
-							if(!bGuard)
-								SetSe(SE_DEF, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-							else
-								SetSe(SE_DEF_B, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-						}
-						// ガードHPがなかったらガード貫通
-						if (bGuard)
-						{
-							// ターゲットのダメージフラグを立てる
-							pTarget->SetDamage();
-							// ヒットSE
-							SetSe(SE_COLLIDE, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-
-							// Joycon振動
-							JcRumble(0 + pTarget->m_nNum * 2, 100, 1);
-							JcRumble(1 + pTarget->m_nNum * 2, 100, 1);
-
-							// ターゲットのHPを減算
-							if (pTarget->SubHp(pWeapon->GetDamage()))
+							bool bGuard = true;
+							// ガード中ならば
+							if (pTarget->m_stAction[Player::AC_GURAD_WU].bUse)
 							{
-								// 終了SE
-								SetSe(SE_GONG, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-								// ダウンSE
-								SetSe(SE_DOWN, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
-
-								// 勝利プレイヤーを設定
-								GameScene::SetRoundWin(pPlayer->m_nNum);
-								// アニメーションを設定
-								pPlayer->ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
-								pPlayer->ChangeAnim(Player::IDOL, PLAYER_ANIM_WEIGHT_DAMAGE);
-
-								//switch (pPlayer->m_nType)
-								//{
-								//case 0:
-								//	pPlayer->ChangeAnim(Player::ATK_SP3, PLAYER_ANIM_WEIGHT_DAMAGE);
-								//	break;
-								//case 1:
-								//case 2:
-								//	pPlayer->ChangeAnim(Player::ATK_SP2, PLAYER_ANIM_WEIGHT_DAMAGE);
-								//	break;
-								//case 3:
-								//	pPlayer->ChangeAnim(Player::ATK_SP1, PLAYER_ANIM_WEIGHT_DAMAGE);
-								//	break;
-								//}
-
-								pTarget->ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
-								pTarget->ChangeAnim(Player::DOWN, PLAYER_ANIM_WEIGHT_DAMAGE);
-								//if (!BaseScene::bSceneChange) SetFadeScene(SceneManager::RESULT);
-								//BaseScene::bSceneChange = true;
+								bGuard = pTarget->SubHpGuard(pWeapon->GetDamage());
+								//pTarget->SetPos()
+								if (!bGuard)
+									SetSe(SE_DEF, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+								else
+									SetSe(SE_DEF_B, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 							}
+							// ガードHPがなかったらガード貫通
+							if (bGuard)
+							{
+								// ターゲットのダメージフラグを立てる
+								pTarget->SetDamage();
+								// ヒットSE
+								SetSe(SE_COLLIDE, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+
+								// Joycon振動
+								JcRumble(0 + pTarget->m_nNum * 2, 100, 1);
+								JcRumble(1 + pTarget->m_nNum * 2, 100, 1);
+
+								// ターゲットのHPを減算
+								if (pTarget->SubHp(pWeapon->GetDamage()))
+								{
+									// 終了SE
+									SetSe(SE_GONG, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+									// ダウンSE
+									SetSe(SE_DOWN, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
+
+									// 勝利プレイヤーを設定
+									GameScene::SetRoundWin(pPlayer->m_nNum);
+									// アニメーションを設定
+									pPlayer->ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
+									pPlayer->ChangeAnim(Player::IDOL, PLAYER_ANIM_WEIGHT_DAMAGE);
+
+									//switch (pPlayer->m_nType)
+									//{
+									//case 0:
+									//	pPlayer->ChangeAnim(Player::ATK_SP3, PLAYER_ANIM_WEIGHT_DAMAGE);
+									//	break;
+									//case 1:
+									//case 2:
+									//	pPlayer->ChangeAnim(Player::ATK_SP2, PLAYER_ANIM_WEIGHT_DAMAGE);
+									//	break;
+									//case 3:
+									//	pPlayer->ChangeAnim(Player::ATK_SP1, PLAYER_ANIM_WEIGHT_DAMAGE);
+									//	break;
+									//}
+
+									pTarget->ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
+									pTarget->ChangeAnim(Player::DOWN, PLAYER_ANIM_WEIGHT_DAMAGE);
+									//if (!BaseScene::bSceneChange) SetFadeScene(SceneManager::RESULT);
+									//BaseScene::bSceneChange = true;
+								}
+							}
+							// プレイヤーのウェポンを false にする
+							pWeapon->SetUse(false,i);
 						}
-						// プレイヤーのウェポンを false にする
-						pWeapon->SetUse(false);
+						// マップサイズとウェポン座標の当たり判定
+						bool bHit = CheckHitBoxToPos(ZERO_D3DXVECTOR3,
+							pWeapon->GetPos(i),
+							D3DXVECTOR2(PLANE_SIZE_X * PLANE_X_MAX + CHECK_HIT_MARGIN_BP,
+								PLANE_SIZE_Y * PLANE_Y_MAX + CHECK_HIT_MARGIN_BP));
+						// マップの外側なら false
+						if (!bHit)pWeapon->SetUse(false,i);
 					}
-					// マップサイズとウェポン座標の当たり判定
-					bool bHit = CheckHitBoxToPos(ZERO_D3DXVECTOR3,
-						pWeapon->GetPos(),
-						D3DXVECTOR2(PLANE_SIZE_X * PLANE_X_MAX + CHECK_HIT_MARGIN_BP,
-							PLANE_SIZE_Y * PLANE_Y_MAX + CHECK_HIT_MARGIN_BP));
-					// マップの外側なら false
-					if (!bHit)pWeapon->SetUse(false);
 				}
 			}
 		}

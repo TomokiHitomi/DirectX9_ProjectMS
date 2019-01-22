@@ -55,9 +55,10 @@
 // ステータス
 #define PLAYER_HP_MAX				(100)
 #define PLAYER_SP_MAX				(100)
-//#define PLAYER_SP_CHARGE_AUTO		(0.05f)
-#define PLAYER_SP_CHARGE_AUTO		(0.5f)
+#define PLAYER_SP_CHARGE_AUTO		(0.05f)
+//#define PLAYER_SP_CHARGE_AUTO		(0.5f)
 #define PLAYER_SP_CHARGE_ATTACK		(5.0f)
+#define PLAYER_SP_SUB				(0.3f)
 
 // ダメージ
 #define PLAYER_DAMAGE_NORMAL		(6.0f)
@@ -222,6 +223,7 @@ private:
 	float				m_fGuardHp;
 	bool				m_bSpMax;
 	bool				m_bSpStandby;
+	bool				m_bSpMode;
 
 	// ジャンプ
 	float	fVelocity;				// 加速度
@@ -258,6 +260,7 @@ public:
 	void InitStatus(void);
 	void RestoreWeaponSp(void);
 	void AddSp(float fSp);
+	void SubSp(float fSp);
 	void ResetSp(void);
 	bool SubHp(float fDamage);
 	bool SubHpGuard(float fDamage);
@@ -270,7 +273,7 @@ public:
 	D3DXVECTOR3 GetPos(void) { return m_vPos; }
 	D3DXVECTOR3 GetPosGage(void) { return m_vPosGage; }
 	D3DXVECTOR3 GetTag(void) { return m_vTag; }
-	D3DXVECTOR3 GetPosWeapon(WeaponLR eLR) { return pWeapon[eLR]->GetPos(); }
+	//D3DXVECTOR3 GetPosWeapon(WeaponLR eLR) { return pWeapon[eLR]->GetPos(); }
 	Weapon* GetWeapon(WeaponLR eLR) { return pWeapon[eLR]; }
 
 	// 追記は逆順（新しいものから格納される）
@@ -340,10 +343,10 @@ public:
 	static void Reset(void);
 	static Player *GetPlayer(PLAYER player) { return m_pPlayer[player]; }
 	static D3DXVECTOR3 GetPos(PLAYER player) { return m_pPlayer[player]->GetPos(); }
-	static D3DXVECTOR3 GetPosWeapon(PLAYER player, Player::WeaponLR eLR)
-	{
-		return m_pPlayer[player]->GetPosWeapon(eLR);
-	}
+	//static D3DXVECTOR3 GetPosWeapon(PLAYER player, Player::WeaponLR eLR)
+	//{
+	//	return m_pPlayer[player]->GetPosWeapon(eLR);
+	//}
 private:
 	void SetTag(void);
 };

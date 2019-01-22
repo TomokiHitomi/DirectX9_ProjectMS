@@ -40,12 +40,18 @@ Weapon::Weapon(CXModel* XModel)
 	// モデルデータを接続
 	pXModel = XModel;
 
-	vPos = ZERO_D3DXVECTOR3;			// 座標情報
-	vRot = ZERO_D3DXVECTOR3;			// 回転情報
+	for (UINT i = 0; i < WEAPON_DATA_MAX;i++)
+	{
+		cWD[i].vPos = ZERO_D3DXVECTOR3;			// 座標情報
+		cWD[i].vRot = ZERO_D3DXVECTOR3;			// 回転情報
+		cWD[i].vMove = ZERO_D3DXVECTOR3;
+		cWD[i].vRemote = ZERO_D3DXVECTOR3;
+		cWD[i].nTime = 0;
+		cWD[i].bUse = false;		// 使用フラグ
+	}
+
 	vScl = WEAPON_SCL_VEC3;				// 拡縮情報
-	vMove = ZERO_D3DXVECTOR3;
-	vShot = ZERO_D3DXVECTOR3;
-	vRemote = ZERO_D3DXVECTOR3;
+	//vShot = ZERO_D3DXVECTOR3;
 	fSize = 0.0f;
 	fDamage = 0.0f;
 	fRemote = 0.0f;
@@ -53,14 +59,11 @@ Weapon::Weapon(CXModel* XModel)
 	// ワールド行列を初期化
 	D3DXMatrixIdentity(&mtxWorld);
 
-	// 生存タイマーを初期化
-	nTime = 0;
+	//// 生存タイマーを初期化
+	//nTime = 0;
 
 	// 回転設定
 	bRot = false;
-
-	// 使用フラグ
-	bUse = false;
 }
 
 //=============================================================================
@@ -76,41 +79,46 @@ Weapon::~Weapon(void)
 //=============================================================================
 void Weapon::Update(void)
 {
-	if (bUse)
+	for (UINT i = 0; i < WEAPON_DATA_MAX; i++)
 	{
-		if (nTime < WEAPON_TIME_MAX)
+		if (cWD[i].bUse)
 		{
-			vPos += vMove * WEAPON_MOVE_SPEED;
-
-			// ワールド変換（回転あり・なし）
-			if (bRot)
+			if (cWD[i].nTime < WEAPON_TIME_MAX)
 			{
-				// 回転ありの場合は vRot に回転量を加算
-				vRot.x -= WEAPON_ROT_SPEED;
-				vRot.z -= WEAPON_ROT_SPEED * 0.1f;
-				WorldConvert(&mtxWorld, vPos, vRot, vScl);
+				cWD[i].vPos += cWD[i].vMove * WEAPON_MOVE_SPEED;
+
+				// ワールド変換（回転あり・なし）
+				if (bRot)
+				{
+					// 回転ありの場合は vRot に回転量を加算
+					cWD[i].vRot.x -= WEAPON_ROT_SPEED;
+					cWD[i].vRot.z -= WEAPON_ROT_SPEED * 0.1f;
+					//WorldConvert(&mtxWorld, vPos, vRot, vScl);
+				}
+				//else WorldConvertAxis(&mtxWorld, vPos, vMove, UP_D3DXVECTOR3, vScl);
+
+				SAFE_UPDATE(pXModel);
+				cWD[i].nTime++;
 			}
-			else WorldConvertAxis(&mtxWorld, vPos, vMove, UP_D3DXVECTOR3, vScl);
-
-			SAFE_UPDATE(pXModel);
-			nTime++;
+			else
+			{
+				cWD[i].bUse = false;
+			}
 		}
-		else
-		{
-			bUse = false;
-		}
-	}
-
 #ifdef _DEBUG
 
-	ImGui::Text("Use [%d] Remote[%.2f] Pos [%.2f,%.2f,%.2f] Move[%.2f,%.2f,%.2f]\n",
-		bUse, fRemote, vPos.x, vPos.y, vPos.z, vMove.x, vMove.y, vMove.z);
+		ImGui::Text("Use [%d] Remote[%.2f] Pos [%.2f,%.2f,%.2f] Move[%.2f,%.2f,%.2f]\n",
+			cWD[i].bUse, fRemote,
+			cWD[i].vPos.x, cWD[i].vPos.y, cWD[i].vPos.z,
+			cWD[i].vMove.x, cWD[i].vMove.y, cWD[i].vMove.z);
 
 		//PrintDebugProc("Use [%d] Remote[%f]\n",bUse, fRemote);
 		//PrintDebugProc("Pos [%f,%f,%f]\n", vPos.x, vPos.y, vPos.z);
 		//PrintDebugProc("Move[%f,%f,%f]\n", vMove.x, vMove.y, vMove.z);
 		//PrintDebugProc("\n");
 #endif
+
+	}
 }
 
 //=============================================================================
@@ -118,19 +126,25 @@ void Weapon::Update(void)
 //=============================================================================
 void Weapon::Draw(void)
 {
-	if (bUse)
+	if (pXModel != NULL)
 	{
-		if (nTime > 0)
+		for (UINT i = 0; i < WEAPON_DATA_MAX; i++)
 		{
-			if (pXModel != NULL)
+			if (cWD[i].bUse)
 			{
-				LPDIRECT3DDEVICE9 pDevice = GetDevice();
-				//// 両面描画する
-				//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-				// モデルを描画
-				pXModel->Draw(mtxWorld);
-				//// 裏面をカリングに戻す
-				//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+				if (cWD[i].nTime > 0)
+				{
+					// ワールド変換（回転あり・なし）
+					if (bRot)
+					{
+						// 回転ありの場合は vRot に回転量を加算
+						WorldConvert(&mtxWorld, cWD[i].vPos, cWD[i].vRot, vScl);
+					}
+					else WorldConvertAxis(&mtxWorld, cWD[i].vPos, cWD[i].vMove, UP_D3DXVECTOR3, vScl);
+
+					// モデルを描画
+					pXModel->Draw(mtxWorld);
+				}
 			}
 		}
 	}
@@ -169,16 +183,23 @@ void Weapon::SetRot(bool bUse)
 //=============================================================================
 bool Weapon::Set(D3DXVECTOR3 pos, D3DXVECTOR3 shot)
 {
-	nTime = 0;
-	vPos = pos;
-	fRemote = 0.0f;
-	vShot = shot;
-	vMove = vShot;
-	bUse = true;
+	for (UINT i = 0; i < WEAPON_DATA_MAX; i++)
+	{
+		if (!cWD[i].bUse)
+		{
+			cWD[i].nTime = 0;
+			cWD[i].vPos = pos;
+			fRemote = 0.0f;
+			//vShot = shot;
+			cWD[i].vMove = shot;
+			cWD[i].bUse = true;
 
-	D3DXVECTOR3 vUp = UP_D3DXVECTOR3;
-	CrossProduct(&vRemote, &vShot, &vUp);
-	return true;
+			D3DXVECTOR3 vUp = UP_D3DXVECTOR3;
+			CrossProduct(&cWD[i].vRemote, &shot, &vUp);
+			return true;
+		}
+	}
+	return false;
 }
 
 //=============================================================================
@@ -186,20 +207,23 @@ bool Weapon::Set(D3DXVECTOR3 pos, D3DXVECTOR3 shot)
 //=============================================================================
 void Weapon::Remote(float remote)
 {
-	if (bUse)
+	for (UINT i = 0; i < WEAPON_DATA_MAX; i++)
 	{
-		// リモート開始時間を上回っていれば
-		if (nTime > WEAPON_REMOTE_TIME)
+		if (cWD[i].bUse)
 		{
-			// リモート値（加速度値）を補正
-			remote *= WEAPON_REMOTE_CORRECTION;
+			// リモート開始時間を上回っていれば
+			if (cWD[i].nTime > WEAPON_REMOTE_TIME)
+			{
+				// リモート値（加速度値）を補正
+				remote *= WEAPON_REMOTE_CORRECTION;
 
-			vMove += vRemote * remote;
+				cWD[i].vMove += cWD[i].vRemote * remote;
 
-			// 射出ベクトルと補正したリモートベクトルを足して移動量に代入
-			//vMove = vShot + (vRemote * (fRemote));
-			// 移動量を正規化
-			D3DXVec3Normalize(&vMove, &vMove);
+				// 射出ベクトルと補正したリモートベクトルを足して移動量に代入
+				//vMove = vShot + (vRemote * (fRemote));
+				// 移動量を正規化
+				D3DXVec3Normalize(&cWD[i].vMove, &cWD[i].vMove);
+			}
 		}
 	}
 }

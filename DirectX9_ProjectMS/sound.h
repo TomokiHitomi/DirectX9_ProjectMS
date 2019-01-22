@@ -70,6 +70,7 @@ enum
 	SE_28,
 	SE_29,
 	SE_30,
+	SE_31,
 
 	VOICE_00,
 	VOICE_01,
@@ -123,6 +124,7 @@ enum
 	SE_DOWN,
 	SE_DEF,
 	SE_DEF_B,
+	SE_ATKSP,
 
 	SE_MAX
 };
