@@ -199,8 +199,6 @@ Player::Player(void)
 	// スキンメッシュポインタを NULL に初期化
 	m_CSkinMesh = NULL;
 
-	// ステータス初期化
-	InitStatus();
 
 	// ウェポンの数だけ NULL に初期化
 	for (unsigned int i = 0; i < TYPE_MAX; i++)
@@ -211,6 +209,14 @@ Player::Player(void)
 	// ゲージのポインタを初期化
 	pGage = NULL;
 	pGage3d = NULL;
+
+	// エフェクトのポインタを取得
+	pEffectMgr = ObjectManager::GetObjectPointer<EffectManager>(ObjectManager::EFFECT);
+	m_handleGuard = pEffectMgr->Play(EffectManager::EFFECT_GUARD);
+	m_handleSp = pEffectMgr->Play(EffectManager::EFFECT_MAGIC);
+
+	// ステータス初期化
+	InitStatus();
 }
 
 //=============================================================================
@@ -232,6 +238,7 @@ void Player::InitStatus(void)
 
 	// ゲージ設置座標
 	m_vPosGage = ZERO_D3DXVECTOR3;
+
 
 	// ステータス
 	m_fHp = PLAYER_HP_MAX;
@@ -279,6 +286,24 @@ void Player::InitStatus(void)
 
 	SetRightLeftSpeed(0 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
 	SetRightLeftSpeed(1 + m_nNum * 2, RIGHTLEFT_COUNT_NORMAL);
+
+	// エフェクト
+	m_fGuardEffectScl = 0.0f;
+	m_xGuardEffectCol = D3DXCOLOR(0.0f, 0.45f, 1.0f, 0.9f);
+
+	pEffectMgr->SetScale(
+		m_handleGuard,
+		D3DXVECTOR3(m_fGuardEffectScl, m_fGuardEffectScl, m_fGuardEffectScl)
+	);
+
+	m_fSpEffectScl = 0.0f;
+
+
+	pEffectMgr->SetScale(
+		m_handleSp,
+		D3DXVECTOR3(m_fSpEffectScl, m_fSpEffectScl, m_fSpEffectScl)
+	);
+
 }
 
 //=============================================================================
@@ -406,7 +431,43 @@ void Player::LateUpdate(void)
 		m_vPosGage.y = m_vPos.y + PLAYER_GAGE_HEIGHT;
 
 
+		// ワールド変換
+		WorldConvertXYZ(&m_mtxWorld, m_vPos, m_vRot, m_vScl);
 
+		float fColorTemp = m_fGuardHp / PLAYER_GUARD_HP_MAX;
+		m_xGuardEffectCol.r = 1.0f - fColorTemp;
+		m_xGuardEffectCol.b = fColorTemp;
+
+		//D3DXMATRIX
+		//D3DXMatrixNormalize()
+		pEffectMgr->SetColor(m_handleGuard, m_xGuardEffectCol);
+		pEffectMgr->SetMatrix(m_handleGuard, m_mtxWorld);
+		pEffectMgr->SetScale(
+			m_handleGuard,
+			D3DXVECTOR3(m_fGuardEffectScl, m_fGuardEffectScl, m_fGuardEffectScl)
+		);
+
+		switch (m_nType)
+		{
+		case 0:
+			m_xSpEffectCol = D3DXCOLOR(1.0f, 0.54f, 0.0f, 0.9f);
+			break;
+		case 1:
+			m_xSpEffectCol = D3DXCOLOR(0.76f, 0.39f, 0.39f, 0.9f);
+			break;
+		case 2:
+			m_xSpEffectCol = D3DXCOLOR(1.0f, 0.0f, 1.0f, 0.9f);
+			break;
+		case 3:
+			m_xSpEffectCol = D3DXCOLOR(0.47f, 0.39f, 0.39f, 0.9f);
+			break;
+		}
+
+		pEffectMgr->SetColor(m_handleSp, m_xSpEffectCol);
+		pEffectMgr->SetMatrix(m_handleSp, m_mtxWorld);
+		pEffectMgr->SetScale(m_handleSp,
+			D3DXVECTOR3(m_fSpEffectScl, m_fSpEffectScl, m_fSpEffectScl)
+		);
 
 
 		// カメラをAtをモデルに設定
@@ -432,8 +493,6 @@ void Player::Draw(void)
 		LPDIRECT3DDEVICE9 pDevice = GetDevice();
 		D3DXMATRIX mtxWing, mtxTemp;		// アニメーション更新処理
 
-		// ワールド変換
-		WorldConvertXYZ(&m_mtxWorld, m_vPos, m_vRot, m_vScl);
 
 		if (m_CSkinMesh != NULL)
 		{
@@ -508,9 +567,20 @@ void Player::Action(void)
 			if (jcL.z < -PLAYER_MARGIN_GUARD && jcR.z > PLAYER_MARGIN_GUARD)
 			{
 				Guard();
+				m_fGuardEffectScl += PLAYER_EFFECT_SCL_GUARD_SPEED;
+				if (m_fGuardEffectScl > PLAYER_EFFECT_SCL_GUARD_SPEED_MAX)
+				{
+					m_fGuardEffectScl = PLAYER_EFFECT_SCL_GUARD_SPEED_MAX;
+				}
 			}
 			else
 			{
+				m_fGuardEffectScl -= PLAYER_EFFECT_SCL_GUARD_SPEED;
+				if (m_fGuardEffectScl < 0.0f)
+				{
+					m_fGuardEffectScl = 0.0f;
+				}
+
 				// ガードフラグを false
 				m_stAction[AC_GURAD_WU].bUse = false;
 			}
@@ -785,6 +855,9 @@ void Player::AttackUpdate(void)
 {
 	if (!m_bSpMode)
 	{
+		m_fSpEffectScl -= PLAYER_EFFECT_SCL_SP_SPEED;
+		if (m_fSpEffectScl < 0.0f)
+			m_fSpEffectScl = 0.0f;
 		if (m_nSpFlag)
 		{
 			m_nSpCount++;
@@ -870,7 +943,29 @@ void Player::AttackUpdate(void)
 			{				
 				JcRumble((int)m_nSpLR + m_nNum * 2, 99, 1);
 			}
+
+			switch (m_nType)
+			{
+			case 0:
+				break;
+			case 1:
+				//pEffectMgr->m_handle = pEffectMgr->Play(EffectManager::EFFECT_PASTRY);
+				//pEffectMgr->SetScale(pEffectMgr->m_handle, PLAYER_EFFECT_SCL_PASTRY);
+				//pEffectMgr->SetMatrix(pEffectMgr->m_handle, m_mtxWorld);
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			}
 		}
+	}
+	else
+	{
+		m_fSpEffectScl += PLAYER_EFFECT_SCL_SP_SPEED;
+		if (m_fSpEffectScl > PLAYER_EFFECT_SCL_SP_SPEED_MAX)
+			m_fSpEffectScl = PLAYER_EFFECT_SCL_SP_SPEED_MAX;
+
 	}
 }
 
@@ -1101,6 +1196,9 @@ void Player::Jump(void)
 			//m_stAction[AC_JUMP_END_CD].nCnt = PLAYER_JUMP_CD;
 
 			m_vPos.y = 0.0f;
+			pEffectMgr->SetScale(
+				pEffectMgr->Play(EffectManager::EFFECT_JUMPEND,m_vPos),
+				PLAYER_EFFECT_SCL_JUMPEND);
 			fVelocity = PLAYER_VELOCITY;
 			fGravity = PLAYER_GRAVITY;
 			bJump = false;

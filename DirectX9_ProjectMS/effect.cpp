@@ -23,18 +23,22 @@
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
-::Effekseer::Matrix44 ConvertMtx44(D3DXMATRIX mtx);
 
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
 const WCHAR* EffectManager::c_filename[] = {
 	// エフェクトファイル
-	L"TrinityField.efk",
-	L"high_sword",
-	L"test2.efk",
-	L"test3.efk",
-	L"test4.efk"
+	L"data/EFFECT/shield.efk",
+	L"data/EFFECT/jump.efk",
+	L"data/EFFECT/magic.efk",
+	//L"data/EFFECT/pastry.efk",
+	//L"data/EFFECT/idol.efk"
+	//L"TrinityField.efk",
+	//L"high_sword",
+	//L"test2.efk",
+	//L"test3.efk",
+	//L"test4.efk"
 };
 
 //=============================================================================
@@ -52,7 +56,6 @@ EffectManager::EffectManager(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	m_manager = NULL;
 	m_renderer = NULL;
-	m_sound = NULL;
 	m_handle = -1;
 	m_position;
 	m_rotation;
@@ -63,9 +66,10 @@ EffectManager::EffectManager(void)
 	}
 
 	//// XAudio2の初期化を行う
-	//XAudio2Create(&g_xa2);
+	//m_sound = NULL;
+	//XAudio2Create(&m_xa2);
 
-	//g_xa2->CreateMasteringVoice(&g_xa2_master);
+	//m_xa2->CreateMasteringVoice(&m_xa2_master);
 
 
 	// 描画用インスタンスの生成
@@ -91,14 +95,14 @@ EffectManager::EffectManager(void)
 
 
 	//// 音再生用インスタンスの生成
-	//g_sound = ::EffekseerSound::Sound::Create(g_xa2, 16, 16);
+	//m_sound = ::EffekseerSound::Sound::Create(m_xa2, 16, 16);
 
 	//// 音再生用インスタンスから再生機能を指定
-	//g_manager->SetSoundPlayer(g_sound->CreateSoundPlayer());
+	//m_manager->SetSoundPlayer(m_sound->CreateSoundPlayer());
 
 	//// 音再生用インスタンスからサウンドデータの読込機能を設定
 	//// 独自拡張可能、現在はファイルから読み込んでいる。
-	//g_manager->SetSoundLoader(g_sound->CreateSoundLoader());
+	//m_manager->SetSoundLoader(m_sound->CreateSoundLoader());
 
 
 	// 視点位置を確定	
@@ -120,8 +124,8 @@ EffectManager::EffectManager(void)
 	//m_handle = m_manager->Play(m_effect[EFFECT1], 0, 0, 0);
 	//m_manager->Play(m_effect[EFFECT2], 0, 5.0f, 0);
 
-	m_manager->SetLocation(m_handle, m_position);
-	m_manager->SetScale(m_handle, 5.0f, 5.0f, 5.0f);
+	//m_manager->SetLocation(m_handle, m_position);
+	//m_manager->SetScale(m_handle, 5.0f, 5.0f, 5.0f);
 
 }
 
@@ -162,29 +166,17 @@ EffectManager::~EffectManager(void)
 //=============================================================================
 void EffectManager::Update(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-
 	// エフェクトの移動処理を行う
 	//g_manager->AddLocation(g_handle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
-	if (GetKeyboardTrigger(DIK_K))
-	{
-		m_handle = m_manager->Play(m_effect[EFFECT2], 0, 5.0f, 0);
-		m_manager->SetScale(m_handle, 5.0f, 5.0f, 5.0f);
-	}
-	if (GetKeyboardTrigger(DIK_J))
-	{
-		m_handle = m_manager->Play(m_effect[EFFECT3], 30.0f, 5.0f, 0);
-		m_manager->SetScale(m_handle, 5.0f, 5.0f, 5.0f);
-	}
-	if (GetKeyboardTrigger(DIK_L))
-	{
-		m_handle = m_manager->Play(m_effect[EFFECT4], 0, 5.0f, 30.0f);
-		m_manager->SetScale(m_handle, 5.0f, 5.0f, 5.0f);
-	}
-	if (GetKeyboardTrigger(DIK_M))
-	{
-		m_manager->StopEffect(m_handle);
-	}
+	//if (GetKeyboardTrigger(DIK_B))
+	//{
+	//	m_handle = m_manager->Play(m_effect[EFFECT1], 0, 500.0f, 0);
+	//	m_manager->SetScale(m_handle, 15.0f, 15.0f, 15.0f);
+	//}
+	//if (GetKeyboardTrigger(DIK_M))
+	//{
+	//	m_manager->StopEffect(m_handle);
+	//}
 
 	// エフェクトの更新処理を行う
 	m_manager->Update();
@@ -199,6 +191,9 @@ void EffectManager::Draw(void)
 
 	D3DXMATRIX mtxView, mtxPro;
 
+	//// UpがYのビュー行列を取得
+	//mtxView = CameraManager::GetCameraNow()->GetMtxViewUpY();
+
 	pDevice->GetTransform(D3DTS_VIEW, &mtxView);
 	pDevice->GetTransform(D3DTS_PROJECTION, &mtxPro);
 
@@ -209,8 +204,8 @@ void EffectManager::Draw(void)
 	m_renderer->SetProjectionMatrix(ConvertMtx44(mtxPro));
 
 
-	// 両面描画する
-	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	//// 両面描画する
+	//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 
 	// エフェクトの描画開始処理を行う。
@@ -225,13 +220,70 @@ void EffectManager::Draw(void)
 	// エフェクトの描画終了処理を行う。
 	m_renderer->EndRendering();
 
-	// 裏面をカリングに戻す
-	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
+	//// 裏面をカリングに戻す
+	//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 
 //=============================================================================
-// Effekseer用行列変換処理
+// 再生処理
+//=============================================================================
+::Effekseer::Handle EffectManager::Play(EFFECT eEffect, D3DXVECTOR3 vPos)
+{
+	return m_manager->Play(m_effect[eEffect], vPos.x, vPos.y, vPos.z);
+}
+
+//=============================================================================
+// エフェクト停止処理
+//=============================================================================
+void EffectManager::Pause(bool bUse)
+{
+	m_manager->SetPausedToAllEffects(bUse);
+}
+
+//=============================================================================
+// カラー設定処理
+//=============================================================================
+void EffectManager::SetColor(::Effekseer::Handle handle, D3DXCOLOR xColor)
+{
+	::Effekseer::Color esColor;
+
+	esColor.R = (uint8_t)(xColor.r * 255);
+	esColor.G = (uint8_t)(xColor.g * 255);
+	esColor.B = (uint8_t)(xColor.b * 255);
+	esColor.A = (uint8_t)(xColor.a * 255);
+
+	m_manager->SetAllColor(handle, esColor);
+}
+
+
+//=============================================================================
+// 行列設定処理
+//=============================================================================
+void EffectManager::SetMatrix(::Effekseer::Handle handle, D3DXMATRIX mtx)
+{
+	m_manager->SetMatrix(handle, ConvertMtx43(mtx));
+}
+
+//=============================================================================
+// 座標設定処理
+//=============================================================================
+void EffectManager::SetPos(::Effekseer::Handle handle, D3DXVECTOR3 vPos)
+{
+	m_manager->SetLocation(handle, vPos.x, vPos.y, vPos.z);
+}
+
+
+//=============================================================================
+// 拡縮設定処理
+//=============================================================================
+void EffectManager::SetScale(::Effekseer::Handle handle, D3DXVECTOR3 vScl)
+{
+	m_manager->SetScale(handle, vScl.x, vScl.y, vScl.z);
+}
+
+
+//=============================================================================
+// Effekseer用行列変換処理(4x4)
 //=============================================================================
 ::Effekseer::Matrix44 ConvertMtx44(D3DXMATRIX mtx)
 {
@@ -253,4 +305,29 @@ void EffectManager::Draw(void)
 	mtx44.Values[3][2] = mtx._43;
 	mtx44.Values[3][3] = mtx._44;
 	return mtx44;
+}
+
+//=============================================================================
+// Effekseer用行列変換処理(4x3)
+//=============================================================================
+::Effekseer::Matrix43 ConvertMtx43(D3DXMATRIX mtx)
+{
+	::Effekseer::Matrix43 mtx43;
+	mtx43.Value[0][0] = mtx._11;
+	mtx43.Value[0][1] = mtx._12;
+	mtx43.Value[0][2] = mtx._13;
+	//mtx43.Value[0][3] = mtx._14;
+	mtx43.Value[1][0] = mtx._21;
+	mtx43.Value[1][1] = mtx._22;
+	mtx43.Value[1][2] = mtx._23;
+	//mtx43.Value[1][3] = mtx._24;
+	mtx43.Value[2][0] = mtx._31;
+	mtx43.Value[2][1] = mtx._32;
+	mtx43.Value[2][2] = mtx._33;
+	//mtx43.Value[2][3] = mtx._34;
+	mtx43.Value[3][0] = mtx._41;
+	mtx43.Value[3][1] = mtx._42;
+	mtx43.Value[3][2] = mtx._43;
+	//mtx43.Value[3][3] = mtx._44;
+	return mtx43;
 }

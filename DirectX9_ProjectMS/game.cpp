@@ -114,6 +114,9 @@ void GameScene::Update(void)
 	// グレーのポインタを取得
 	Gray* pGray = ObjectManager::GetObjectPointer<Gray>(ObjectManager::GRAY);
 
+	// エフェクトのポインタを取得
+	EffectManager* pEffectMgr = ObjectManager::GetObjectPointer<EffectManager>(ObjectManager::EFFECT);
+
 	// ポーズフラグが false ならば
 	if (!bPause)
 	{
@@ -207,9 +210,9 @@ GameScene::GameScene(void)
 	//ObjectManager::CreateObject<Cube>();
 	ObjectManager::CreateObject<ParticleManager>();
 	ObjectManager::CreateObject<StageManager>();
+	ObjectManager::CreateObject<EffectManager>();
 	ObjectManager::CreateObject<WeaponManager>();
 	ObjectManager::CreateObject<PlayerManager>();
-	ObjectManager::CreateObject<EffectManager>();
 	ObjectManager::CreateObject<Roundlogo>();
 	ObjectManager::CreateObject<Rightleft>();
 	ObjectManager::CreateObject<Gage>();

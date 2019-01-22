@@ -20,6 +20,7 @@
 #include "weaponMgr.h"
 #include "gage.h"
 #include "gage3d.h"
+#include "effect.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -55,7 +56,7 @@
 // ステータス
 #define PLAYER_HP_MAX				(100)
 #define PLAYER_SP_MAX				(100)
-#define PLAYER_SP_CHARGE_AUTO		(0.05f)
+#define PLAYER_SP_CHARGE_AUTO		(0.5f)
 //#define PLAYER_SP_CHARGE_AUTO		(0.5f)
 #define PLAYER_SP_CHARGE_ATTACK		(5.0f)
 #define PLAYER_SP_SUB				(0.3f)
@@ -130,6 +131,16 @@
 #define PLAYER_GAGE_SET_XZ			(3.0f)
 #define PLAYER_GAGE_HEIGHT			(-11.0f)
 
+// エフェクト
+#define PLAYER_EFFECT_SCL_JUMPEND		(D3DXVECTOR3(1.5f,1.5f,1.5f))
+#define PLAYER_EFFECT_SCL_PASTRY		(D3DXVECTOR3(2.0f,2.0f,2.0f))
+
+#define PLAYER_EFFECT_SCL_GUARD_SPEED			(0.15f)
+#define PLAYER_EFFECT_SCL_GUARD_SPEED_MAX		(1.7f)
+
+#define PLAYER_EFFECT_SCL_SP_SPEED			(0.6f)
+#define PLAYER_EFFECT_SCL_SP_SPEED_MAX		(9.0f)
+
 //*****************************************************************************
 // 構造体定義
 //*****************************************************************************
@@ -154,6 +165,16 @@ public:
 
 	Gage*		pGage;
 	Gage3d*		pGage3d;
+
+	EffectManager* pEffectMgr;
+	::Effekseer::Handle	m_handleSp;
+	::Effekseer::Handle	m_handleGuard;
+
+	float			m_fGuardEffectScl;
+	D3DXCOLOR		m_xGuardEffectCol;
+
+	float			m_fSpEffectScl;
+	D3DXCOLOR		m_xSpEffectCol;
 
 	// コンストラクタ（初期化処理）
 	Player(void);
