@@ -62,12 +62,13 @@
 
 // ダメージ
 #define PLAYER_DAMAGE_NORMAL		(6.0f)
-#define PLAYER_DAMAGE_SP			(25.0f)
+#define PLAYER_DAMAGE_SP			(16.0f)
 #define PLAYER_DAMAGE_CD			(10)
 
 // アタック
 #define PLAYER_ATTACK_CD			(30)		// クールダウン
 #define PLAYER_ATTACK_CD_ANIM		(19)		// クールダウン
+#define PLAYER_ATTACK_START			(4)
 
 // ガード
 #define PLAYER_GUARD_CD				(5)			// クールダウン
@@ -225,6 +226,10 @@ private:
 	bool				m_bSpStandby;
 	bool				m_bSpMode;
 
+	int					m_nSpLR;
+	int					m_nSpCount;
+	bool				m_nSpFlag;
+
 	// ジャンプ
 	float	fVelocity;				// 加速度
 	float	fGravity;				// 重力
@@ -245,7 +250,10 @@ private:
 	void Dash(void);
 	void DashCancel(void);
 	void Guard(void);
+
 	void Attack(WeaponLR eLR);
+	void AttackUpdate(void);
+
 	void Jump(void);
 	void MoveFunc(float);
 	void MoveInertia(float fInertia);

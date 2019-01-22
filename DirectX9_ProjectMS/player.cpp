@@ -243,6 +243,10 @@ void Player::InitStatus(void)
 	// クールダウン値
 	m_nCoolDown = 0;
 
+	m_nSpLR = 0;
+	m_nSpCount = 0;
+	m_nSpFlag = false;
+
 	// 各フラグとウォームアップ・クールダウンの初期化
 	for (unsigned int i = 0; i < AC_MAX; i++)
 	{
@@ -295,10 +299,10 @@ void Player::Update(void)
 #ifdef _DEBUG
 	//PrintDebugProc("Player[%d]  Hp[%f]  GHp[%f]\n", m_nNum, m_fHp, m_fGuardHp);
 	ImGui::Text("Player[%d]  Hp[%f]  GHp[%f]\n", m_nNum, m_fHp, m_fGuardHp);
-	if (ImGui::Button("SpMode = true"))
-	{
-		m_bSpMode = true;
-	}
+	//if (ImGui::Button("SpMode = true"))
+	//{
+	//	m_bSpMode = true;
+	//}
 #endif
 
 	if (m_bUse)
@@ -455,6 +459,8 @@ void Player::Action(void)
 	// Sp減算処理
 	SubSp(PLAYER_SP_SUB);
 
+	
+
 	if (CheckJoyconSize(4) || (CheckJoyconSize(2) && m_nNum == 0))
 	{
 		D3DXVECTOR3 jcL, jcR;
@@ -590,6 +596,7 @@ void Player::Action(void)
 	{
 		ActionKeyboard();
 	}
+	AttackUpdate();
 	Dash();
 	Jump();
 } 
@@ -697,76 +704,173 @@ void Player::Attack(WeaponLR eLR)
 	// 設置可能状態であれば
 	if (SetRightLeft((int)eLR + m_nNum * 2))
 	{
-		// SPチャージ
-		AddSp(PLAYER_SP_CHARGE_ATTACK);
-
-		//// SPアタックが準備済み
-		//if (m_bSpStandby)
-		//{
-		//	// Spを初期化
-		//	ResetSp();
-		//	// スタンバイフラグを false
-		//	m_bSpStandby = false;
-		//}
-		//else if (eLRSp != TYPE_TEMP)
-		//{
-		//	// ウェポン復元処理
-		//	RestoreWeaponSp();
-		//}
-		//else
+		if (m_bSpMode)
+		{
 			SetSe(SE_DOCTOR_THROW, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 
 
-		if (eLR == TYPE_LEFT)
-		{
-			// RIGHT のフラグが立っていたら false にする
-			if (m_stAction[AC_ATTACK_RIGHT].bFlag)m_stAction[AC_ATTACK_RIGHT].bFlag = false;
+			if (eLR == TYPE_LEFT)
+			{
+				// RIGHT のフラグが立っていたら false にする
+				if (m_stAction[AC_ATTACK_RIGHT].bFlag)m_stAction[AC_ATTACK_RIGHT].bFlag = false;
+				// フラグを立てる
+				m_stAction[AC_ATTACK_LEFT].bFlag = true;
+				// クールダウン値を代入
+				m_stAction[AC_ATTACK_LEFT].nCnt = PLAYER_ATTACK_CD_ANIM;
+			}
+			else if (eLR == TYPE_RIGHT)
+			{
+				// LEFT のフラグが立っていたら false にする
+				if (m_stAction[AC_ATTACK_LEFT].bFlag)m_stAction[AC_ATTACK_LEFT].bFlag = false;
+				// フラグを立てる
+				m_stAction[AC_ATTACK_RIGHT].bFlag = true;
+				// クールダウン値を代入
+				m_stAction[AC_ATTACK_RIGHT].nCnt = PLAYER_ATTACK_CD_ANIM;
+			}
+
 			// フラグを立てる
-			m_stAction[AC_ATTACK_LEFT].bFlag = true;
+			m_stAction[AC_ATTACK].bFlag = true;
 			// クールダウン値を代入
-			m_stAction[AC_ATTACK_LEFT].nCnt = PLAYER_ATTACK_CD_ANIM;
+			m_stAction[AC_ATTACK].nCnt = PLAYER_ATTACK_CD;
+
+			// 設置座標の算出
+			D3DXVECTOR3 posTmp = D3DXVECTOR3(m_mtxWorld._11, m_mtxWorld._12, m_mtxWorld._13);
+			D3DXVec3Normalize(&posTmp, &posTmp);
+
+			// RIGHT の場合は設置posが反対側
+			if (eLR == TYPE_RIGHT)posTmp *= -1.0f;
+
+			// 設置場所を調整してプレイヤーPosにオフセット
+			posTmp.x = m_vPos.x + posTmp.x * PLAYER_WEAPON_SET_XZ;
+			posTmp.z = m_vPos.z + posTmp.z * PLAYER_WEAPON_SET_XZ;
+			posTmp.y = m_vPos.y + PLAYER_WEAPON_SET_HEIGHT;
+
+			// 移動ベクトルの算出
+			D3DXVECTOR3 moveTmp = m_vTag;
+			moveTmp.y += PLAYER_HEIGHT_HIT;
+			moveTmp = moveTmp - posTmp;
+			D3DXVec3Normalize(&moveTmp, &moveTmp);
+
+			// ウェポンをセット
+			pWeapon[eLR]->Set(posTmp, moveTmp);
+
+			// Joycon振動
+			JcRumble((int)eLR + m_nNum * 2, 99, 1);
+
 		}
-		else if (eLR == TYPE_RIGHT)
+		else
 		{
-			// LEFT のフラグが立っていたら false にする
-			if (m_stAction[AC_ATTACK_LEFT].bFlag)m_stAction[AC_ATTACK_LEFT].bFlag = false;
-			// フラグを立てる
-			m_stAction[AC_ATTACK_RIGHT].bFlag = true;
-			// クールダウン値を代入
-			m_stAction[AC_ATTACK_RIGHT].nCnt = PLAYER_ATTACK_CD_ANIM;
+			if (m_nSpCount <= PLAYER_ATTACK_START && m_nSpFlag)
+			{
+				m_nSpLR = (int)TYPE_SP;
+			}
+			else
+			{
+				m_nSpLR = (int)eLR;
+			}
+			m_nSpFlag = true;
+		}
+	}
+
+
+}
+
+//=============================================================================
+// アタック処理関数
+//=============================================================================
+void Player::AttackUpdate(void)
+{
+	if (!m_bSpMode)
+	{
+		if (m_nSpFlag)
+		{
+			m_nSpCount++;
 		}
 
-		// フラグを立てる
-		m_stAction[AC_ATTACK].bFlag = true;
-		// クールダウン値を代入
-		m_stAction[AC_ATTACK].nCnt = PLAYER_ATTACK_CD;
+		if (m_nSpCount > PLAYER_ATTACK_START)
+		{
+			m_nSpCount = 0;
+			m_nSpFlag = false;
 
-		// 設置座標の算出
-		D3DXVECTOR3 posTmp = D3DXVECTOR3(m_mtxWorld._11, m_mtxWorld._12, m_mtxWorld._13);
-		D3DXVec3Normalize(&posTmp, &posTmp);
+			// SPチャージ
+			AddSp(PLAYER_SP_CHARGE_ATTACK);
 
-		// RIGHT の場合は設置posが反対側
-		if (eLR == TYPE_RIGHT)posTmp *= -1.0f;
+			//// SPアタックが準備済み
+			//if (m_bSpStandby)
+			//{
+			//	// Spを初期化
+			//	ResetSp();
+			//	// スタンバイフラグを false
+			//	m_bSpStandby = false;
+			//}
+			//else if (eLRSp != TYPE_TEMP)
+			//{
+			//	// ウェポン復元処理
+			//	RestoreWeaponSp();
+			//}
+			//else
+			SetSe(SE_DOCTOR_THROW, E_DS8_FLAG_NONE, SOUND_OPTION_CONTINUE_ON, 0);
 
-		// 設置場所を調整してプレイヤーPosにオフセット
-		posTmp.x = m_vPos.x + posTmp.x * PLAYER_WEAPON_SET_XZ;
-		posTmp.z = m_vPos.z + posTmp.z * PLAYER_WEAPON_SET_XZ;
-		posTmp.y = m_vPos.y + PLAYER_WEAPON_SET_HEIGHT;
 
-		// 移動ベクトルの算出
-		D3DXVECTOR3 moveTmp = m_vTag;
-		moveTmp.y += PLAYER_HEIGHT_HIT;
-		moveTmp = moveTmp - posTmp;
-		D3DXVec3Normalize(&moveTmp, &moveTmp);
+			if (m_nSpLR == TYPE_LEFT || m_nSpLR == TYPE_SP)
+			{
+				// RIGHT のフラグが立っていたら false にする
+				if (m_stAction[AC_ATTACK_RIGHT].bFlag)m_stAction[AC_ATTACK_RIGHT].bFlag = false;
+				// フラグを立てる
+				m_stAction[AC_ATTACK_LEFT].bFlag = true;
+				// クールダウン値を代入
+				m_stAction[AC_ATTACK_LEFT].nCnt = PLAYER_ATTACK_CD_ANIM;
+			}
+			else if (m_nSpLR == TYPE_RIGHT)
+			{
+				// LEFT のフラグが立っていたら false にする
+				if (m_stAction[AC_ATTACK_LEFT].bFlag)m_stAction[AC_ATTACK_LEFT].bFlag = false;
+				// フラグを立てる
+				m_stAction[AC_ATTACK_RIGHT].bFlag = true;
+				// クールダウン値を代入
+				m_stAction[AC_ATTACK_RIGHT].nCnt = PLAYER_ATTACK_CD_ANIM;
+			}
 
-		// ウェポンをセット
-		pWeapon[eLR]->Set(posTmp, moveTmp);
+			// フラグを立てる
+			m_stAction[AC_ATTACK].bFlag = true;
+			// クールダウン値を代入
+			m_stAction[AC_ATTACK].nCnt = PLAYER_ATTACK_CD;
 
-		// Joycon振動
-		JcRumble((int)eLR + m_nNum * 2, 99, 1);
-		return;
+			// 設置座標の算出
+			D3DXVECTOR3 posTmp = D3DXVECTOR3(m_mtxWorld._11, m_mtxWorld._12, m_mtxWorld._13);
+			D3DXVec3Normalize(&posTmp, &posTmp);
+
+			// RIGHT の場合は設置posが反対側
+			if (m_nSpLR == TYPE_RIGHT)posTmp *= -1.0f;
+
+			// 設置場所を調整してプレイヤーPosにオフセット
+			posTmp.x = m_vPos.x + posTmp.x * PLAYER_WEAPON_SET_XZ;
+			posTmp.z = m_vPos.z + posTmp.z * PLAYER_WEAPON_SET_XZ;
+			posTmp.y = m_vPos.y + PLAYER_WEAPON_SET_HEIGHT;
+
+			// 移動ベクトルの算出
+			D3DXVECTOR3 moveTmp = m_vTag;
+			moveTmp.y += PLAYER_HEIGHT_HIT;
+			moveTmp = moveTmp - posTmp;
+			D3DXVec3Normalize(&moveTmp, &moveTmp);
+
+			// ウェポンをセット
+			pWeapon[m_nSpLR]->Set(posTmp, moveTmp);
+
+			// Joycon振動
+			if (m_nSpLR == TYPE_SP)
+			{
+				JcRumble((int)0 + m_nNum * 2, 99, 1);
+				JcRumble((int)1 + m_nNum * 2, 99, 1);
+			}
+			else
+			{				
+				JcRumble((int)m_nSpLR + m_nNum * 2, 99, 1);
+			}
+		}
 	}
 }
+
 
 //=============================================================================
 // SPウェポン変更処理
@@ -812,6 +916,7 @@ void Player::ChangeWeaponSp(void)
 	//		m_bSpStandby = true;
 	//	}
 	//}
+	
 }
 
 //=============================================================================

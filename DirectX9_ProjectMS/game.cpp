@@ -60,6 +60,8 @@ int		GameScene::m_nRoundWin = 0;
 void GameScene::Update(void)
 {
 
+	Time* pTime = ObjectManager::GetObjectPointer<Time>(ObjectManager::TIME);
+
 	if (!m_bGame)
 	{
 		int nGameCount;
@@ -78,7 +80,6 @@ void GameScene::Update(void)
 				{
 					ObjectManager::GetObjectPointer<Ko>(ObjectManager::KO)->Unset();
 				}
-				Time* pTime = ObjectManager::GetObjectPointer<Time>(ObjectManager::TIME);
 				pTime->Reset();
 				pTime->SetStart(false);
 
@@ -143,8 +144,10 @@ void GameScene::Update(void)
 				pPlayer->ChangeAnimSpeed(PLAYER_ANIM_SPEED_DEF);
 				pPlayer->ChangeAnim(Player::IDOL, PLAYER_ANIM_WEIGHT_DAMAGE);
 			}
+			//pTime->Reset();
+
 			// 勝利プレイヤーを設定
-			GameScene::SetRoundWin(pPlayer->m_nNum);
+			GameScene::SetRoundWin(nIdx);
 		}
 
 		// ポーズ情報を取得

@@ -205,8 +205,10 @@ bool Time::GetEnd(void)
 void Time::SetStart(bool flag)
 {
 	TimeObj[0].Start = flag;
+	TimeObj[0].End = false;
 }
 void Time::Reset(void)
 {
 	TimeObj[0].Timer = TEXTURE_TIME_SECOND * FRAME;
+	TimeObj[0].End = false;
 }
